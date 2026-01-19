@@ -8,6 +8,37 @@
   <meta name="theme-color" content="#030303" />
   <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
 
+  <script type="text/javascript">
+    // Single Page Apps for GitHub Pages
+    // https://github.com/rafgraph/spa-github-pages
+    // This script checks to see if a redirect is present in the query string,
+    // converts it back into a correct url and adds it to the browser's history
+    // using window.history.replaceState(...), which won't cause the browser
+    // to refresh the page after registration.
+    (function (l) {
+      if (l.search[1] === 'p') {
+        var decoded = l.search.slice(1).split('&').map(function (s) {
+          return s.replace(/~and~/g, '&')
+        }).filter(function (s) {
+          return s.slice(0, 2) === 'p='
+        })[0];
+        if (decoded !== undefined) {
+          var path = decoded.slice(2);
+          if (path !== l.pathname.slice(1)) {
+            window.history.replaceState(null, null,
+              l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+              l.pathname.slice(0, 1) + '/' + path +
+              l.search.slice(1).split('&').filter(function (s) {
+                return s.slice(0, 2) !== 'p='
+              }).join('&').replace(/^(..*)$/, '?$1') +
+              l.hash
+            );
+          }
+        }
+      }
+    }(window.location))
+  </script>
+
   <!-- Primary Meta Tags -->
   <title>Bhavin Pathak | Best Full Stack Developer & Software Architect</title>
   <meta name="title" content="Bhavin Pathak | Best Full Stack Developer & Software Architect" />
