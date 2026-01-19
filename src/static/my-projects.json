@@ -1,0 +1,195 @@
+{
+    "pageTitle": "Works",
+    "pageSubtitle": "A selection of projects.",
+    "projects": [
+        {
+            "id": 1,
+            "name": "YT AI Q&A",
+            "description": "An AI-powered question-answering application that extracts insights from YouTube videos using transcripts and natural language processing.",
+            "html_url": "https://github.com/Bhavin-Pathak/YT-AI-QA.git",
+            "homepage": "",
+            "topics": [
+                "AI",
+                "YouTube",
+                "NLP",
+                "Ollama"
+            ],
+            "language": "Python"
+        },
+        {
+            "id": 2,
+            "name": "Clario",
+            "description": "Clario is a sleek and modern text summarization application built with React, powered by the OpenAI API, designed to transform lengthy text into concise, meaningful summaries with ease.",
+            "html_url": "https://github.com/Bhavin-Pathak/clario.git",
+            "homepage": "https://bhavin-pathak.github.io/clario/",
+            "topics": [
+                "JavaScript",
+                "ReactJS",
+                "Tailwindcss",
+                "OpenAI"
+            ],
+            "language": "JavaScript"
+        },
+        {
+            "id": 3,
+            "name": "Fullstack Linux Setup",
+            "description": "A complete full-stack development environment setup for Linux users, covering essential tools, configurations, and workflows for modern web and backend development.",
+            "html_url": "https://github.com/Bhavin-Pathak/fullstack-linux-setup.git",
+            "homepage": "",
+            "topics": [
+                "Linux",
+                "Automation",
+                "Developer-Setup"
+            ],
+            "language": "Shell"
+        },
+        {
+            "id": 4,
+            "name": "Authentication Kit",
+            "description": "A modern animated authentication kit with login, signup, OTP, and password reset flows.",
+            "html_url": "https://github.com/Bhavin-Pathak/Login_Kit.git",
+            "homepage": "",
+            "topics": [
+                "Swift",
+                "SwiftUI",
+                "MVVM",
+                "Authentication"
+            ],
+            "language": "iOS"
+        },
+        {
+            "id": 5,
+            "name": "Evernotes",
+            "description": "A lightweight notes application with full CRUD operations and local storage-based persistence.",
+            "html_url": "https://github.com/Bhavin-Pathak/evernotes.git",
+            "homepage": "https://bhavin-pathak.github.io/evernotes/",
+            "topics": [
+                "ReactJS",
+                "Tailwindcss",
+                "CRUD"
+            ],
+            "language": "JavaScript"
+        },
+        {
+            "id": 6,
+            "name": "Personal Portfolio",
+            "description": "A personal portfolio website to showcase projects, skills, and professional experience.",
+            "html_url": "https://github.com/Bhavin-Pathak/portfolio-bhaviin.git",
+            "homepage": "https://bhaviinpathak.online/",
+            "topics": [
+                "ReactJS",
+                "Tailwindcss"
+            ],
+            "language": "JavaScript"
+        },
+        {
+            "id": 7,
+            "name": "Digital Resume",
+            "description": "A responsive digital resume website built to present professional experience and projects.",
+            "html_url": "https://github.com/Bhavin-Pathak/digital-resume.git",
+            "homepage": "https://bhavin-pathak.github.io/digital-resume/",
+            "topics": [
+                "HTML",
+                "CSS",
+                "JavaScript"
+            ],
+            "language": "HTML"
+        },
+        {
+            "id": 8,
+            "name": "Split-Digits",
+            "description": "A logic-based number matching puzzle game developed using SwiftUI.",
+            "html_url": "https://github.com/Bhavin-Pathak/Split-Digits.git",
+            "homepage": "",
+            "topics": [
+                "Swift",
+                "SwiftUI",
+                "MVVM"
+            ],
+            "language": "iOS"
+        },
+        {
+            "id": 9,
+            "name": "Leet Code Solutions",
+            "description": "A structured collection of algorithm and data structure problem solutions for interview preparation.",
+            "html_url": "https://github.com/Bhavin-Pathak/Leet-Code.git",
+            "homepage": "",
+            "topics": [
+                "DSA",
+                "Algorithms"
+            ],
+            "language": "JavaScript + Dart"
+        },
+        {
+            "id": 10,
+            "name": "Atmos-alert",
+            "description": "A responsive weather application built with React using the OpenWeatherMap API.",
+            "html_url": "https://github.com/Bhavin-Pathak/atmos-alert.git",
+            "homepage": "https://bhavin-pathak.github.io/atmos-alert/",
+            "topics": [
+                "ReactJS",
+                "API"
+            ],
+            "language": "JavaScript"
+        },
+        {
+            "id": 11,
+            "name": "Inspirebox",
+            "description": "A random quote generator with modern UI effects built using React and Tailwind CSS.",
+            "html_url": "https://github.com/Bhavin-Pathak/inspirebox.git",
+            "homepage": "https://bhavin-pathak.github.io/inspirebox/",
+            "topics": [
+                "ReactJS",
+                "UI"
+            ],
+            "language": "JavaScript"
+        },
+        {
+            "id": 12,
+            "name": "BMIwise",
+            "description": "A BMI calculator application built using React and Tailwind CSS.",
+            "html_url": "https://github.com/Bhavin-Pathak/bmiwise.git",
+            "homepage": "https://bhavin-pathak.github.io/bmiwise/",
+            "topics": [
+                "ReactJS"
+            ],
+            "language": "JavaScript"
+        },
+        {
+            "id": 13,
+            "name": "Users from JSONPlaceholder",
+            "description": "An application consuming JSONPlaceholder API to display and search user data.",
+            "html_url": "https://github.com/Bhavin-Pathak/UserNFT-JsonPlaceholder.git",
+            "homepage": "",
+            "topics": [
+                "SwiftUI",
+                "API"
+            ],
+            "language": "iOS"
+        },
+        {
+            "id": 14,
+            "name": "Hamburger Kit",
+            "description": "A SwiftUI navigation drawer with animated transitions.",
+            "html_url": "https://github.com/Bhavin-Pathak/Navigation-Slider-.git",
+            "homepage": "",
+            "topics": [
+                "SwiftUI",
+                "Animations"
+            ],
+            "language": "iOS"
+        },
+        {
+            "id": 15,
+            "name": "Flutter Projects",
+            "description": "A collection of Flutter mini-projects exploring UI components and architecture patterns.",
+            "html_url": "https://github.com/Bhavin-Pathak/Flutter-Projects.git",
+            "homepage": "",
+            "topics": [
+                "Flutter",
+                "Dart"
+            ],
+            "language": "Flutter"
+        }
+    ]
+}

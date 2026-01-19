@@ -1,0 +1,16 @@
+{
+    "title": "Identity",
+    "subtitle": "Developer. Problem Solver.",
+    "image": "/images/me.png",
+    "name": "Bhavin Pathak",
+    "bio1": "Full-stack developer specializing in AI-driven solutions, cross-platform mobile apps, and scalable web applications. With expertise in Node.js, React, and Flutter, I've delivered high-performance solutions for healthcare and enterprise sectors.",
+    "bio2": "My comprehensive experience spans the entire development lifecycle, from concept to deployment, with published applications on both iOS and Android platforms",
+    "social": {
+        "linkedin": "https://www.linkedin.com/in/bhavin-pathak/",
+        "github": "https://github.com/Bhavin-Pathak",
+        "leetcode": "https://leetcode.com/u/bhavinpathak8729/",
+        "resume": "/cv/resume_bhavin.pdf",
+        "email": "bhavinpathak29@gmail.com",
+        "phone": "+91 9428455515"
+    }
+}

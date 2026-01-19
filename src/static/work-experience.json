@@ -1,0 +1,88 @@
+{
+    "pageTitle": "The Journey",
+    "pageSubtitle": "Professional milestones.",
+    "jobs": [
+        {
+            "company": "Meril",
+            "position": "Software Developer SDE-1",
+            "period": "Dec 2024 - Present",
+            "image": "/companies/MERIL.jpg",
+            "description": "Worked cross-functionally with AI & product teams to design and ship smart software systems.",
+            "technologies": [
+                "Node.js",
+                "React.js",
+                "AI/LLMs",
+                "Express.js",
+                "PostgreSQL"
+            ],
+            "responsibilities": [
+                "Collaborated with AI and product teams to deliver intelligent software systems",
+                "Developed secure and scalable backend services",
+                "Built interactive and dynamic UIs using React.js",
+                "Integrated AI/LLMs into real-world applications",
+                "Automated workflows to improve software intelligence"
+            ]
+        },
+        {
+            "company": "UB Softec",
+            "position": "Mobile Application Developer",
+            "period": "Apr 2024 - Oct 2024",
+            "image": "/companies/UB.jpg",
+            "description": "Worked as a collaborative junior developer, contributing to mobile app and backend development.",
+            "technologies": [
+                "Flutter",
+                "Node.js",
+                "Firebase",
+                "MongoDB"
+            ],
+            "responsibilities": [
+                "Contributed to mobile app development projects with Flutter",
+                "Assisted in backend development and API integrations",
+                "Collaborated with senior developers to implement features",
+                "Fixed bugs and optimized app performance",
+                "Gained hands-on experience in agile teamwork"
+            ]
+        },
+        {
+            "company": "RnD Technosoft",
+            "position": "iOS App Developer",
+            "period": "Jun 2022 - Mar 2024",
+            "image": "/companies/RND.jpg",
+            "description": "Developed and published iOS applications on the App Store and Android applications on Play Store.",
+            "technologies": [
+                "Swift",
+                "iOS SDK",
+                "Xcode",
+                "App Store Connect",
+                "Play Console"
+            ],
+            "responsibilities": [
+                "Developed and maintained multiple iOS apps",
+                "Handled app submissions and compliance with App Store and Play Store policies",
+                "Collaborated with design and backend teams for feature implementation",
+                "Debugged and optimized app performance for smooth user experience",
+                "Ensured adherence to Apple and Google publishing guidelines"
+            ]
+        },
+        {
+            "company": "Earth Infotech",
+            "position": "Computer Technical Specialist",
+            "period": "Apr 2020 - May 2022",
+            "image": "/companies/E-I.jpg",
+            "description": "Provided computer hardware and technical support services, specializing in custom systems and OS installations.",
+            "technologies": [
+                "Windows",
+                "Linux",
+                "Hardware Troubleshooting",
+                "Networking"
+            ],
+            "responsibilities": [
+                "Built and configured custom computer systems for clients",
+                "Installed and upgraded operating systems and software",
+                "Performed hardware diagnostics and troubleshooting",
+                "Provided IT support for local clients and businesses",
+                "Ensured smooth deployment of updated systems"
+            ]
+        }
+    ]
+}

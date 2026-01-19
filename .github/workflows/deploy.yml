@@ -1,0 +1,54 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
+
+      - name: Install and Build 🔧
+        run: |
+          npm install --legacy-peer-deps
+          npm run sitemap
+          npm run build
+          cp build/index.html build/404.html
+        env:
+          CI: false
+          DISABLE_ESLINT_PLUGIN: true
+
+      - name: Commit and Push 📝
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Stage the sitemap changes first
+          git add public/sitemap.xml
+          
+          # Pull latest changes using autostash to avoid "unstaged changes" error
+          git pull origin main --rebase --autostash
+          
+          # Commit and push only if there are changes
+          if ! git diff --cached --quiet; then
+            git commit -m "Auto-update sitemap [skip ci]"
+            git push origin main
+          else
+            echo "No changes to sitemap."
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: build
+          branch: gh-pages

@@ -1,0 +1,98 @@
+{
+    "pageTitle": "The Stack",
+    "pageSubtitle": "Professional tech stack.",
+    "categories": [
+        {
+            "name": "Technologies and Frameworks",
+            "icon": "Globe",
+            "skills": [
+                {
+                    "name": "Swift",
+                    "proficiency": 75
+                },
+                {
+                    "name": "Dart",
+                    "proficiency": 70
+                },
+                {
+                    "name": "Javascript",
+                    "proficiency": 80
+                },
+                {
+                    "name": "Python",
+                    "proficiency": 60
+                },
+                {
+                    "name": "Figma UI/UX",
+                    "proficiency": 65
+                },
+                {
+                    "name": "SwiftUI",
+                    "proficiency": 70
+                },
+                {
+                    "name": "Flutter",
+                    "proficiency": 75
+                },
+                {
+                    "name": "React Native",
+                    "proficiency": 60
+                },
+                {
+                    "name": "NodeJS",
+                    "proficiency": 70
+                },
+                {
+                    "name": "Express/REST API's",
+                    "proficiency": 75
+                }
+            ]
+        },
+        {
+            "name": "Database | DevOps",
+            "icon": "Database",
+            "skills": [
+                {
+                    "name": "SQL",
+                    "proficiency": 70
+                },
+                {
+                    "name": "PostgreSQL",
+                    "proficiency": 70
+                },
+                {
+                    "name": "MongoDB",
+                    "proficiency": 65
+                },
+                {
+                    "name": "Cassandra",
+                    "proficiency": 50
+                },
+                {
+                    "name": "Firebase",
+                    "proficiency": 75
+                },
+                {
+                    "name": "Supabase",
+                    "proficiency": 60
+                },
+                {
+                    "name": "Docker",
+                    "proficiency": 55
+                },
+                {
+                    "name": "CI/CD",
+                    "proficiency": 60
+                },
+                {
+                    "name": "GitHub Actions",
+                    "proficiency": 65
+                },
+                {
+                    "name": "Jenkins",
+                    "proficiency": 50
+                }
+            ]
+        }
+    ]
+}
