@@ -12,5 +12,23 @@
         "resume": "/cv/resume_bhavin.pdf",
         "email": "bhavinpathak29@gmail.com",
         "phone": "+91 9428455515"
-    }
+    },
+    "expertise": [
+        {
+            "title": "Scalable Architecture",
+            "desc": "Designing robust, high-availability systems using Node.js and modern cloud patterns."
+        },
+        {
+            "title": "AI & Machine Learning",
+            "desc": "Integrating LLMs and intelligent automation into enterprise software workflows."
+        },
+        {
+            "title": "Mobile Engineering",
+            "desc": "Architecting seamless cross-platform experiences with a focus on performance."
+        },
+        {
+            "title": "Full Stack Mastery",
+            "desc": "End-to-end development using React and performance-tuned backend services."
+        }
+    ]
 }
