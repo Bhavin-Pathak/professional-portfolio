@@ -50,7 +50,7 @@ export default function AboutView() {
                             transition={{ duration: 0.5, delay: 0.2, ease: "backOut" }}
                             className="space-y-6 text-gray-900 dark:text-white"
                         >
-                            <p className="text-lg md:text-xl text-blue-700 dark:text-blue-200 border-l-4 border-blue-500 pl-4 bg-black/5 dark:bg-black/20 p-2 rounded-r">
+                            <p className="text-lg md:text-xl text-blue-700 dark:text-blue-200 border-l-4 border-blue-500 pl-4 bg-black/5 dark:bg-black/20 p-2 rounded-r font-sans">
                                 {aboutData.subtitle}
                             </p>
                             <div className="space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed text-base md:text-lg font-sans mix-blend-normal">
@@ -79,6 +79,34 @@ export default function AboutView() {
                             </div>
                         </motion.div>
                     </div>
+
+                    {/* Technical Focus Section */}
+                    {aboutData.expertise && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6, delay: 0.4 }}
+                            className="mt-16 pt-8 border-t border-black/10 dark:border-white/10"
+                        >
+                            <h3 className="text-2xl font-bold mb-8 text-center text-gray-900 dark:text-white font-sans tracking-tight">Technical Pillars</h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                {aboutData.expertise.map((item, index) => (
+                                    <div
+                                        key={index}
+                                        className="p-5 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 hover:border-blue-500/50 transition-all group"
+                                    >
+                                        <h4 className="text-lg font-bold text-blue-600 dark:text-blue-400 mb-2 group-hover:translate-x-1 transition-transform inline-block">
+                                            {item.title}
+                                        </h4>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed font-sans">
+                                            {item.desc}
+                                        </p>
+                                    </div>
+                                ))}
+                            </div>
+                        </motion.div>
+                    )}
                 </LiquidContainer>
             </div>
         </motion.div>
