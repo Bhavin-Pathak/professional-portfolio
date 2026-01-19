@@ -3,24 +3,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import PropTypes from "prop-types";
 import pkg from "../../package.json";
 
-const devLines = [
-    "> Initializing repository...",
-    "> Connecting to gh-pages...",
-    "> npm install...",
-    "> Starting dev server...",
-    "> Loading assets...",
-    "> Compiling styles...",
-    "> Linking components...",
-    "> Applying dark theme...",
-    "> Finalizing development build...",
-    "> Ready to launch..."
-];
-
 export default function LoadingView({ onComplete }) {
     const [progress, setProgress] = useState(0);
     const [isExiting, setIsExiting] = useState(false);
     const version = pkg.version;
-    // useEffect for Progress Bar
+
     useEffect(() => {
         const timer = setInterval(() => {
             setProgress((prev) => {
@@ -28,97 +15,124 @@ export default function LoadingView({ onComplete }) {
                     clearInterval(timer);
                     setTimeout(() => {
                         setIsExiting(true);
-                        setTimeout(onComplete, 1000);
-                    }, 1200); // Wait 1.2s at 100%
+                        setTimeout(onComplete, 800);
+                    }, 400);
                     return 100;
                 }
                 return prev + 1;
             });
-        }, 250);
+        }, 30);
         return () => clearInterval(timer);
     }, [onComplete]);
-    // Show the final line slightly earlier and wait longer at 100%
-    const lineIndex = Math.min(Math.floor((progress / 100) * devLines.length), devLines.length - 1);
+
     return (
         <AnimatePresence>
             {!isExiting && (
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    exit={{ opacity: 0, scale: 1.1, filter: "blur(20px)" }}
-                    transition={{ duration: 0.8 }}
-                    className="fixed inset-0 bg-[#050505] z-[100] flex flex-col items-center justify-center overflow-hidden"
+                    exit={{ opacity: 0, scale: 1.05, filter: "blur(40px)" }}
+                    transition={{ duration: 0.8, ease: "easeInOut" }}
+                    className="fixed inset-0 bg-black z-[100] flex flex-col items-center justify-center overflow-hidden"
                 >
-                    {/* One-by-One Animated Line Preview (Bottom) */}
-                    <div className="absolute bottom-[15%] inset-x-0 flex justify-center opacity-40 pointer-events-none select-none">
-                        <AnimatePresence mode="wait">
-                            <motion.div
-                                key={lineIndex}
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -10 }}
-                                transition={{ duration: 0.8, ease: "easeInOut" }}
-                                className="font-mono font-bold text-white uppercase tracking-[0.5em] text-[1.2vw] md:text-[0.8vw] text-center"
-                            >
-                                {devLines[lineIndex]}
-                            </motion.div>
-                        </AnimatePresence>
-                    </div>
-                    {/* Ambient Glows */}
-                    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                    {/* Atmospheric Digital Pulse - Background */}
+                    <div className="absolute inset-0 z-0 pointer-events-none">
                         <motion.div
                             animate={{
+                                opacity: [0.1, 0.2, 0.1],
                                 scale: [1, 1.2, 1],
-                                opacity: [0.1, 0.15, 0.1]
                             }}
-                            transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                            className="absolute top-0 left-0 w-full h-full bg-primary/10 rounded-full blur-[120px]"
+                            transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                            className="absolute top-[-20%] left-[-20%] w-[140%] h-[140%] bg-[radial-gradient(circle_at_center,rgba(37,99,235,0.15)_0%,transparent_70%)]"
                         />
                     </div>
+
                     <div className="relative z-10 flex flex-col items-center">
-                        {/* Animated Logo/Shape */}
-                        <div className="relative w-28 h-28 md:w-36 md:h-36 mb-12">
+                        {/* Loader Body */}
+                        <div className="relative w-40 h-40 md:w-56 md:h-56 mb-16 flex items-center justify-center">
+                            {/* Outer Spinning Ring */}
                             <motion.div
                                 animate={{ rotate: 360 }}
-                                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                                className="absolute inset-0 border-2 border-t-primary border-r-transparent border-b-primary-dark border-l-transparent rounded-full shadow-[0_0_20px_rgba(37,99,235,0.3)]"
+                                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                                className="absolute inset-0 border-[1px] border-dashed border-primary/40 rounded-full"
                             />
-                            <motion.div
-                                animate={{ rotate: -360 }}
-                                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                                className="absolute inset-3 border-2 border-t-transparent border-r-primary/60 border-b-transparent border-l-primary/60 rounded-full opacity-60"
-                            />
-                            <div className="absolute inset-0 flex items-center justify-center">
-                                <motion.span
-                                    initial={{ scale: 0.8, opacity: 0 }}
-                                    animate={{ scale: 1, opacity: 1 }}
-                                    className="text-3xl md:text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-br from-primary via-primary-dark to-primary drop-shadow-sm"
-                                >
-                                    {Math.floor(progress)}%
-                                </motion.span>
-                            </div>
-                        </div>
-                        {/* Progress Bar Container */}
-                        <div className="w-64 md:w-96 space-y-5">
-                            <div className="h-[2px] w-full bg-white/5 rounded-full overflow-hidden">
-                                <motion.div
-                                    className="h-full bg-gradient-to-r from-primary via-primary-dark to-primary shadow-[0_0_10px_rgba(37,99,235,0.5)]"
-                                    initial={{ width: "0%" }}
-                                    animate={{ width: `${progress}%` }}
-                                    transition={{ duration: 0.1 }}
+
+                            {/* Main Glowing Progress Ring */}
+                            <svg className="absolute inset-0 w-full h-full -rotate-90">
+                                <circle
+                                    cx="50%"
+                                    cy="50%"
+                                    r="48%"
+                                    className="stroke-white/5 fill-none"
+                                    strokeWidth="2"
                                 />
-                            </div>
-                            <div className="flex justify-between items-center text-[10px] md:text-xs uppercase tracking-[0.25em] text-white font-bold">
-                                <motion.span
-                                    animate={{ opacity: [0.6, 1, 0.6] }}
+                                <motion.circle
+                                    cx="50%"
+                                    cy="50%"
+                                    r="48%"
+                                    className="stroke-primary fill-none"
+                                    strokeWidth="2"
+                                    strokeDasharray="100 100"
+                                    initial={{ strokeDashoffset: 100 }}
+                                    animate={{ strokeDashoffset: 100 - progress }}
+                                    strokeLinecap="round"
+                                />
+                            </svg>
+
+                            {/* Center Inner Pulse */}
+                            <motion.div
+                                animate={{
+                                    scale: [0.95, 1.05, 0.95],
+                                    opacity: [0.5, 0.8, 0.5]
+                                }}
+                                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                                className="absolute inset-6 rounded-full bg-primary/10 backdrop-blur-3xl border border-primary/20 flex items-center justify-center shadow-[0_0_50px_rgba(37,99,235,0.2)]"
+                            >
+                                <div className="flex flex-col items-center relative">
+                                    <div className="flex items-baseline">
+                                        <motion.span
+                                            className="text-4xl md:text-6xl font-bold tracking-tighter text-white font-sans"
+                                        >
+                                            {Math.floor(progress)}
+                                        </motion.span>
+                                        <span className="text-xl md:text-2xl font-bold text-primary ml-1">%</span>
+                                    </div>
+                                    <motion.span className="text-[10px] md:text-xs uppercase tracking-[0.5em] text-primary/80 font-bold mt-1">
+                                        Loading
+                                    </motion.span>
+                                </div>
+                            </motion.div>
+                        </div>
+
+                        {/* Modern Version Reveal */}
+                        <div className="space-y-3 text-center">
+                            <motion.h2
+                                initial={{ opacity: 0, letterSpacing: "1em" }}
+                                animate={{ opacity: 1, letterSpacing: "0.5em" }}
+                                className="text-sm md:text-base font-bold text-white uppercase tracking-[0.5em]"
+                            >
+                                v{version}
+                            </motion.h2>
+                            <div className="flex items-center justify-center gap-3">
+                                <div className="h-[1px] w-6 bg-blue-500/30" />
+                                <motion.p
+                                    animate={{ opacity: [0.4, 1, 0.4] }}
                                     transition={{ duration: 2, repeat: Infinity }}
+                                    className="text-[10px] md:text-xs text-gray-400 font-mono tracking-[0.3em] uppercase"
                                 >
-                                    Initializing Portfolio...
-                                </motion.span>
-                                <span className="text-white/80">v{version}</span>
+                                    Establishing Connection
+                                </motion.p>
+                                <div className="h-[1px] w-6 bg-blue-500/30" />
                             </div>
                         </div>
                     </div>
+
+                    {/* Minimalist Scanning Line */}
+                    <motion.div
+                        animate={{ top: ["-10%", "110%"] }}
+                        transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                        className="absolute inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent z-20"
+                    />
                 </motion.div>
             )}
         </AnimatePresence>
