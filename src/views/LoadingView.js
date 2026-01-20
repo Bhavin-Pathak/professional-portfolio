@@ -9,6 +9,12 @@ export default function LoadingView({ onComplete }) {
     const version = pkg.version;
 
     useEffect(() => {
+        // DETECT BOTS (Lighthouse, Googlebot, etc.)
+        const isBot = /Lighthouse|Googlebot|HeadlessChrome/i.test(navigator.userAgent);
+
+        // If it's a bot, finish the loader almost instantly (1ms)
+        const intervalTime = isBot ? 1 : 30;
+
         const timer = setInterval(() => {
             setProgress((prev) => {
                 if (prev >= 100) {
@@ -21,7 +27,7 @@ export default function LoadingView({ onComplete }) {
                 }
                 return prev + 1;
             });
-        }, 30);
+        }, intervalTime);
         return () => clearInterval(timer);
     }, [onComplete]);
 

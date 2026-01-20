@@ -33,8 +33,10 @@ export default function ExperienceView() {
                                     <div className="shrink-0 w-16 h-16 rounded-xl overflow-hidden border border-white/20 bg-white/5 shadow-lg mx-auto md:mx-0">
                                         <img
                                             src={job.image}
-                                            alt={job.company}
+                                            alt={`${job.company} logo`}
                                             className="w-full h-full object-cover"
+                                            loading="lazy"
+                                            decoding="async"
                                         />
                                     </div>
                                     {/* Content */}
