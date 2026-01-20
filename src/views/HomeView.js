@@ -20,8 +20,8 @@ export default function HomeView() {
     return (
         <div className="flex-grow h-full flex items-center justify-center p-4">
             <SEO
-                title="Bhavin Pathak | Best Full Stack Developer & Tech Consultant"
-                description="Bhavin Pathak: Expert Full Stack Developer & Software Architect. Specialized in building scalable web applications and custom software solutions."
+                title="Full Stack Developer & Tech Architect"
+                description="Professional Full Stack Developer & Technical Architect specialized in AI solutions and scalable web architectures. Based in Vapi & Sagwara, India."
                 url="/"
             />
             {/* Desktop: Max width increased for horizontal layout Mobile: Standard width */}

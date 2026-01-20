@@ -33,7 +33,7 @@ export default function Header({ title, subtitle, backTo, tag: Tag = "h1" }) {
                         {title}
                     </Tag>
                     {subtitle && (
-                        <p className="text-[7px] md:text-[10px] text-blue-400 font-black uppercase tracking-[0.2em] opacity-80 truncate w-full">
+                        <p className="text-[10px] md:text-[12px] text-blue-400 font-black uppercase tracking-[0.2em] opacity-80 truncate w-full">
                             {subtitle}
                         </p>
                     )}

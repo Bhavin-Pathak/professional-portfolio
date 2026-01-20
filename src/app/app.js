@@ -18,9 +18,10 @@ const BlogDetailView = lazy(() => import("../views/BlogDetailView.js"));
 const NotFoundView = lazy(() => import("../views/NotFoundView.js"));
 
 // Animations and Cursor Effect 
-import DigitalWarp from "../components/DigitalWarp.js";
-import SplashCursor from "../components/SplashCursor.js";
-import FollowCursor from "../components/FollowCursor.js";
+// Animations and Cursor Effect (Lazy Load)
+const DigitalWarp = lazy(() => import("../components/DigitalWarp.js"));
+const SplashCursor = lazy(() => import("../components/SplashCursor.js"));
+const FollowCursor = lazy(() => import("../components/FollowCursor.js"));
 import Footer from "../components/Footer.js";
 
 export default function App() {
@@ -72,7 +73,11 @@ export default function App() {
         {/* Global Background Layer */}
         <div className="fixed inset-0 bg-black -z-50" />
         {/* Interactive Cursor Effects - Disabled on Mobile/Tablet for performance */}
-        {!isMobile && (showIntro ? <SplashCursor /> : !isLoading && <FollowCursor />)}
+        {!isMobile && (
+          <Suspense fallback={null}>
+            {showIntro ? <SplashCursor /> : !isLoading && <FollowCursor />}
+          </Suspense>
+        )}
         {/* Global Background Elements (Static Orbs) */}
         <div className="fixed inset-0 z-0 pointer-events-none">
           <div className="absolute top-[10%] left-[10%] w-[40rem] h-[40rem] bg-indigo-600/20 rounded-full blur-[100px] animate-pulse" />
@@ -84,7 +89,9 @@ export default function App() {
           ) : showIntro ? (
             <IntroView key="intro" onEnter={handleIntroComplete} />
           ) : isTransitioning ? (
-            <DigitalWarp key="warp" onComplete={handleWarpComplete} />
+            <Suspense fallback={<div className="min-h-screen bg-black" />}>
+              <DigitalWarp key="warp" onComplete={handleWarpComplete} />
+            </Suspense>
           ) : (
             <Suspense fallback={<div className="min-h-screen bg-black" />}>
               <div className="flex-grow flex flex-col min-h-screen">
