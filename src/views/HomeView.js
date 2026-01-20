@@ -40,6 +40,7 @@ export default function HomeView() {
                             whileHover={{ scale: 1.05, y: -5, transition: { duration: 0.2 } }}
                             whileTap={{ scale: 0.95 }}
                             onClick={() => navigate(item.path)}
+                            aria-label={`Go to ${item.label} page`}
                             className="relative group flex-1 min-h-[5rem] md:min-h-[16rem] rounded-2xl overflow-hidden border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 transition-all duration-200 flex flex-row md:flex-col items-center justify-start md:justify-center p-4 md:p-6 gap-4 md:gap-6 cursor-pointer"
                         >
                             {/* Background Gradient on Hover */}

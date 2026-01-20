@@ -39,6 +39,7 @@ export default function AboutView() {
                                     alt={aboutData.name}
                                     className="w-full h-auto object-cover relative z-10"
                                     loading="lazy"
+                                    decoding="async"
                                 />
                             </div>
                         </motion.div>
