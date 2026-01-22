@@ -68,6 +68,11 @@
   </style>
 
   <script type="text/javascript">
+    // HTTPS Enforcement - Redirect HTTP to HTTPS
+    if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
+      location.replace('https:' + location.href.substring(location.protocol.length));
+    }
+    
     // Single Page Apps for GitHub Pages
     // https://github.com/rafgraph/spa-github-pages
     // This script checks to see if a redirect is present in the query string,
