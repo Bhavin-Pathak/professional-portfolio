@@ -1,4 +1,16 @@
-User-agent: *
-Disallow:
+# Robots.txt for bhaviinpathak.online
+# Allow all crawlers
 
+User-agent: *
+Allow: /
+Disallow: /static/js/*.map
+Disallow: /static/css/*.map
+
+# Crawl-delay for rate limiting (optional, respected by some bots)
+Crawl-delay: 1
+
+# Sitemap location
 Sitemap: https://bhaviinpathak.online/sitemap.xml
+
+# Host directive (helps some search engines)
+Host: https://bhaviinpathak.online
