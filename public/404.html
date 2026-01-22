@@ -1,29 +1,120 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
     <meta charset="utf-8">
-    <title>Bhavin Pathak</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bhavin Pathak | Full Stack Developer</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description"
+        content="Professional Full Stack Developer & Technical Architect specialized in AI solutions and scalable web architectures." />
+    <meta name="robots" content="noindex, follow">
+    <link rel="canonical" href="https://bhaviinpathak.online/" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://bhaviinpathak.online/" />
+    <meta property="og:title" content="Bhavin Pathak | Full Stack Developer" />
+    <meta property="og:description"
+        content="Professional Full Stack Developer & Technical Architect specialized in AI solutions." />
+    <meta property="og:image" content="https://bhaviinpathak.online/images/og-image.png" />
+
+    <!-- Basic styling for non-JS users -->
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #030303;
+            color: #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 400px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        p {
+            color: #9ca3af;
+            margin-bottom: 1.5rem;
+        }
+
+        a {
+            color: #60a5fa;
+            text-decoration: none;
+            padding: 12px 24px;
+            border: 1px solid #60a5fa;
+            border-radius: 8px;
+            display: inline-block;
+            transition: all 0.2s;
+        }
+
+        a:hover {
+            background: #60a5fa;
+            color: #030303;
+        }
+
+        .loading {
+            display: none;
+            margin-top: 1rem;
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+    </style>
+
     <script type="text/javascript">
         // Single Page Apps for GitHub Pages
         // https://github.com/rafgraph/spa-github-pages
         // This script takes the current url and converts the path and query
         // string into just a query string, and then redirects the browser
-        // to the new url with only a query string and hash fragment,
-        // e.g. http://www.foo.tld/one/two?a=b#c -> http://www.foo.tld/?p=/one/two&q=a=b#c
-        // Note: this standard script expects the app to be at the root of the domain.
-        var l = window.location;
-        l.replace(
-            l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
-            l.pathname.split('/').slice(0, 1).join('/') + '/?p=' +
-            l.pathname.slice(1).replace(/&/g, '~and~') +
-            (l.search ? '&q=' + l.search.slice(1).replace(/&/g, '~and~') : '') +
-            l.hash
-        );
+        // to the new url with only a query string and hash fragment.
+
+        // Check if this is a bot/crawler - if so, show static content instead of redirect
+        var isBot = /Googlebot|bingbot|Slurp|DuckDuckBot|Baiduspider|YandexBot|facebookexternalhit|Twitterbot|LinkedInBot|Applebot/i.test(navigator.userAgent);
+
+        if (!isBot) {
+            // Show loading indicator
+            document.addEventListener('DOMContentLoaded', function () {
+                var loadingEl = document.querySelector('.loading');
+                if (loadingEl) loadingEl.style.display = 'block';
+            });
+
+            var l = window.location;
+            l.replace(
+                l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+                l.pathname.split('/').slice(0, 1).join('/') + '/?p=' +
+                l.pathname.slice(1).replace(/&/g, '~and~') +
+                (l.search ? '&q=' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+                l.hash
+            );
+        }
     </script>
 </head>
 
 <body>
+    <noscript>
+        <meta http-equiv="refresh" content="0;url=https://bhaviinpathak.online/">
+    </noscript>
+    <div class="container">
+        <h1>Bhavin Pathak</h1>
+        <p>Full Stack Developer & Technical Architect</p>
+        <a href="https://bhaviinpathak.online/">Visit Homepage</a>
+        <p class="loading">Redirecting...</p>
+    </div>
 </body>
 
 </html>

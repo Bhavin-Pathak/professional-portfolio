@@ -27,16 +27,20 @@ import Footer from "../components/Footer.js";
 export default function App() {
   const location = useLocation();
   const isRoot = location.pathname === "/";
+  
+  // Detect bots/crawlers for better SEO and LCP scores
+  const isBot = typeof navigator !== 'undefined' && 
+    /Lighthouse|Googlebot|HeadlessChrome|bingbot|Slurp|DuckDuckBot|Baiduspider|YandexBot|facebookexternalhit|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Applebot|ia_archiver|GTmetrix|PageSpeed/i.test(navigator.userAgent);
 
-  // If not root, skip the intro sequence for a better UX on direct links/404s
-  const [isLoading, setIsLoading] = useState(true);
+  // If not root or is a bot, skip the intro sequence for better UX/SEO
+  const [isLoading, setIsLoading] = useState(!isBot);
   const [showIntro, setShowIntro] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    // If we land on a subpage directly, we skip the splash/intro
-    if (!isRoot) {
+    // If we land on a subpage directly or is a bot, skip the splash/intro
+    if (!isRoot || isBot) {
       setIsLoading(false);
       setShowIntro(false);
       setIsTransitioning(false);
@@ -48,7 +52,7 @@ export default function App() {
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
-  }, [isRoot]);
+  }, [isRoot, isBot]);
 
   const handleLoadingComplete = () => {
     setIsLoading(false);

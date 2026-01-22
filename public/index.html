@@ -14,6 +14,59 @@
   <link rel="preconnect" href="https://static.cloudflareinsights.com" />
   <link rel="dns-prefetch" href="https://static.cloudflareinsights.com" />
 
+  <!-- Preload Critical Assets for LCP -->
+  <link rel="preload" href="%PUBLIC_URL%/images/og-image.png" as="image" />
+
+  <!-- Critical CSS for faster FCP/LCP -->
+  <style>
+    /* Critical CSS - Above the fold styles */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      line-height: 1.5;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #000;
+      color: #f3f4f6;
+      min-height: 100vh;
+    }
+
+    #root {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Initial loading state - prevents CLS */
+    .initial-loader {
+      position: fixed;
+      inset: 0;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    .initial-loader-text {
+      font-size: 1.5rem;
+      font-weight: bold;
+      background: linear-gradient(to right, #60a5fa, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+  </style>
+
   <script type="text/javascript">
     // Single Page Apps for GitHub Pages
     // https://github.com/rafgraph/spa-github-pages
@@ -129,7 +182,26 @@
 </head>
 
 <body>
-  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <noscript>
+    <div
+      style="background:#000;color:#f3f4f6;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center;font-family:system-ui,sans-serif;">
+      <h1
+        style="font-size:2.5rem;margin-bottom:1rem;background:linear-gradient(to right,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">
+        Bhavin Pathak</h1>
+      <h2 style="font-size:1.5rem;color:#9ca3af;margin-bottom:2rem;">Full Stack Developer & Technical Architect</h2>
+      <p style="max-width:600px;color:#6b7280;line-height:1.8;margin-bottom:2rem;">Professional Full Stack Developer
+        specialized in AI solutions and scalable web architectures. Based in Vapi & Sagwara, India.</p>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;">
+        <a href="https://linkedin.com/in/bhavin-pathak"
+          style="color:#60a5fa;text-decoration:none;padding:0.75rem 1.5rem;border:1px solid #60a5fa;border-radius:0.5rem;">LinkedIn</a>
+        <a href="https://github.com/Bhavin-Pathak"
+          style="color:#60a5fa;text-decoration:none;padding:0.75rem 1.5rem;border:1px solid #60a5fa;border-radius:0.5rem;">GitHub</a>
+        <a href="mailto:bhavinpathak29@gmail.com"
+          style="color:#60a5fa;text-decoration:none;padding:0.75rem 1.5rem;border:1px solid #60a5fa;border-radius:0.5rem;">Email</a>
+      </div>
+      <p style="margin-top:2rem;color:#4b5563;font-size:0.875rem;">Please enable JavaScript for the full experience.</p>
+    </div>
+  </noscript>
   <div id="root"></div>
 
   <!-- Cloudflare Web Analytics -->

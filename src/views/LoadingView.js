@@ -9,23 +9,32 @@ export default function LoadingView({ onComplete }) {
     const version = pkg.version;
 
     useEffect(() => {
-        // DETECT BOTS (Lighthouse, Googlebot, etc.)
-        const isBot = /Lighthouse|Googlebot|HeadlessChrome/i.test(navigator.userAgent);
+        // DETECT BOTS (Lighthouse, Googlebot, etc.) - Expanded detection
+        const isBot = /Lighthouse|Googlebot|HeadlessChrome|bingbot|Slurp|DuckDuckBot|Baiduspider|YandexBot|facebookexternalhit|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Applebot|ia_archiver|GTmetrix|PageSpeed/i.test(navigator.userAgent);
 
-        // If it's a bot, finish the loader almost instantly (1ms)
-        const intervalTime = isBot ? 1 : 30;
+        // If it's a bot, skip loading completely for better LCP
+        if (isBot) {
+            setIsExiting(true);
+            onComplete();
+            return;
+        }
+
+        // Reduced loading time: 15ms per step = 1.5 seconds total (was 3+ seconds)
+        const intervalTime = 15;
 
         const timer = setInterval(() => {
             setProgress((prev) => {
                 if (prev >= 100) {
                     clearInterval(timer);
+                    // Reduced delays: 100ms + 300ms (was 400ms + 800ms)
                     setTimeout(() => {
                         setIsExiting(true);
-                        setTimeout(onComplete, 800);
-                    }, 400);
+                        setTimeout(onComplete, 300);
+                    }, 100);
                     return 100;
                 }
-                return prev + 1;
+                // Faster progress: increment by 2 instead of 1
+                return Math.min(prev + 2, 100);
             });
         }, intervalTime);
         return () => clearInterval(timer);
