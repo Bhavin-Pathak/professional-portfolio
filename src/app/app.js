@@ -27,9 +27,9 @@ import Footer from "../components/Footer.js";
 export default function App() {
   const location = useLocation();
   const isRoot = location.pathname === "/";
-  
+
   // Detect bots/crawlers for better SEO and LCP scores
-  const isBot = typeof navigator !== 'undefined' && 
+  const isBot = typeof navigator !== 'undefined' &&
     /Lighthouse|Googlebot|HeadlessChrome|bingbot|Slurp|DuckDuckBot|Baiduspider|YandexBot|facebookexternalhit|Twitterbot|LinkedInBot|WhatsApp|TelegramBot|Applebot|ia_archiver|GTmetrix|PageSpeed/i.test(navigator.userAgent);
 
   // If not root or is a bot, skip the intro sequence for better UX/SEO
