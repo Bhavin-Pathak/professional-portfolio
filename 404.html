@@ -4,22 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bhavin Pathak | Full Stack Developer</title>
-
-    <!-- SEO Meta Tags -->
-    <meta name="description"
-        content="Professional Full Stack Developer & Technical Architect specialized in AI solutions and scalable web architectures." />
-    <meta name="robots" content="noindex, follow">
-    <link rel="canonical" href="https://bhaviinpathak.online/" />
-
-    <!-- Open Graph -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://bhaviinpathak.online/" />
-    <meta property="og:title" content="Bhavin Pathak | Full Stack Developer" />
-    <meta property="og:description"
-        content="Professional Full Stack Developer & Technical Architect specialized in AI solutions." />
-    <meta property="og:image" content="https://bhaviinpathak.online/images/og-image.png" />
-
+    <title>Bhavin Pathak</title>
     <!-- Basic styling for non-JS users -->
     <style>
         body {
@@ -75,33 +60,19 @@
             font-size: 0.875rem;
         }
     </style>
-
     <script type="text/javascript">
-        // Single Page Apps for GitHub Pages
-        // https://github.com/rafgraph/spa-github-pages
-        // This script takes the current url and converts the path and query
-        // string into just a query string, and then redirects the browser
-        // to the new url with only a query string and hash fragment.
-
-        // Check if this is a bot/crawler - if so, show static content instead of redirect
-        var isBot = /Googlebot|bingbot|Slurp|DuckDuckBot|Baiduspider|YandexBot|facebookexternalhit|Twitterbot|LinkedInBot|Applebot/i.test(navigator.userAgent);
-
-        if (!isBot) {
-            // Show loading indicator
-            document.addEventListener('DOMContentLoaded', function () {
-                var loadingEl = document.querySelector('.loading');
-                if (loadingEl) loadingEl.style.display = 'block';
-            });
-
-            var l = window.location;
-            l.replace(
-                l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
-                l.pathname.split('/').slice(0, 1).join('/') + '/?p=' +
-                l.pathname.slice(1).replace(/&/g, '~and~') +
-                (l.search ? '&q=' + l.search.slice(1).replace(/&/g, '~and~') : '') +
-                l.hash
-            );
-        }
+        document.addEventListener('DOMContentLoaded', function () {
+            var loadingEl = document.querySelector('.loading');
+            if (loadingEl) loadingEl.style.display = 'block';
+        });
+        var l = window.location;
+        l.replace(
+            l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+            l.pathname.split('/').slice(0, 1).join('/') + '/?p=' +
+            l.pathname.slice(1).replace(/&/g, '~and~') +
+            (l.search ? '&q=' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+            l.hash
+        );
     </script>
 </head>
 
