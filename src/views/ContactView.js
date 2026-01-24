@@ -74,7 +74,7 @@ export default function ContactView() {
             initial="initial"
             animate="animate"
             exit="exit"
-            className="h-screen w-screen bg-[#030303] overflow-hidden flex flex-col relative font-sans"
+            className="min-h-screen w-full bg-transparent overflow-hidden flex flex-col relative font-sans"
         >
             <SEO
                 title="Connect"
