@@ -77,7 +77,12 @@ export default function App() {
         )}
         {/* Global Background Elements (Animated Orbs) - Hidden on Loading, Intro Page and Transition */}
         {!isLoading && !showIntro && !isTransitioning && (
-          <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1.5 }}
+            className="fixed inset-0 z-0 pointer-events-none overflow-hidden"
+          >
             {/* Purple Orb: Moves from Top-Left to Bottom-Right */}
             <motion.div
               animate={{
@@ -106,7 +111,7 @@ export default function App() {
               }}
               className="absolute bottom-[10%] right-[10%] w-[35rem] h-[35rem] bg-cyan-500/40 rounded-full blur-[100px]"
             />
-          </div>
+          </motion.div>
         )}
         <AnimatePresence mode="wait">
           {isLoading ? (
