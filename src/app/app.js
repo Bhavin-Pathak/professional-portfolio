@@ -5,10 +5,11 @@ import DigitalWarp from "../components/DigitalWarp.js";
 
 
 
-// Screens (Lazy Load)
+// Screens With Lazy Load 
+import HomeView from "../views/HomeView.js";
+import Footer from "../components/Footer.js";
 const LoadingView = lazy(() => import("../views/LoadingView.js"));
 const IntroView = lazy(() => import("../views/IntroView.js"));
-const HomeView = lazy(() => import("../views/HomeView.js"));
 const AboutView = lazy(() => import("../views/AboutView.js"));
 const SkillsView = lazy(() => import("../views/SkillsView.js"));
 const ExperienceView = lazy(() => import("../views/ExperienceView.js"));
@@ -20,7 +21,6 @@ const NotFoundView = lazy(() => import("../views/NotFoundView.js"));
 // Animations and Cursor Effect (Lazy Load)
 const SplashCursor = lazy(() => import("../components/SplashCursor.js"));
 const FollowCursor = lazy(() => import("../components/FollowCursor.js"));
-import Footer from "../components/Footer.js";
 
 export default function App() {
   const location = useLocation();
@@ -124,7 +124,13 @@ export default function App() {
             </div>
           ) : (
             <Suspense fallback={<div className="min-h-screen bg-black" />}>
-              <div className="flex-grow flex flex-col min-h-screen">
+              <motion.div
+                key="main-content"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1, ease: "easeInOut" }}
+                className="flex-grow flex flex-col min-h-screen"
+              >
                 <Routes location={location} key={location.pathname}>
                   <Route path="/" element={<HomeView />} />
                   <Route path="/about" element={<AboutView />} />
@@ -137,7 +143,7 @@ export default function App() {
                   <Route path="*" element={<NotFoundView />} />
                 </Routes>
                 <Footer />
-              </div>
+              </motion.div>
             </Suspense>
           )}
         </AnimatePresence>
