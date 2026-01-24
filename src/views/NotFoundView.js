@@ -1,17 +1,13 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { LiquidButton } from "../components/LiquidButton.js";
-import SEO from "../components/SEO.js";
+
 
 export default function NotFoundView() {
     const navigate = useNavigate();
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center p-4 text-center">
-            <SEO
-                title="404 - Not Found"
-                description="The page you are looking for does not exist. Back to Bhavin Pathak's portfolio."
-            />
             <motion.h1
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}

@@ -5,7 +5,6 @@ import Header from "../components/Header.js";
 import { Github, ExternalLink } from "lucide-react";
 import React from "react";
 import { pageVariants } from "../utils/animations.js";
-import SEO from "../components/SEO.js";
 
 export default function ProjectsView() {
     // Scroll logic removed - handled in Header
@@ -18,11 +17,6 @@ export default function ProjectsView() {
             exit="exit"
             className="min-h-screen bg-transparent overflow-x-hidden flex flex-col"
         >
-            <SEO
-                title="Works"
-                description="Explore the projects and creations of Bhavin Pathak, featuring innovative software solutions, AI applications, and web development."
-                url="/projects"
-            />
             <Header title={projectsData.pageTitle} subtitle={projectsData.pageSubtitle} />
 
             <div className="max-w-7xl mx-auto px-4 md:px-8 pt-28 md:pt-36 pb-12 w-full flex-grow flex flex-col justify-center">

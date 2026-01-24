@@ -6,7 +6,7 @@ import Header from "../components/Header.js";
 import blogData from "../static/blog-posts.json";
 import { Tag, Quote, Share2 } from "lucide-react";
 import { pageVariants } from "../utils/animations.js";
-import SEO from "../components/SEO.js";
+
 
 export default function BlogDetailView() {
     const { id } = useParams();
@@ -32,12 +32,6 @@ export default function BlogDetailView() {
             exit="exit"
             className="min-h-screen bg-transparent overflow-x-hidden flex flex-col"
         >
-            <SEO
-                title={post.title}
-                description={post.excerpt}
-                url={`/blog/${post.id}`}
-                type="article"
-            />
             {/* Global Header with Post Metadata */}
             <Header
                 title={post.title}

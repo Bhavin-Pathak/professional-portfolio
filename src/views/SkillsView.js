@@ -6,7 +6,6 @@ import Header from "../components/Header.js";
 import { Globe, Database, Code, Server, Layers, Smartphone, GitBranch, Cloud, Cpu } from "lucide-react";
 import PropTypes from "prop-types";
 import { pageVariants } from "../utils/animations.js";
-import SEO from "../components/SEO.js";
 
 // Icon mapping (JSON can't store components data)
 const iconMap = { Globe, Database, Code, Server, Layers, Smartphone, GitBranch, Cloud, Cpu };
@@ -69,11 +68,6 @@ export default function SkillsView() {
             exit="exit"
             className="min-h-screen bg-transparent overflow-x-hidden flex flex-col"
         >
-            <SEO
-                title="The Stack"
-                description="Explore the technical stack and expertise of Bhavin Pathak, ranging from frontend technologies like React to backend architecture and AI."
-                url="/skills"
-            />
             <Header title={skillsData.pageTitle} subtitle={skillsData.pageSubtitle} />
             <div className="max-w-7xl mx-auto px-4 md:px-8 pt-28 md:pt-36 pb-12 w-full flex-grow flex flex-col justify-center">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">

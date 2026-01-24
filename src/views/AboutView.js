@@ -4,8 +4,6 @@ import { LiquidContainer } from "../components/LiquidContainer.js";
 import Header from "../components/Header.js";
 import { Linkedin, Github, Code, DownloadCloud } from "lucide-react";
 import { pageVariants } from "../utils/animations.js";
-import SEO from "../components/SEO.js";
-
 export default function AboutView() {
     return (
         <motion.div
@@ -15,11 +13,6 @@ export default function AboutView() {
             exit="exit"
             className="min-h-screen bg-transparent overflow-x-hidden flex flex-col"
         >
-            <SEO
-                title="About"
-                description="Learn more about Bhavin Pathak, a passionate Full Stack Developer and Technical Architect with a focus on creating impact through technology."
-                url="/about"
-            />
             <Header title={aboutData.title} subtitle={aboutData.subtitle} />
             <div className="max-w-7xl mx-auto w-full p-4 md:p-8 pt-28 md:pt-36 flex-grow flex items-center justify-center">
                 <LiquidContainer className="max-w-5xl w-full p-6 md:p-8">

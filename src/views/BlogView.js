@@ -5,7 +5,7 @@ import blogDataRaw from "../static/blog-posts.json";
 import { BookOpen, ExternalLink } from "lucide-react";
 import { pageVariants } from "../utils/animations.js";
 import { useNavigate } from "react-router-dom";
-import SEO from "../components/SEO.js";
+
 
 export default function BlogView() {
     const navigate = useNavigate();
@@ -21,11 +21,6 @@ export default function BlogView() {
             exit="exit"
             className="min-h-screen bg-transparent overflow-x-hidden flex flex-col"
         >
-            <SEO
-                title="Insights"
-                description="Read the latest articles and insights from Bhavin Pathak on technology, software development, AI, and career growth."
-                url="/blog"
-            />
             <Header
                 title={blogData.pageTitle}
                 subtitle={blogData.pageSubtitle}

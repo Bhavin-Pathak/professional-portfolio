@@ -5,7 +5,7 @@ import Header from "../components/Header.js";
 import { Linkedin, Github, Mail, Phone, ExternalLink, Copy, Check } from "lucide-react";
 import { pageVariants } from "../utils/animations.js";
 import { useState, useEffect } from "react";
-import SEO from "../components/SEO.js";
+
 
 export default function ContactView() {
     const [copied, setCopied] = useState("");
@@ -76,11 +76,6 @@ export default function ContactView() {
             exit="exit"
             className="min-h-screen w-full bg-transparent overflow-hidden flex flex-col relative font-sans"
         >
-            <SEO
-                title="Connect"
-                description="Get in touch with Bhavin Pathak for collaborations, technical consulting, or just to say hi. Available for high-impact software projects."
-                url="/contact"
-            />
             {/* Background Grain Effect */}
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
 
