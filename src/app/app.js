@@ -75,17 +75,17 @@ export default function App() {
             {showIntro ? <SplashCursor /> : !isLoading && <FollowCursor />}
           </Suspense>
         )}
-        {/* Global Background Elements (Animated Orbs) - Hidden on Intro Page and Transition */}
-        {!showIntro && !isTransitioning && (
+        {/* Global Background Elements (Animated Orbs) - Hidden on Loading, Intro Page and Transition */}
+        {!isLoading && !showIntro && !isTransitioning && (
           <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
             {/* Purple Orb: Moves from Top-Left to Bottom-Right */}
             <motion.div
               animate={{
-                x: ["0vw", "50vw"],
-                y: ["0vh", "50vh"],
+                x: ["0vw", "20vw"],
+                y: ["0vh", "30vh"],
               }}
               transition={{
-                duration: 2,
+                duration: 4,
                 repeat: Infinity,
                 repeatType: "reverse",
                 ease: "easeInOut"
@@ -95,11 +95,11 @@ export default function App() {
             {/* Cyan Orb: Moves from Bottom-Right to Top-Left */}
             <motion.div
               animate={{
-                x: ["0vw", "-50vw"],
-                y: ["0vh", "-50vh"],
+                x: ["0vw", "-20vw"],
+                y: ["0vh", "-30vh"],
               }}
               transition={{
-                duration: 2,
+                duration: 4,
                 repeat: Infinity,
                 repeatType: "reverse",
                 ease: "easeInOut"
