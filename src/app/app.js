@@ -1,6 +1,6 @@
 import { useState, useEffect, Suspense, lazy } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { RedirectHandler } from "../components/RedirectHandler.js";
 
 
@@ -82,10 +82,36 @@ export default function App() {
             {showIntro ? <SplashCursor /> : !isLoading && <FollowCursor />}
           </Suspense>
         )}
-        {/* Global Background Elements (Static Orbs) */}
-        <div className="fixed inset-0 z-0 pointer-events-none">
-          <div className="absolute top-[10%] left-[10%] w-[40rem] h-[40rem] bg-indigo-600/20 rounded-full blur-[100px] animate-pulse" />
-          <div className="absolute bottom-[10%] right-[10%] w-[30rem] h-[30rem] bg-cyan-600/10 rounded-full blur-[100px] animate-pulse delay-1000" />
+        {/* Global Background Elements (Animated Orbs) */}
+        <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+          {/* Purple Orb: Moves from Top-Left to Bottom-Right */}
+          <motion.div
+            animate={{
+              x: ["0vw", "50vw"],
+              y: ["0vh", "50vh"],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              repeatType: "reverse",
+              ease: "easeInOut"
+            }}
+            className="absolute top-[10%] left-[10%] w-[40rem] h-[40rem] bg-purple-500/40 rounded-full blur-[100px]"
+          />
+          {/* Cyan Orb: Moves from Bottom-Right to Top-Left */}
+          <motion.div
+            animate={{
+              x: ["0vw", "-50vw"],
+              y: ["0vh", "-50vh"],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              repeatType: "reverse",
+              ease: "easeInOut"
+            }}
+            className="absolute bottom-[10%] right-[10%] w-[35rem] h-[35rem] bg-cyan-500/40 rounded-full blur-[100px]"
+          />
         </div>
         <AnimatePresence mode="wait">
           {isLoading ? (
