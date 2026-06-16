@@ -71,23 +71,19 @@ export default function AIChatbot() {
     const [isWaiting, setIsWaiting] = useState(false);
     const apiKey = process.env.REACT_APP_GEMINI_API_KEY || "";
 
-    const chatEndRef = useRef(null);
-    const typingIntervalRef = useRef(null);
+    const chatLogRef = useRef(null);
 
-    // Clean up typing interval on component unmount
+    // Auto-scroll to bottom of chat window instantly as text streams
     useEffect(() => {
-        return () => clearInterval(typingIntervalRef.current);
-    }, []);
-
-    // Auto-scroll to bottom of chat window
-    useEffect(() => {
-        chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, [messages, isTyping]);
+        if (chatLogRef.current) {
+            chatLogRef.current.scrollTop = chatLogRef.current.scrollHeight;
+        }
+    }, [messages, isTyping, isWaiting]);
 
     const [suggestions, setSuggestions] = useState([
-        "Tell me about your technical expertise",
-        "What are you working on at Meril Life Sciences?",
-        "Are you available for new opportunities?"
+        "What is your primary tech stack?",
+        "Tell me about your projects at Meril Life Sciences",
+        "Are you open to freelance or full-time roles?"
     ]);
 
     const systemPrompt = `You are "Bhavin's AI Twin", a professional, polite, and highly capable AI assistant designed to represent Bhavin Pathak (a Full Stack Developer & AI Engineer).
@@ -107,7 +103,7 @@ STRICT INSTRUCTIONS:
 2. If the user asks general coding questions NOT related to Bhavin, or asks about completely unrelated topics (e.g. recipes, weather, geography, trivia, riddles, history, sports, writing random scripts, mathematical calculations), you MUST politely refuse. Respond with: "I am Bhavin's AI Twin, designed only to answer questions about Bhavin Pathak's professional profile, skills, and projects. Please ask me something related to him."
 3. Keep responses structured, concise, and professional.
 4. Do not make up facts. If you don't know the answer, say that you don't have that detail and suggest reaching out to Bhavin directly at bhavinpathak29@gmail.com.
-5. At the very end of your response, you MUST always list exactly 2 or 3 relevant suggested follow-up questions that the visitor might want to ask you next based on your response. The questions should be written from the visitor's perspective asking about you (Bhavin) (e.g. asking about "your mobile projects", "your backend experience", or "your availability"). Format this list on a new line exactly like:
+5. At the very end of your response, you MUST always list exactly 2 or 3 relevant suggested follow-up questions that the visitor might want to ask you next based on your response. The questions MUST be written from the visitor's perspective asking about Bhavin (e.g., "What is your primary tech stack?", "What projects did you work on at Meril?", "How can I contact you?"). Always use "you" or "your" to refer to Bhavin since the visitor is talking to Bhavin's AI Twin. All suggestions must focus directly on Bhavin Pathak's work, experience, or skills. Format this list on a new line exactly like:
 [Suggestions] Question 1?, Question 2?
 Do not include the suggestions inside your normal message body. Keep the questions short, highly professional, and directly related to your current response.
 6. Keep your answers concise, structured, and easy to read. Use bullet points where appropriate, and keep your reply under 2-3 short paragraphs so it fits well in a chat window. Do not cut off mid-sentence.`;
@@ -115,7 +111,6 @@ Do not include the suggestions inside your normal message body. Keep the questio
     const handleSend = async (textToSend) => {
         const query = (textToSend || input).trim();
         if (!query) return;
-
         if (!textToSend) setInput("");
         setMessages(prev => [...prev, { role: "user", text: query }]);
         setIsTyping(true);
@@ -139,7 +134,7 @@ Do not include the suggestions inside your normal message body. Keep the questio
 
         try {
             const response = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`,
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:streamGenerateContent?alt=sse&key=${apiKey}`,
                 {
                     method: "POST",
                     headers: {
@@ -162,54 +157,106 @@ Do not include the suggestions inside your normal message body. Keep the questio
 
             setIsWaiting(false);
 
-            const data = await response.json();
-            const rawReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "I apologize, but I could not formulate a response. Please try again.";
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder("utf-8");
+            let buffer = "";
+            let accumulatedText = "";
 
-            const sugIdx = rawReply.indexOf("[Suggestions]");
-            let replyText = rawReply;
-            let nextSugs = [
-                "Tell me about your technical expertise",
-                "What are you working on at Meril Life Sciences?",
-                "Are you available for new opportunities?"
-            ];
+            // Set empty bot message to prepare for streaming chunks
+            setMessages(prev => [...prev, { role: "bot", text: "" }]);
 
-            if (sugIdx !== -1) {
-                replyText = rawReply.substring(0, sugIdx).trim();
-                const sugPart = rawReply.substring(sugIdx + 13).trim();
-                const parsedSugs = sugPart
-                    .split(",")
-                    .map(s => s.trim().replace(/\[|\]|"/g, ""))
-                    .filter(Boolean);
-                if (parsedSugs.length > 0) {
-                    nextSugs = parsedSugs;
+            let readingStream = true;
+            while (readingStream) {
+                const { done, value } = await reader.read();
+                if (done) {
+                    readingStream = false;
+                    break;
+                }
+
+                buffer += decoder.decode(value, { stream: true });
+                const lines = buffer.split("\n\n");
+                buffer = lines.pop() || "";
+
+                for (const line of lines) {
+                    const trimmedLine = line.trim();
+                    if (!trimmedLine) continue;
+
+                    if (trimmedLine.startsWith("data: ")) {
+                        const jsonStr = trimmedLine.slice(6).trim();
+                        try {
+                            const parsed = JSON.parse(jsonStr);
+                            const chunkText = parsed.candidates?.[0]?.content?.parts?.[0]?.text || "";
+                            if (chunkText) {
+                                accumulatedText += chunkText;
+
+                                // Extract suggestions and show clean text in real-time
+                                let visibleText = accumulatedText;
+                                const sugMarkers = ["[Suggestions]", "[suggestions]", "Suggestions:", "SUGGESTIONS:"];
+                                let sugIdx = -1;
+                                for (const marker of sugMarkers) {
+                                    const idx = accumulatedText.indexOf(marker);
+                                    if (idx !== -1) {
+                                        sugIdx = idx;
+                                        break;
+                                    }
+                                }
+
+                                if (sugIdx !== -1) {
+                                    visibleText = accumulatedText.substring(0, sugIdx).trim();
+                                }
+
+                                setMessages(prev => {
+                                    const copy = [...prev];
+                                    if (copy.length > 0) {
+                                        copy[copy.length - 1] = { role: "bot", text: visibleText };
+                                    }
+                                    return copy;
+                                });
+                            }
+                        } catch (e) {
+                            console.error("Error parsing chunk:", e);
+                        }
+                    }
                 }
             }
 
-            // Simulated streaming typing effect
-            clearInterval(typingIntervalRef.current);
-            setMessages(prev => [...prev, { role: "bot", text: "" }]);
-            
-            let currentText = "";
-            let charIndex = 0;
-            typingIntervalRef.current = setInterval(() => {
-                if (charIndex < replyText.length) {
-                    currentText += replyText[charIndex];
-                    setMessages(prev => {
-                        const copy = [...prev];
-                        if (copy.length > 0) {
-                            copy[copy.length - 1] = { role: "bot", text: currentText };
-                        }
-                        return copy;
-                    });
-                    charIndex++;
-                } else {
-                    clearInterval(typingIntervalRef.current);
-                    setIsTyping(false);
-                    setSuggestions(nextSugs);
+            // Stream finished. Parse final suggestions from accumulated text
+            let finalSuggestions = [
+                "What is your primary tech stack?",
+                "Tell me about your projects at Meril Life Sciences",
+                "Are you open to freelance or full-time roles?"
+            ];
+
+            const sugMarkers = ["[Suggestions]", "[suggestions]", "Suggestions:", "SUGGESTIONS:"];
+            let sugIdx = -1;
+            let markerLength = 0;
+            for (const marker of sugMarkers) {
+                const idx = accumulatedText.indexOf(marker);
+                if (idx !== -1) {
+                    sugIdx = idx;
+                    markerLength = marker.length;
+                    break;
                 }
-            }, 12); // Smooth typing speed
-        } catch {
+            }
+
+            if (sugIdx !== -1) {
+                const sugPart = accumulatedText.substring(sugIdx + markerLength).trim();
+                const parsedSugs = sugPart
+                    .split(",")
+                    .map(s => s.trim().replace(/\[|\]|"/g, "").replace(/\?+$/, "?"))
+                    .filter(Boolean);
+                if (parsedSugs.length > 0) {
+                    finalSuggestions = parsedSugs;
+                }
+            }
+
+            setSuggestions(finalSuggestions);
+            setIsTyping(false);
+
+        } catch (error) {
+            console.error("Chatbot Error:", error);
             setIsWaiting(false);
+            setIsTyping(false);
             setMessages(prev => [
                 ...prev,
                 {
@@ -217,8 +264,6 @@ Do not include the suggestions inside your normal message body. Keep the questio
                     text: "Sorry, I ran into a connectivity error. Please verify your API Key configuration or network connection and try again."
                 }
             ]);
-        } finally {
-            // Keep typing active until stream completes
         }
     };
 
@@ -242,105 +287,104 @@ Do not include the suggestions inside your normal message body. Keep the questio
                             <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-black/5 pointer-events-none" />
                             <div className="relative z-10 flex-grow flex flex-col h-full overflow-hidden">
 
-                            {/* Chat Header */}
-                            <div className="flex items-center justify-between pb-3 border-b border-gray-200/60 dark:border-white/10">
-                                <div className="flex items-center gap-2">
-                                    <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-500 animate-pulse">
-                                        <Sparkles className="w-4 h-4" />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-xs md:text-sm font-bold text-gray-800 dark:text-white">{"Bhavin's AI Twin"}</h3>
-                                        <span className="text-[9px] text-green-500 font-medium flex items-center gap-1">
-                                            <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-ping" />
-                                            Online & ready
-                                        </span>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <button
-                                        type="button"
-                                        onClick={() => setIsOpen(false)}
-                                        aria-label="Close chatbot"
-                                        className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-400 dark:text-white/40 hover:text-gray-600 dark:hover:text-white transition-colors cursor-pointer"
-                                    >
-                                        <X className="w-4 h-4" />
-                                    </button>
-                                </div>
-                            </div>
-
-
-
-                            {/* Chat Messages Log */}
-                            <div className="flex-grow overflow-y-auto py-3 pr-1 flex flex-col gap-3 scrollbar-thin">
-                                {messages.map((msg, index) => (
-                                    <div
-                                        key={index}
-                                        className={`flex flex-col max-w-[85%] ${msg.role === "user" ? "self-end items-end" : "self-start items-start"}`}
-                                    >
-                                        <div
-                                            className={`p-3 rounded-2xl text-xs md:text-sm font-medium leading-relaxed border ${msg.role === "user"
-                                                    ? "bg-blue-600 text-white border-blue-700 rounded-tr-none"
-                                                    : "bg-slate-100 dark:bg-white/5 text-gray-800 dark:text-gray-200 border-gray-200/50 dark:border-white/5 rounded-tl-none shadow-sm"
-                                                }`}
-                                        >
-                                            {msg.role === "bot" ? formatResponseText(msg.text) : msg.text}
+                                {/* Chat Header */}
+                                <div className="flex items-center justify-between pb-3 border-b border-gray-200/60 dark:border-white/10">
+                                    <div className="flex items-center gap-2">
+                                        <div className="p-1.5 rounded-lg bg-blue-500/10 text-blue-500 animate-pulse">
+                                            <Sparkles className="w-4 h-4" />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-xs md:text-sm font-bold text-gray-800 dark:text-white">{"Bhavin's AI Twin"}</h3>
+                                            <span className="text-[9px] text-green-500 font-medium flex items-center gap-1">
+                                                <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-ping" />
+                                                Online & ready
+                                            </span>
                                         </div>
                                     </div>
-                                ))}
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            type="button"
+                                            onClick={() => setIsOpen(false)}
+                                            aria-label="Close chatbot"
+                                            className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-400 dark:text-white/40 hover:text-gray-600 dark:hover:text-white transition-colors cursor-pointer"
+                                        >
+                                            <X className="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                </div>
 
-                                {isWaiting && (
-                                    <div className="self-start flex flex-col items-start gap-1 max-w-[85%]">
-                                        <div className="p-3 bg-slate-100 dark:bg-white/5 border border-gray-200/50 dark:border-white/5 text-gray-500 dark:text-gray-400 rounded-2xl rounded-tl-none flex items-center gap-1 shadow-sm">
-                                            <RefreshCw className="w-3.5 h-3.5 animate-spin text-blue-500" />
-                                            <span className="text-[10px] font-medium italic">Twin is formulating reply...</span>
+
+
+                                {/* Chat Messages Log */}
+                                <div ref={chatLogRef} className="flex-grow overflow-y-auto py-3 pr-1 flex flex-col gap-3 scrollbar-thin">
+                                    {messages.map((msg, index) => (
+                                        <div
+                                            key={index}
+                                            className={`flex flex-col max-w-[85%] ${msg.role === "user" ? "self-end items-end" : "self-start items-start"}`}
+                                        >
+                                            <div
+                                                className={`p-3 rounded-2xl text-xs md:text-sm font-medium leading-relaxed border ${msg.role === "user"
+                                                    ? "bg-blue-600 text-white border-blue-700 rounded-tr-none"
+                                                    : "bg-slate-100 dark:bg-white/5 text-gray-800 dark:text-gray-200 border-gray-200/50 dark:border-white/5 rounded-tl-none shadow-sm"
+                                                    }`}
+                                            >
+                                                {msg.role === "bot" ? formatResponseText(msg.text) : msg.text}
+                                            </div>
+                                        </div>
+                                    ))}
+
+                                    {isWaiting && (
+                                        <div className="self-start flex flex-col items-start gap-1 max-w-[85%]">
+                                            <div className="p-3 bg-slate-100 dark:bg-white/5 border border-gray-200/50 dark:border-white/5 text-gray-500 dark:text-gray-400 rounded-2xl rounded-tl-none flex items-center gap-1 shadow-sm">
+                                                <RefreshCw className="w-3.5 h-3.5 animate-spin text-blue-500" />
+                                                <span className="text-[10px] font-medium italic">Twin is formulating reply...</span>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Prompt Suggestions */}
+                                {messages[messages.length - 1]?.role === "bot" && !isTyping && (
+                                    <div className="flex flex-col gap-1.5 pb-2">
+                                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider pl-1">Suggested prompts:</span>
+                                        <div className="flex flex-wrap gap-1.5">
+                                            {suggestions.map((p, idx) => (
+                                                <button
+                                                    type="button"
+                                                    key={idx}
+                                                    onClick={() => handleSend(p)}
+                                                    className="text-[10px] bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-gray-600 dark:text-gray-300 px-2.5 py-1 rounded-full border border-gray-200 dark:border-white/5 cursor-pointer font-medium transition-colors"
+                                                >
+                                                    {p}
+                                                </button>
+                                            ))}
                                         </div>
                                     </div>
                                 )}
-                                <div ref={chatEndRef} />
-                            </div>
 
-                            {/* Prompt Suggestions */}
-                            {messages[messages.length - 1]?.role === "bot" && !isTyping && (
-                                <div className="flex flex-col gap-1.5 pb-2">
-                                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider pl-1">Suggested prompts:</span>
-                                    <div className="flex flex-wrap gap-1.5">
-                                        {suggestions.map((p, idx) => (
-                                            <button
-                                                type="button"
-                                                key={idx}
-                                                onClick={() => handleSend(p)}
-                                                className="text-[10px] bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-gray-600 dark:text-gray-300 px-2.5 py-1 rounded-full border border-gray-200 dark:border-white/5 cursor-pointer font-medium transition-colors"
-                                            >
-                                                {p}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Message Input Form */}
-                            <form
-                                onSubmit={(e) => {
-                                    e.preventDefault();
-                                    handleSend();
-                                }}
-                                className="flex gap-2 pt-2 border-t border-gray-200/60 dark:border-white/10"
-                            >
-                                <input
-                                    type="text"
-                                    placeholder="Ask about Bhavin..."
-                                    value={input}
-                                    onChange={(e) => setInput(e.target.value)}
-                                    className="flex-grow bg-slate-100 dark:bg-black/40 border border-gray-200 dark:border-white/15 px-3 py-2 rounded-xl text-xs md:text-sm text-gray-800 dark:text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
-                                />
-                                <button
-                                    type="submit"
-                                    aria-label="Send message"
-                                    className="p-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-colors duration-200 flex items-center justify-center cursor-pointer shadow-md"
+                                {/* Message Input Form */}
+                                <form
+                                    onSubmit={(e) => {
+                                        e.preventDefault();
+                                        handleSend();
+                                    }}
+                                    className="flex gap-2 pt-2 border-t border-gray-200/60 dark:border-white/10"
                                 >
-                                    <Send className="w-3.5 h-3.5" />
-                                </button>
-                            </form>
+                                    <input
+                                        type="text"
+                                        placeholder="Ask about Bhavin..."
+                                        value={input}
+                                        onChange={(e) => setInput(e.target.value)}
+                                        className="flex-grow bg-slate-100 dark:bg-black/40 border border-gray-200 dark:border-white/15 px-3 py-2 rounded-xl text-xs md:text-sm text-gray-800 dark:text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all"
+                                    />
+                                    <button
+                                        type="submit"
+                                        aria-label="Send message"
+                                        className="p-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl transition-colors duration-200 flex items-center justify-center cursor-pointer shadow-md"
+                                    >
+                                        <Send className="w-3.5 h-3.5" />
+                                    </button>
+                                </form>
 
                             </div>
                         </div>
@@ -356,8 +400,8 @@ Do not include the suggestions inside your normal message body. Keep the questio
                 whileTap={{ scale: 0.9 }}
                 aria-label="Toggle chat widget"
                 className={`p-4 rounded-full text-white cursor-pointer relative shadow-2xl transition-all duration-300 flex items-center justify-center ${isOpen
-                        ? "bg-red-500 border-red-600 rotate-90"
-                        : "bg-blue-600 hover:bg-blue-700 border-blue-700 hover:shadow-blue-500/20"
+                    ? "bg-red-500 border-red-600 rotate-90"
+                    : "bg-blue-600 hover:bg-blue-700 border-blue-700 hover:shadow-blue-500/20"
                     }`}
             >
                 {/* Pulsing ring indicator */}
