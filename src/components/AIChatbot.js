@@ -147,40 +147,79 @@ WORK EXPERIENCE:
 EDUCATION:
 - Bachelor of Computer Applications (BCA) — Mohanlal Sukhadia University, Udaipur | 2017 – 2021
 
-PROJECTS (EXACT TECH — DO NOT ADD ANYTHING ELSE):
+PROJECTS (ALL PROJECTS — EXACT TECH ONLY — DO NOT ADD ANYTHING ELSE):
 
-1. YT AI Q&A
-   - Tech: Python, NLP, LLMs, AI
-   - Built AI-powered Q&A system over YouTube video transcripts
-   - Implemented semantic search and context-aware responses using LLMs
-   - Designed scalable pipeline for transcript ingestion and processing
+1. YT AI Q&A | GitHub: https://github.com/Bhavin-Pathak/YT-AI-QA.git
+   - Tech: Python, NLP, LLMs, AI, Ollama
+   - AI-powered Q&A system over YouTube video transcripts
+   - Semantic search and context-aware responses using LLMs
+   - Scalable pipeline for transcript ingestion and processing
    - Optimized response relevance using prompt structuring and context windows
 
-2. Clario
-   - Tech: React.js, Tailwind CSS, OpenAI API
-   - Developed modern AI-powered text summarization web application
-   - Integrated OpenAI API for concise and meaningful summaries
-   - Built reusable React components with clean state management
-   - Designed fully responsive UI using Tailwind CSS
+2. Clario | GitHub: https://github.com/Bhavin-Pathak/clario.git | Live: https://bhavin-pathak.github.io/clario/
+   - Tech: React.js, Tailwind CSS, OpenAI API, JavaScript
+   - AI-powered text summarization web application
+   - Integrated OpenAI API for concise summaries
+   - Reusable React components with clean state management
 
-3. Fullstack Linux Setup
+3. Fullstack Linux Setup | GitHub: https://github.com/Bhavin-Pathak/fullstack-linux-setup.git
    - Tech: Linux, Shell, Automation
-   - Automated Linux-based full-stack development environment using shell scripts
+   - Automated Linux full-stack development environment using shell scripts
    - Scripted installation and configuration of essential development tools
    - Standardized developer onboarding
 
-4. Authentication Kit
-   - Tech: Swift, SwiftUI, MVVM
-   - Built reusable authentication module with login, signup, OTP, and password reset flows
-   - Implemented secure input validation and structured error handling
-   - Designed smooth animated transitions using SwiftUI
-   - Followed MVVM architecture
+4. Authentication Kit | GitHub: https://github.com/Bhavin-Pathak/Login_Kit.git
+   - Tech: Swift, SwiftUI, MVVM, Authentication
+   - Reusable authentication module — login, signup, OTP, password reset
+   - Secure input validation, structured error handling
+   - Smooth animated transitions using SwiftUI
 
-5. Evernotes
-   - Tech: React.js, Tailwind CSS, CRUD
-   - Developed notes management application with full CRUD functionality
-   - Implemented local storage for client-side data persistence
-   - Designed responsive layouts for mobile and desktop
+5. Evernotes | GitHub: https://github.com/Bhavin-Pathak/evernotes.git | Live: https://bhavin-pathak.github.io/evernotes/
+   - Tech: React.js, Tailwind CSS, JavaScript, CRUD
+   - Notes management app with full CRUD functionality
+   - Local storage for client-side data persistence
+   - Responsive layouts for mobile and desktop
+
+6. Personal Portfolio | GitHub: https://github.com/Bhavin-Pathak/portfolio-bhaviin.git | Live: https://bhaviinpathak.online/
+   - Tech: React.js, Tailwind CSS, JavaScript
+   - Personal portfolio website showcasing projects, skills, and professional experience
+
+7. Digital Resume | GitHub: https://github.com/Bhavin-Pathak/digital-resume.git | Live: https://bhavin-pathak.github.io/digital-resume/
+   - Tech: HTML, CSS, JavaScript
+   - Responsive digital resume website presenting professional experience and projects
+
+8. Split-Digits | GitHub: https://github.com/Bhavin-Pathak/Split-Digits.git
+   - Tech: Swift, SwiftUI, MVVM
+   - Logic-based number matching puzzle game built with SwiftUI
+
+9. LeetCode Solutions | GitHub: https://github.com/Bhavin-Pathak/Leet-Code.git
+   - Tech: JavaScript, Dart, DSA, Algorithms
+   - Structured collection of algorithm and data structure problem solutions
+   - 49+ problems solved on LeetCode (username: bhavinpathak8729), focus on Medium
+
+10. Atmos-Alert | GitHub: https://github.com/Bhavin-Pathak/atmos-alert.git | Live: https://bhavin-pathak.github.io/atmos-alert/
+    - Tech: React.js, JavaScript, OpenWeatherMap API
+    - Responsive weather application using OpenWeatherMap API
+
+11. Inspirebox | GitHub: https://github.com/Bhavin-Pathak/inspirebox.git | Live: https://bhavin-pathak.github.io/inspirebox/
+    - Tech: React.js, Tailwind CSS, JavaScript, UI
+    - Random quote generator with modern UI effects
+
+12. BMIwise | GitHub: https://github.com/Bhavin-Pathak/bmiwise.git | Live: https://bhavin-pathak.github.io/bmiwise/
+    - Tech: React.js, Tailwind CSS, JavaScript
+    - BMI calculator application
+
+13. Users from JSONPlaceholder | GitHub: https://github.com/Bhavin-Pathak/UserNFT-JsonPlaceholder.git
+    - Tech: SwiftUI, API, iOS
+    - App consuming JSONPlaceholder API to display and search user data
+
+14. Hamburger Kit | GitHub: https://github.com/Bhavin-Pathak/Navigation-Slider-.git
+    - Tech: SwiftUI, Animations, iOS
+    - SwiftUI navigation drawer with animated transitions
+
+15. Flutter Projects | GitHub: https://github.com/Bhavin-Pathak/Flutter-Projects.git
+    - Tech: Flutter, Dart
+    - Collection of Flutter mini-projects exploring UI components and architecture patterns
 
 === END OF RESUME ===
 
