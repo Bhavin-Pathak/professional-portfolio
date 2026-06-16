@@ -7,6 +7,7 @@ import { useTheme } from "../theme/theme-provider.js";
 // Screens With Lazy Load 
 import HomeView from "../views/HomeView.js";
 import Footer from "../components/Footer.js";
+import AIChatbot from "../components/AIChatbot.js";
 const LoadingView = lazy(() => import("../views/LoadingView.js"));
 const IntroView = lazy(() => import("../views/IntroView.js"));
 const AboutView = lazy(() => import("../views/AboutView.js"));
@@ -17,6 +18,7 @@ const ContactView = lazy(() => import("../views/ContactView.js"));
 const BlogView = lazy(() => import("../views/BlogView.js"));
 const BlogDetailView = lazy(() => import("../views/BlogDetailView.js"));
 const NotFoundView = lazy(() => import("../views/NotFoundView.js"));
+const TimelineView = lazy(() => import("../views/TimelineView.js"));
 const SplashCursor = lazy(() => import("../components/SplashCursor.js"));
 const FollowCursor = lazy(() => import("../components/FollowCursor.js"));
 const DigitalWarp = lazy(() => import("../components/DigitalWarp.js"));
@@ -165,12 +167,14 @@ export default function App() {
                   <Route path="/skills" element={<SkillsView />} />
                   <Route path="/experience" element={<ExperienceView />} />
                   <Route path="/projects" element={<ProjectsView />} />
+                  <Route path="/timeline" element={<TimelineView />} />
                   <Route path="/contact" element={<ContactView />} />
                   <Route path="/blog" element={<BlogView />} />
                   <Route path="/blog/:id" element={<BlogDetailView />} />
                   <Route path="*" element={<NotFoundView />} />
                 </Routes>
                 <Footer />
+                <AIChatbot />
               </motion.div>
             </Suspense>
           )}
