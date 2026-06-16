@@ -77,11 +77,11 @@ export default function AIChatbot() {
         chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages, isTyping]);
 
-    const staticResponses = {
-        "show me your ai projects": "Here are Bhavin's top **AI & Machine Learning** projects:\n- **YT AI Q&A**: A Python intelligence tool using LLMs to interactively answer questions based on YouTube video content.\n- **Clario**: An AI-powered writing assistant and editor.\n- **NuvoAI Integrations**: In his current SDE-1 role at Meril Life Sciences, Bhavin is responsible for deploying and integrating custom LLMs into medical diagnostic and administrative pipelines.",
-        "what is your current role": "Bhavin is currently working as a **Software Development Engineer (SDE-1)** at **Meril Life Sciences Pvt. Ltd.** in Vapi, Gujarat (NuvoAI Department) since December 2024.\n\nHis primary stack there includes Node.js, React.js, AI/LLMs, Express.js, and PostgreSQL.",
-        "how can i contact you": "You can connect with Bhavin Pathak via:\n- **Email**: [bhavinpathak29@gmail.com](mailto:bhavinpathak29@gmail.com)\n- **LinkedIn**: [bhavin-pathak](https://www.linkedin.com/in/bhavin-pathak/)\n- **GitHub**: [Bhavin-Pathak](https://github.com/Bhavin-Pathak)\n- **Phone**: +91 9428455515\n\nOr click on the **Connect** page in the main navigation grid!"
-    };
+    const suggestions = [
+        "Show me your AI projects",
+        "What is your current role?",
+        "How can I contact you?"
+    ];
 
     const systemPrompt = `You are "Bhavin's AI Twin", a professional, polite, and highly capable AI assistant designed to represent Bhavin Pathak (a Full Stack Developer & AI Engineer).
 Your goal is to answer questions about Bhavin's background, skills, experiences, and project portfolio.
@@ -109,16 +109,7 @@ STRICT INSTRUCTIONS:
         setMessages(prev => [...prev, { role: "user", text: query }]);
         setIsTyping(true);
 
-        const lowerQuery = query.toLowerCase().replace(/[?.]/g, "");
 
-        // Check if query is in predefined static responses for zero latency & offline mode
-        if (staticResponses[lowerQuery]) {
-            setTimeout(() => {
-                setMessages(prev => [...prev, { role: "bot", text: staticResponses[lowerQuery] }]);
-                setIsTyping(false);
-            }, 750);
-            return;
-        }
 
         // If no API key configured, prompt the user or reply with mock warning
         if (!apiKey) {
@@ -254,14 +245,14 @@ STRICT INSTRUCTIONS:
                                 <div className="flex flex-col gap-1.5 pb-2">
                                     <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider pl-1">Suggested prompts:</span>
                                     <div className="flex flex-wrap gap-1.5">
-                                        {Object.keys(staticResponses).map((p, idx) => (
+                                        {suggestions.map((p, idx) => (
                                             <button
                                                 type="button"
                                                 key={idx}
                                                 onClick={() => handleSend(p)}
                                                 className="text-[10px] bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-gray-600 dark:text-gray-300 px-2.5 py-1 rounded-full border border-gray-200 dark:border-white/5 cursor-pointer font-medium transition-colors"
                                             >
-                                                {p.replace(/\b\w/g, c => c.toUpperCase())}
+                                                {p}
                                             </button>
                                         ))}
                                     </div>
