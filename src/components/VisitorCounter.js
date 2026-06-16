@@ -4,19 +4,30 @@ export default function VisitorCounter() {
     const [count, setCount] = useState(null);
 
     useEffect(() => {
-        // Using CounterAPI (free service)
-        // Format: https://api.counterapi.dev/v1/[namespace]/[key]/up
         const namespace = "bhaviinpathak_portfolio";
         const key = "total_visits";
 
-        fetch(`https://api.counterapi.dev/v1/${namespace}/${key}/up`)
-            .then(res => res.json())
-            .then(data => {
-                if (data && data.count) {
-                    setCount(data.count);
-                }
-            })
-            .catch(err => console.error("CounterAPI Error:", err));
+        const SESSION_KEY = "visitor_counted";
+        const alreadyCounted = sessionStorage.getItem(SESSION_KEY);
+
+        if (alreadyCounted) {
+            fetch(`https://api.counterapi.dev/v1/${namespace}/${key}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.count) setCount(data.count);
+                })
+                .catch(err => console.error("CounterAPI Error:", err));
+        } else {
+            fetch(`https://api.counterapi.dev/v1/${namespace}/${key}/up`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.count) {
+                        setCount(data.count);
+                        sessionStorage.setItem(SESSION_KEY, "true");
+                    }
+                })
+                .catch(err => console.error("CounterAPI Error:", err));
+        }
     }, []);
 
     return (

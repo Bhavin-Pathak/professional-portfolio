@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
 import aboutData from "../static/about-me.json";
 import { LiquidContainer } from "../components/LiquidContainer.js";
 import Header from "../components/Header.js";

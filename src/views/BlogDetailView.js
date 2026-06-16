@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
 import { LiquidContainer } from "../components/LiquidContainer.js";
 import Header from "../components/Header.js";
 import blogData from "../static/blog-posts.json";
