@@ -5,7 +5,6 @@ import { LiquidContainer } from "../components/LiquidContainer.js";
 import Header from "../components/Header.js";
 import { Linkedin, Github, Code, DownloadCloud } from "lucide-react";
 import { pageVariants } from "../utils/animations.js";
-import { Helmet } from "react-helmet-async";
 
 export default function AboutView() {
     return (

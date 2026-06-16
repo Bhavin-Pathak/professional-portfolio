@@ -7,7 +7,6 @@ import Header from "../components/Header.js";
 import blogData from "../static/blog-posts.json";
 import { Tag, Quote, Share2 } from "lucide-react";
 import { pageVariants } from "../utils/animations.js";
-import { Helmet } from "react-helmet-async";
 
 
 export default function BlogDetailView() {

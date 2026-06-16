@@ -6,7 +6,6 @@ import Header from "../components/Header.js";
 import { Linkedin, Github, Mail, Phone, ExternalLink, Copy, Check } from "lucide-react";
 import { pageVariants } from "../utils/animations.js";
 import { useState, useEffect } from "react";
-import { Helmet } from "react-helmet-async";
 
 
 export default function ContactView() {
