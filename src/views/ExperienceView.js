@@ -20,12 +20,12 @@ export default function ExperienceView() {
             <Helmet>
                 <title>Experience | Bhavin Pathak — Work History</title>
                 <meta name="description" content="Bhavin Pathak's professional journey: SDE-1 at Meril, Mobile Developer at UB Softec, iOS Developer at RnD Technosoft, and Technical Specialist at Earth Infotech." />
-                <link rel="canonical" href="https://bhavinpathak.dev/experience" />
+                <link rel="canonical" href="https://bhaviinpathak.online/experience" />
                 <meta property="og:title" content="Experience | Bhavin Pathak — Work History" />
                 <meta property="og:description" content="Bhavin Pathak's professional journey: SDE-1 at Meril, Mobile Developer at UB Softec, iOS Developer at RnD Technosoft, and Technical Specialist at Earth Infotech." />
                 <meta property="og:type" content="website" />
-                <meta property="og:url" content="https://bhavinpathak.dev/experience" />
-                <meta property="og:image" content="https://bhavinpathak.dev/images/og-image.png" />
+                <meta property="og:url" content="https://bhaviinpathak.online/experience" />
+                <meta property="og:image" content="https://bhaviinpathak.online/images/og-image.png" />
                 <meta name="twitter:card" content="summary_large_image" />
             </Helmet>
             <Header title={experienceData.pageTitle} subtitle={`${expText} • ${experienceData.pageSubtitle}`} />

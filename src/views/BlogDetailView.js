@@ -36,12 +36,12 @@ export default function BlogDetailView() {
             <Helmet>
                 <title>{`${post.title} | Bhavin Pathak — Blog`}</title>
                 <meta name="description" content={post.excerpt} />
-                <link rel="canonical" href={`https://bhavinpathak.dev/blog/${post.id}`} />
+                <link rel="canonical" href={`https://bhaviinpathak.online/blog/${post.id}`} />
                 <meta property="og:title" content={`${post.title} | Bhavin Pathak — Blog`} />
                 <meta property="og:description" content={post.excerpt} />
                 <meta property="og:type" content="article" />
-                <meta property="og:url" content={`https://bhavinpathak.dev/blog/${post.id}`} />
-                <meta property="og:image" content="https://bhavinpathak.dev/images/og-image.png" />
+                <meta property="og:url" content={`https://bhaviinpathak.online/blog/${post.id}`} />
+                <meta property="og:image" content="https://bhaviinpathak.online/images/og-image.png" />
                 <meta name="twitter:card" content="summary_large_image" />
             </Helmet>
             {/* Global Header with Post Metadata */}

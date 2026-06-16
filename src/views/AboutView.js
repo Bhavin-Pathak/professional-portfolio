@@ -18,12 +18,12 @@ export default function AboutView() {
             <Helmet>
                 <title>Identity | Bhavin Pathak — About Me</title>
                 <meta name="description" content="Learn more about Bhavin Pathak, a Full Stack Developer and SDE-1 specializing in React, Node.js, and AI solutions." />
-                <link rel="canonical" href="https://bhavinpathak.dev/about" />
+                <link rel="canonical" href="https://bhaviinpathak.online/about" />
                 <meta property="og:title" content="Identity | Bhavin Pathak — About Me" />
                 <meta property="og:description" content="Learn more about Bhavin Pathak, a Full Stack Developer and SDE-1 specializing in React, Node.js, and AI solutions." />
                 <meta property="og:type" content="website" />
-                <meta property="og:url" content="https://bhavinpathak.dev/about" />
-                <meta property="og:image" content="https://bhavinpathak.dev/images/og-image.png" />
+                <meta property="og:url" content="https://bhaviinpathak.online/about" />
+                <meta property="og:image" content="https://bhaviinpathak.online/images/og-image.png" />
                 <meta name="twitter:card" content="summary_large_image" />
             </Helmet>
             <Header title={aboutData.title} subtitle={aboutData.subtitle} />

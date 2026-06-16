@@ -72,12 +72,12 @@ export default function SkillsView() {
             <Helmet>
                 <title>The Stack | Bhavin Pathak — Tech Skills</title>
                 <meta name="description" content="Explore Bhavin Pathak's technical skill set: Swift, Flutter, React, Node.js, PostgreSQL, Firebase, Docker, and more." />
-                <link rel="canonical" href="https://bhavinpathak.dev/skills" />
+                <link rel="canonical" href="https://bhaviinpathak.online/skills" />
                 <meta property="og:title" content="The Stack | Bhavin Pathak — Tech Skills" />
                 <meta property="og:description" content="Explore Bhavin Pathak's technical skill set: Swift, Flutter, React, Node.js, PostgreSQL, Firebase, Docker, and more." />
                 <meta property="og:type" content="website" />
-                <meta property="og:url" content="https://bhavinpathak.dev/skills" />
-                <meta property="og:image" content="https://bhavinpathak.dev/images/og-image.png" />
+                <meta property="og:url" content="https://bhaviinpathak.online/skills" />
+                <meta property="og:image" content="https://bhaviinpathak.online/images/og-image.png" />
                 <meta name="twitter:card" content="summary_large_image" />
             </Helmet>
             <Header title={skillsData.pageTitle} subtitle={skillsData.pageSubtitle} />

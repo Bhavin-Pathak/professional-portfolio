@@ -83,12 +83,12 @@ export default function ContactView() {
             <Helmet>
                 <title>Connect | Bhavin Pathak — Contact Info</title>
                 <meta name="description" content="Get in touch with Bhavin Pathak for professional collaborations, project inquiries, and career opportunities." />
-                <link rel="canonical" href="https://bhavinpathak.dev/contact" />
+                <link rel="canonical" href="https://bhaviinpathak.online/contact" />
                 <meta property="og:title" content="Connect | Bhavin Pathak — Contact Info" />
                 <meta property="og:description" content="Get in touch with Bhavin Pathak for professional collaborations, project inquiries, and career opportunities." />
                 <meta property="og:type" content="website" />
-                <meta property="og:url" content="https://bhavinpathak.dev/contact" />
-                <meta property="og:image" content="https://bhavinpathak.dev/images/og-image.png" />
+                <meta property="og:url" content="https://bhaviinpathak.online/contact" />
+                <meta property="og:image" content="https://bhaviinpathak.online/images/og-image.png" />
                 <meta name="twitter:card" content="summary_large_image" />
             </Helmet>
 

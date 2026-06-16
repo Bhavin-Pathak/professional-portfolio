@@ -24,20 +24,20 @@ export default function HomeView() {
             <Helmet>
                 <title>Bhavin Pathak | Full Stack Developer &amp; AI Engineer</title>
                 <meta name="description" content="Bhavin Pathak — Full Stack Developer specializing in AI-driven solutions, React, Node.js, Flutter, and scalable enterprise software. SDE-1 at Meril Life Sciences." />
-                <link rel="canonical" href="https://bhavinpathak.dev/" />
+                <link rel="canonical" href="https://bhaviinpathak.online/" />
                 <meta property="og:title" content="Bhavin Pathak | Full Stack Developer &amp; AI Engineer" />
                 <meta property="og:description" content="Bhavin Pathak — Full Stack Developer specializing in AI-driven solutions, React, Node.js, Flutter, and scalable enterprise software. SDE-1 at Meril Life Sciences." />
                 <meta property="og:type" content="website" />
-                <meta property="og:url" content="https://bhavinpathak.dev/" />
-                <meta property="og:image" content="https://bhavinpathak.dev/images/og-image.png" />
+                <meta property="og:url" content="https://bhaviinpathak.online/" />
+                <meta property="og:image" content="https://bhaviinpathak.online/images/og-image.png" />
                 <meta name="twitter:card" content="summary_large_image" />
                 <script type="application/ld+json">
                     {JSON.stringify({
                         "@context": "https://schema.org",
                         "@type": "Person",
                         "name": "Bhavin Pathak",
-                        "url": "https://bhavinpathak.dev/",
-                        "image": "https://bhavinpathak.dev/images/og-image.png",
+                        "url": "https://bhaviinpathak.online/",
+                        "image": "https://bhaviinpathak.online/images/og-image.png",
                         "jobTitle": "Full Stack Developer & AI Engineer",
                         "worksFor": {
                             "@type": "Organization",
