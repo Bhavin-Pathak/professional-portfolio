@@ -164,7 +164,7 @@ Do not include the suggestions inside your normal message body. Keep the questio
                     } else if (errCode === 403) {
                         errorMsg = "⚠️ API Key is invalid or has insufficient permissions. Please verify the key.";
                     }
-                } catch (_) {}
+                } catch (_) { /* use default error message if response body can't be parsed */ }
                 setIsWaiting(false);
                 setIsTyping(false);
                 setMessages(prev => [...prev, { role: "bot", text: errorMsg }]);
