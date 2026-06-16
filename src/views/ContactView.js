@@ -148,22 +148,22 @@ export default function ContactView() {
                                 whileHover={{ y: -2 }}
                                 className="group relative"
                             >
-                                <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-900/[0.03] dark:bg-white/[0.03] border border-slate-900/5 dark:border-white/5 hover:border-slate-900/10 dark:hover:border-white/10 hover:bg-slate-900/[0.05] dark:hover:bg-white/[0.05] transition-all duration-300">
-                                    <div className="flex items-center gap-3 text-left">
-                                        <div className={`p-2.5 rounded-xl bg-slate-900/5 dark:bg-white/5 ${item.color} transition-transform duration-300`}>
+                                <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-900/[0.03] dark:bg-white/[0.03] border border-slate-900/5 dark:border-white/5 hover:border-slate-900/10 dark:hover:border-white/10 hover:bg-slate-900/[0.05] dark:hover:bg-white/[0.05] transition-all duration-300 min-w-0">
+                                    <div className="flex items-center gap-3 text-left min-w-0 mr-2">
+                                        <div className={`p-2.5 rounded-xl bg-slate-900/5 dark:bg-white/5 ${item.color} transition-transform duration-300 shrink-0`}>
                                             <item.icon size={18} />
                                         </div>
-                                        <div className="flex flex-col">
+                                        <div className="flex flex-col min-w-0">
                                             <span className="text-[9px] font-bold text-slate-500 dark:text-gray-400 uppercase tracking-widest leading-none mb-1 opacity-60">
                                                 {item.label}
                                             </span>
-                                            <span className="text-xs font-semibold text-slate-900 dark:text-white tracking-tight">
+                                            <span className="text-xs font-semibold text-slate-900 dark:text-white tracking-tight truncate">
                                                 {item.value}
                                             </span>
                                         </div>
                                     </div>
 
-                                    <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                    <div className="flex gap-1.5 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-300 shrink-0">
                                         {item.copyable && (
                                             <button
                                                 onClick={() => handleCopy(item.value, item.label)}

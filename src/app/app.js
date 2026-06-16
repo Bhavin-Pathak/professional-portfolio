@@ -1,7 +1,6 @@
 import { useState, useEffect, Suspense, lazy } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import DigitalWarp from "../components/DigitalWarp.js";
 import { Sun, Moon, Monitor } from "lucide-react";
 import { useTheme } from "../theme/theme-provider.js";
 
@@ -18,9 +17,9 @@ const ContactView = lazy(() => import("../views/ContactView.js"));
 const BlogView = lazy(() => import("../views/BlogView.js"));
 const BlogDetailView = lazy(() => import("../views/BlogDetailView.js"));
 const NotFoundView = lazy(() => import("../views/NotFoundView.js"));
-// Animations and Cursor Effect (Lazy Load)
 const SplashCursor = lazy(() => import("../components/SplashCursor.js"));
 const FollowCursor = lazy(() => import("../components/FollowCursor.js"));
+const DigitalWarp = lazy(() => import("../components/DigitalWarp.js"));
 
 // Icon + label based on current active mode
 const MODE_CONFIG = {
@@ -153,7 +152,9 @@ export default function App() {
             <IntroView key="intro" onEnter={handleIntroComplete} />
           ) : isTransitioning ? (
             <div className="min-h-screen bg-black">
-              <DigitalWarp key="warp" onComplete={handleWarpComplete} />
+              <Suspense fallback={<div className="min-h-screen bg-black" />}>
+                <DigitalWarp key="warp" onComplete={handleWarpComplete} />
+              </Suspense>
             </div>
           ) : (
             <Suspense fallback={<div className="min-h-screen bg-slate-50 dark:bg-black" />}>
