@@ -2,37 +2,58 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 const ThemeContext = createContext();
 
+// Detect OS dark preference safely
+const getSystemDark = () =>
+  typeof window !== "undefined" &&
+  window.matchMedia("(prefers-color-scheme: dark)").matches;
+
 // eslint-disable-next-line react/prop-types
 export function ThemeProvider({ children }) {
-  // Read saved preference from localStorage, default to dark
-  const [isDark, setIsDark] = useState(() => {
-    try {
-      const saved = localStorage.getItem("theme");
-      return saved ? saved === "dark" : true; // Default: dark
-    } catch {
-      return true;
-    }
+  // mode: 'dark' | 'light' | 'system'
+  const [mode, setMode] = useState(() => {
+    try { return localStorage.getItem("theme-mode") || "dark"; } catch { return "dark"; }
   });
 
-  // Apply/remove "dark" class and persist preference
-  useEffect(() => {
-    const root = document.documentElement;
-    if (isDark) {
-      root.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
-    }
+  const [isDark, setIsDark] = useState(() => {
     try {
-      localStorage.setItem("theme", isDark ? "dark" : "light");
-    } catch {
-      // localStorage unavailable (e.g. private mode) — fail silently
-    }
-  }, [isDark]);
+      const saved = localStorage.getItem("theme-mode") || "dark";
+      if (saved === "dark") return true;
+      if (saved === "light") return false;
+      return getSystemDark();
+    } catch { return true; }
+  });
 
-  const toggleTheme = () => setIsDark((prev) => !prev);
+  useEffect(() => {
+    const applyDark = (dark) => {
+      document.documentElement.classList.toggle("dark", dark);
+      setIsDark(dark);
+    };
+
+    try { localStorage.setItem("theme-mode", mode); } catch { /* fail silently */ }
+
+    if (mode === "system") {
+      // Apply current system preference immediately
+      applyDark(getSystemDark());
+      // Listen for OS-level changes
+      const mq = window.matchMedia("(prefers-color-scheme: dark)");
+      const handler = (e) => applyDark(e.matches);
+      mq.addEventListener("change", handler);
+      return () => mq.removeEventListener("change", handler);
+    } else {
+      applyDark(mode === "dark");
+    }
+  }, [mode]);
+
+  // Cycle: dark → light → system → dark
+  const cycleMode = () =>
+    setMode((prev) => {
+      if (prev === "dark") return "light";
+      if (prev === "light") return "system";
+      return "dark";
+    });
 
   return (
-    <ThemeContext.Provider value={{ isDark, toggleTheme }}>
+    <ThemeContext.Provider value={{ isDark, mode, cycleMode, setMode }}>
       {children}
     </ThemeContext.Provider>
   );

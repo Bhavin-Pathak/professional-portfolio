@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
 import projectsData from "../static/my-projects.json";
 import { LiquidContainer } from "../components/LiquidContainer.js";
 import Header from "../components/Header.js";
@@ -17,6 +18,10 @@ export default function ProjectsView() {
             exit="exit"
             className="min-h-screen bg-transparent overflow-x-hidden flex flex-col"
         >
+            <Helmet>
+                <title>Works | Bhavin Pathak — Projects</title>
+                <meta name="description" content="A curated selection of Bhavin Pathak's projects: AI tools, React apps, iOS apps, Flutter, Node.js backends, and more." />
+            </Helmet>
             <Header title={projectsData.pageTitle} subtitle={projectsData.pageSubtitle} />
 
             <div className="max-w-7xl mx-auto px-4 md:px-8 pt-28 md:pt-36 pb-12 w-full flex-grow flex flex-col justify-center">
@@ -28,34 +33,34 @@ export default function ProjectsView() {
                             transition={{ type: "spring", stiffness: 300 }}
                             className="h-full"
                         >
-                            <LiquidContainer delay={idx * 0.1} className="p-6 flex flex-col h-full bg-white/5 hover:bg-white/10 transition-colors">
+                            <LiquidContainer delay={idx * 0.1} className="p-6 flex flex-col h-full hover:bg-gray-50/50 dark:hover:bg-white/10 transition-colors">
                                 <div className="flex justify-between items-start mb-4">
-                                    <h3 className="text-lg md:text-xl font-bold text-white group-hover:text-blue-400 transition-colors">
+                                    <h3 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white transition-colors">
                                         {project.name}
                                     </h3>
-                                    <span className="px-2 py-1 bg-white/10 rounded text-xs text-gray-300">
+                                    <span className="px-2 py-1 bg-gray-100 dark:bg-white/10 rounded text-xs text-gray-600 dark:text-gray-300">
                                         {project.language}
                                     </span>
                                 </div>
 
-                                <p className="text-gray-400 text-sm mb-6 flex-grow leading-relaxed">
+                                <p className="text-gray-600 dark:text-gray-400 text-sm mb-6 flex-grow leading-relaxed">
                                     {project.description}
                                 </p>
 
                                 <div className="flex flex-wrap gap-2 mb-6">
                                     {project.topics.slice(0, 4).map((topic, i) => (
-                                        <span key={i} className="text-xs text-blue-300 bg-blue-500/10 px-2 py-1 rounded border border-blue-500/20">
+                                        <span key={i} className="text-xs text-blue-600 dark:text-blue-300 bg-blue-50 dark:bg-blue-500/10 px-2 py-1 rounded border border-blue-200 dark:border-blue-500/20">
                                             {topic}
                                         </span>
                                     ))}
                                 </div>
 
-                                <div className="flex gap-4 pt-4 border-t border-white/10 mt-auto">
+                                <div className="flex gap-4 pt-4 border-t border-gray-200 dark:border-white/10 mt-auto">
                                     <a
                                         href={project.html_url}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="flex items-center gap-2 text-sm text-gray-300 hover:text-white transition-colors"
+                                        className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
                                     >
                                         <Github className="w-4 h-4" /> Source
                                     </a>
@@ -64,7 +69,7 @@ export default function ProjectsView() {
                                             href={project.homepage}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300 transition-colors ml-auto"
+                                            className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors ml-auto"
                                         >
                                             <ExternalLink className="w-4 h-4" /> Demo
                                         </a>

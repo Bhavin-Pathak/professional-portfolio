@@ -13,7 +13,7 @@ export default function Footer() {
                 <div className="flex items-center gap-2">
                     <VisitorCounter />
                 </div>
-                <div className="text-gray-400 text-[10px] md:text-sm text-center font-medium opacity-60">
+                <div className="text-gray-500 dark:text-gray-400 text-[10px] md:text-sm text-center font-medium opacity-70 dark:opacity-60">
                     © {new Date().getFullYear()} Bhavin Pathak • All rights reserved.
                 </div>
             </motion.div>

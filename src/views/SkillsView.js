@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
 import skillsData from "../static/technical-skills.json";
 import { LiquidContainer } from "../components/LiquidContainer.js";
 import Header from "../components/Header.js";
@@ -45,11 +46,11 @@ const SkillBar = ({ name, proficiency }) => {
 
     return (
         <div>
-            <div className="flex justify-between text-sm mb-2 text-gray-300">
+            <div className="flex justify-between text-sm mb-2 text-gray-700 dark:text-gray-300">
                 <span>{name}</span>
-                <span className="font-mono text-blue-300">{count}%</span>
+                <span className="font-mono text-blue-600 dark:text-blue-300">{count}%</span>
             </div>
-            <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+            <div className="h-2 bg-gray-200 dark:bg-white/5 rounded-full overflow-hidden">
                 <motion.div
                     style={{ width: `${width}%` }}
                     className="h-full bg-gradient-to-r from-blue-500 to-purple-500"
@@ -68,6 +69,10 @@ export default function SkillsView() {
             exit="exit"
             className="min-h-screen bg-transparent overflow-x-hidden flex flex-col"
         >
+            <Helmet>
+                <title>The Stack | Bhavin Pathak — Tech Skills</title>
+                <meta name="description" content="Explore Bhavin Pathak's technical skill set: Swift, Flutter, React, Node.js, PostgreSQL, Firebase, Docker, and more." />
+            </Helmet>
             <Header title={skillsData.pageTitle} subtitle={skillsData.pageSubtitle} />
             <div className="max-w-7xl mx-auto px-4 md:px-8 pt-28 md:pt-36 pb-12 w-full flex-grow flex flex-col justify-center">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
@@ -76,10 +81,10 @@ export default function SkillsView() {
                         return (
                             <LiquidContainer key={idx} delay={idx * 0.1} className="p-8">
                                 <div className="flex items-center gap-4 mb-8">
-                                    <div className="p-3 bg-white/10 rounded-xl">
-                                        <Icon className="w-8 h-8 text-blue-400" />
+                                    <div className="p-3 bg-gray-100 dark:bg-white/10 rounded-xl">
+                                        <Icon className="w-8 h-8 text-blue-500 dark:text-blue-400" />
                                     </div>
-                                    <h3 className="text-lg md:text-xl font-bold text-white">{category.name}</h3>
+                                    <h3 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white">{category.name}</h3>
                                 </div>
                                 <div className="space-y-6">
                                     {category.skills.map((skill, sIdx) => (
