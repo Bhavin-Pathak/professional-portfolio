@@ -161,9 +161,7 @@ Do not include the suggestions inside your normal message body. Keep the questio
             const decoder = new TextDecoder("utf-8");
             let buffer = "";
             let accumulatedText = "";
-
-            // Set empty bot message to prepare for streaming chunks
-            setMessages(prev => [...prev, { role: "bot", text: "" }]);
+            let botMessageAdded = false;
 
             let readingStream = true;
             while (readingStream) {
@@ -173,80 +171,89 @@ Do not include the suggestions inside your normal message body. Keep the questio
                     break;
                 }
 
-                buffer += decoder.decode(value, { stream: true });
+                // Normalize \r\n to \n before processing
+                buffer += decoder.decode(value, { stream: true }).replace(/\r\n/g, "\n");
+                // SSE chunks are separated by double newlines
                 const lines = buffer.split("\n\n");
                 buffer = lines.pop() || "";
 
-                for (const line of lines) {
-                    const trimmedLine = line.trim();
-                    if (!trimmedLine) continue;
+                for (const chunk of lines) {
+                    // Each chunk may have multiple lines; find the data: line
+                    const dataLine = chunk
+                        .split("\n")
+                        .find(l => l.startsWith("data: "));
+                    if (!dataLine) continue;
 
-                    if (trimmedLine.startsWith("data: ")) {
-                        const jsonStr = trimmedLine.slice(6).trim();
-                        try {
-                            const parsed = JSON.parse(jsonStr);
-                            const chunkText = parsed.candidates?.[0]?.content?.parts?.[0]?.text || "";
-                            if (chunkText) {
-                                accumulatedText += chunkText;
+                    const jsonStr = dataLine.slice(6).trim();
+                    if (!jsonStr || jsonStr === "[DONE]") continue;
 
-                                // Extract suggestions and show clean text in real-time
-                                let visibleText = accumulatedText;
-                                const sugMarkers = ["[Suggestions]", "[suggestions]", "Suggestions:", "SUGGESTIONS:"];
-                                let sugIdx = -1;
-                                for (const marker of sugMarkers) {
-                                    const idx = accumulatedText.indexOf(marker);
-                                    if (idx !== -1) {
-                                        sugIdx = idx;
-                                        break;
-                                    }
-                                }
+                    try {
+                        const parsed = JSON.parse(jsonStr);
+                        // Extract text - skip chunks that only have thoughtSignature
+                        const parts = parsed.candidates?.[0]?.content?.parts || [];
+                        // Filter parts that have actual text content (thoughtSignature can co-exist with text)
+                        const chunkText = parts
+                            .filter(p => typeof p.text === "string" && p.text.length > 0)
+                            .map(p => p.text)
+                            .join("");
 
-                                if (sugIdx !== -1) {
-                                    visibleText = accumulatedText.substring(0, sugIdx).trim();
-                                }
+                        if (!chunkText) continue;
 
-                                setMessages(prev => {
-                                    const copy = [...prev];
-                                    if (copy.length > 0) {
-                                        copy[copy.length - 1] = { role: "bot", text: visibleText };
-                                    }
-                                    return copy;
-                                });
+                        accumulatedText += chunkText;
+
+                        // Strip [Suggestions] block from visible text in real-time
+                        const sugMarkers = ["[Suggestions]", "[suggestions]", "Suggestions:", "SUGGESTIONS:"];
+                        let visibleText = accumulatedText;
+                        for (const marker of sugMarkers) {
+                            const idx = accumulatedText.indexOf(marker);
+                            if (idx !== -1) {
+                                visibleText = accumulatedText.substring(0, idx).trim();
+                                break;
                             }
-                        } catch (e) {
-                            console.error("Error parsing chunk:", e);
                         }
+
+                        // Add bot message bubble on first text chunk
+                        if (!botMessageAdded) {
+                            botMessageAdded = true;
+                            setMessages(prev => [...prev, { role: "bot", text: visibleText }]);
+                        } else {
+                            setMessages(prev => {
+                                const copy = [...prev];
+                                copy[copy.length - 1] = { role: "bot", text: visibleText };
+                                return copy;
+                            });
+                        }
+                    } catch (e) {
+                        // Skip malformed chunks silently
                     }
                 }
             }
 
-            // Stream finished. Parse final suggestions from accumulated text
+            // If stream ended but no message was added (e.g. all chunks had no text)
+            if (!botMessageAdded) {
+                setMessages(prev => [...prev, { role: "bot", text: "Sorry, I couldn't generate a response. Please try again." }]);
+            }
+
+            // Stream finished — parse suggestions from accumulated text
             let finalSuggestions = [
                 "What is your primary tech stack?",
                 "Tell me about your projects at Meril Life Sciences",
                 "Are you open to freelance or full-time roles?"
             ];
 
-            const sugMarkers = ["[Suggestions]", "[suggestions]", "Suggestions:", "SUGGESTIONS:"];
-            let sugIdx = -1;
-            let markerLength = 0;
-            for (const marker of sugMarkers) {
+            const sugMarkersFinal = ["[Suggestions]", "[suggestions]", "Suggestions:", "SUGGESTIONS:"];
+            for (const marker of sugMarkersFinal) {
                 const idx = accumulatedText.indexOf(marker);
                 if (idx !== -1) {
-                    sugIdx = idx;
-                    markerLength = marker.length;
+                    const sugPart = accumulatedText.substring(idx + marker.length).trim();
+                    const parsedSugs = sugPart
+                        .split(",")
+                        .map(s => s.trim().replace(/[[\]"]/g, "").replace(/\?+$/, "?").trim())
+                        .filter(s => s.length > 5);
+                    if (parsedSugs.length >= 1) {
+                        finalSuggestions = parsedSugs.slice(0, 3);
+                    }
                     break;
-                }
-            }
-
-            if (sugIdx !== -1) {
-                const sugPart = accumulatedText.substring(sugIdx + markerLength).trim();
-                const parsedSugs = sugPart
-                    .split(",")
-                    .map(s => s.trim().replace(/\[|\]|"/g, "").replace(/\?+$/, "?"))
-                    .filter(Boolean);
-                if (parsedSugs.length > 0) {
-                    finalSuggestions = parsedSugs;
                 }
             }
 
