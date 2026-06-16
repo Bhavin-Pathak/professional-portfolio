@@ -1,7 +1,7 @@
 import { useState, useEffect, Suspense, lazy } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import { Sun, Moon, Monitor } from "lucide-react";
+import { Sun, Moon } from "lucide-react";
 import { useTheme } from "../theme/theme-provider.js";
 
 // Screens With Lazy Load 
@@ -21,17 +21,10 @@ const SplashCursor = lazy(() => import("../components/SplashCursor.js"));
 const FollowCursor = lazy(() => import("../components/FollowCursor.js"));
 const DigitalWarp = lazy(() => import("../components/DigitalWarp.js"));
 
-// Icon + label based on current active mode
-const MODE_CONFIG = {
-  dark: { icon: Moon, label: "Dark mode — click for Light" },
-  light: { icon: Sun, label: "Light mode — click for System" },
-  system: { icon: Monitor, label: "System mode — click for Dark" },
-};
-
 export default function App() {
   const location = useLocation();
   const isRoot = location.pathname === "/";
-  const { isDark, mode, cycleMode } = useTheme();
+  const { isDark, cycleMode } = useTheme();
 
   const [isLoading, setIsLoading] = useState(true);
   const [showIntro, setShowIntro] = useState(false);
@@ -69,7 +62,8 @@ export default function App() {
   const handleWarpComplete = () => setIsTransitioning(false);
 
   const showThemeToggle = !isLoading && !showIntro && !isTransitioning;
-  const { icon: ModeIcon, label: modeLabel } = MODE_CONFIG[mode] || MODE_CONFIG.dark;
+  const ModeIcon = isDark ? Sun : Moon;
+  const modeLabel = isDark ? "Switch to Light Mode" : "Switch to Dark Mode";
 
   return (
     <>
@@ -111,7 +105,7 @@ export default function App() {
             >
               <AnimatePresence mode="wait">
                 <motion.div
-                  key={mode}
+                  key={isDark ? "dark" : "light"}
                   initial={{ rotate: -90, opacity: 0, scale: 0.5 }}
                   animate={{ rotate: 0, opacity: 1, scale: 1 }}
                   exit={{ rotate: 90, opacity: 0, scale: 0.5 }}

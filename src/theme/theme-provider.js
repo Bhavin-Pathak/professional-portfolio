@@ -11,12 +11,12 @@ const getSystemDark = () =>
 export function ThemeProvider({ children }) {
   // mode: 'dark' | 'light' | 'system'
   const [mode, setMode] = useState(() => {
-    try { return localStorage.getItem("theme-mode") || "dark"; } catch { return "dark"; }
+    try { return localStorage.getItem("theme-mode") || "system"; } catch { return "system"; }
   });
 
   const [isDark, setIsDark] = useState(() => {
     try {
-      const saved = localStorage.getItem("theme-mode") || "dark";
+      const saved = localStorage.getItem("theme-mode") || "system";
       if (saved === "dark") return true;
       if (saved === "light") return false;
       return getSystemDark();
@@ -44,13 +44,12 @@ export function ThemeProvider({ children }) {
     }
   }, [mode]);
 
-  // Cycle: dark → light → system → dark
-  const cycleMode = () =>
-    setMode((prev) => {
-      if (prev === "dark") return "light";
-      if (prev === "light") return "system";
-      return "dark";
+  // Toggle strictly between 'light' and 'dark'
+  const cycleMode = () => {
+    setMode(() => {
+      return isDark ? "light" : "dark";
     });
+  };
 
   return (
     <ThemeContext.Provider value={{ isDark, mode, cycleMode, setMode }}>
