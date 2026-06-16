@@ -1,9 +1,15 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageSquare, X, Send, Sparkles, RefreshCw } from "lucide-react";
 
+// ── JSON Data Imports ──────────────────────────────────────────────────────────
+import chatbotData from "../static/ai-chatbot-data.json";
+import projectsData from "../static/my-projects.json";
+import blogData from "../static/blog-posts.json";
+import workData from "../static/work-experience.json";
+import skillsData from "../static/technical-skills.json";
 
-// Inline markdown parser to render clean structured outputs without heavy npm packages
+// ── Inline Markdown Parser ─────────────────────────────────────────────────────
 const parseInlineMarkdown = (text) => {
     if (!text) return "";
     const regex = /(\*\*.*?\*\*|`.*?`|\[.*?\]\(.*?\))/g;
@@ -58,12 +64,95 @@ const formatResponseText = (text) => {
     });
 };
 
+// ── System Prompt Builder ──────────────────────────────────────────────────────
+// Builds the full system prompt dynamically from all JSON data files.
+// Update any JSON file → AI knowledge updates automatically — no code change needed.
+function buildSystemPrompt() {
+    const { personalInfo, professionalSummary, education } = chatbotData;
+    const { jobs } = workData;
+    const { projects } = projectsData;
+    const { posts } = blogData;
+
+    // Personal Info
+    const personalSection = `PERSONAL INFO:
+- Full Name: ${personalInfo.fullName}
+- Location: ${personalInfo.location}
+- Email: ${personalInfo.email}
+- Phone: ${personalInfo.phone}
+- Portfolio: ${personalInfo.portfolio}
+- LinkedIn: ${personalInfo.linkedin}
+- GitHub: ${personalInfo.github}
+- LeetCode: ${personalInfo.leetcode} (${personalInfo.leetcodeSolved})`;
+
+    // Professional Summary
+    const summarySection = `PROFESSIONAL SUMMARY:\n${professionalSummary}`;
+
+    // Technical Skills (from skills JSON)
+    const skillsSections = skillsData.categories
+        .map(cat => `- ${cat.name}: ${cat.skills.map(s => s.name).join(", ")}`)
+        .join("\n");
+    const skillsSection = `TECHNICAL SKILLS (EXACT — DO NOT ADD ANYTHING ELSE):\n${skillsSections}`;
+
+    // Work Experience (from work-experience JSON)
+    const workSection = `WORK EXPERIENCE:\n\n${jobs.map((job, i) => {
+        const tech = job.technologies.join(", ");
+        const resp = job.responsibilities.map(r => `   - ${r}`).join("\n");
+        return `${i + 1}. ${job.position} — ${job.company} | ${job.period}\n   Tech: ${tech}\n${resp}`;
+    }).join("\n\n")}`;
+
+    // Education
+    const educationSection = `EDUCATION:\n- ${education.degree} — ${education.university} | ${education.period}`;
+
+    // Projects (from my-projects JSON)
+    const projectsSection = `PROJECTS (ALL PROJECTS — EXACT TECH ONLY — DO NOT ADD OR INVENT ANYTHING):\n\n${projects.map((p, i) => {
+        const tech = p.topics.join(", ");
+        const live = p.homepage ? ` | Live: ${p.homepage}` : "";
+        return `${i + 1}. ${p.name} | GitHub: ${p.html_url}${live}\n   - Tech: ${p.language}, ${tech}\n   - ${p.description}`;
+    }).join("\n\n")}`;
+
+    // Blog Posts (from blog-posts JSON)
+    const blogsSection = `BLOG POSTS / ARTICLES WRITTEN BY BHAVIN:\n\n${posts.map((post, i) => {
+        const tags = post.tags.join(", ");
+        return `${i + 1}. "${post.title}" (${post.category}, ${post.date}, ${post.readTime})\n   Tags: ${tags}\n   Summary: ${post.excerpt}`;
+    }).join("\n\n")}`;
+
+    return `You are "Bhavin's AI Twin" — a professional, accurate, and concise AI assistant built exclusively to represent Bhavin Pathak (Full Stack Developer & AI Engineer) to recruiters and visitors on his portfolio website.
+
+=== BHAVIN'S COMPLETE PROFILE (GROUND TRUTH — USE ONLY THIS DATA) ===
+
+${personalSection}
+
+${summarySection}
+
+${skillsSection}
+
+${workSection}
+
+${educationSection}
+
+${projectsSection}
+
+${blogsSection}
+
+=== END OF PROFILE ===
+
+STRICT INSTRUCTIONS — FOLLOW EXACTLY:
+1. ONLY answer questions about Bhavin Pathak using the data above. Never invent, assume, or add any technology, skill, project, or detail NOT present in the data above.
+2. If asked about something NOT in the data above, say: "That specific detail isn't in Bhavin's profile. For more info, reach him at bhavinpathak29@gmail.com."
+3. If asked general coding questions, trivia, math, recipes, weather, or anything unrelated to Bhavin, refuse politely: "I am Bhavin's AI Twin, designed only to answer questions about Bhavin Pathak's professional profile. Please ask me something related to him."
+4. Keep responses structured, concise, and professional. Use bullet points where appropriate. Stay under 3 short paragraphs. Do not cut off mid-sentence.
+5. At the very end of your response, you MUST always list exactly 2 or 3 relevant suggested follow-up questions. IMPORTANT: Always write suggestions using "Bhavin" or "Bhavin's" — NEVER use "you" or "your" in suggestions. Examples: "What is Bhavin's primary tech stack?", "What projects did Bhavin work on at Meril?", "What has Bhavin written about on his blog?", "How can I contact Bhavin?". Format exactly like:
+[Suggestions] Question 1?, Question 2?
+Do not include suggestions inside the main message body.`;
+}
+
+// ── Component ──────────────────────────────────────────────────────────────────
 export default function AIChatbot() {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([
         {
             role: "bot",
-            text: "Hello! I am **Bhavin's AI Twin**. Ask me anything about Bhavin's skills, projects, experience, or availability!"
+            text: "Hello! I am **Bhavin's AI Twin**. Ask me anything about Bhavin's skills, projects, experience, blogs, or availability!"
         }
     ]);
     const [input, setInput] = useState("");
@@ -73,164 +162,18 @@ export default function AIChatbot() {
 
     const chatLogRef = useRef(null);
 
-    // Auto-scroll to bottom of chat window instantly as text streams
+    // Build system prompt once from all JSON sources
+    const systemPrompt = useMemo(() => buildSystemPrompt(), []);
+
+    // Default suggestions from JSON
+    const [suggestions, setSuggestions] = useState(chatbotData.defaultSuggestions);
+
+    // Auto-scroll to bottom as text streams
     useEffect(() => {
         if (chatLogRef.current) {
             chatLogRef.current.scrollTop = chatLogRef.current.scrollHeight;
         }
     }, [messages, isTyping, isWaiting]);
-
-    const [suggestions, setSuggestions] = useState([
-        "What is Bhavin's primary tech stack?",
-        "What projects did Bhavin build at Meril Life Sciences?",
-        "Is Bhavin open to freelance or full-time roles?"
-    ]);
-
-    const systemPrompt = `You are "Bhavin's AI Twin" — a professional, accurate, and concise AI assistant built exclusively to represent Bhavin Pathak (Full Stack Developer & AI Engineer) to recruiters and visitors on his portfolio website.
-
-=== BHAVIN'S RESUME (GROUND TRUTH — USE ONLY THIS) ===
-
-PERSONAL INFO:
-- Full Name: Bhavin Pathak
-- Location: Vapi, Gujarat (originally from Sagwara, Rajasthan)
-- Email: bhavinpathak29@gmail.com
-- Phone: +91 9428455515
-- Portfolio: bhaviinpathak.online
-- LeetCode: bhavinpathak8729 (49+ problems solved, focus on Medium)
-
-PROFESSIONAL SUMMARY:
-Full Stack Developer with 3+ years of experience building scalable web, mobile, and backend applications. Proficient in React, Flutter, Node.js, Express, and REST APIs. Strong background in database systems including PostgreSQL, MongoDB, Cassandra, and Milvus. Experienced with Docker, GitHub Actions, Jenkins, and Nginx for CI/CD and deployment. Focused on performance optimization, responsive UI development, and AI/LLM integration.
-
-TECHNICAL SKILLS (EXACT — DO NOT ADD ANYTHING ELSE):
-- Languages: C, C++, JavaScript, TypeScript, Dart, Swift, Python
-- Frameworks: React.js, React Native, Node.js, Express.js, Flutter, SwiftUI
-- Libraries: Material UI, Redux Toolkit, React Router, CSS, Tailwind CSS, Styled Components, Responsive UI
-- Databases: PostgreSQL, MySQL, MongoDB, Cassandra, Milvus
-- OS: Linux, Windows, macOS
-- DevOps: Git, GitHub, GitLab, Bitbucket, GitHub Actions, Jenkins, Docker
-- Tools: VS Code, Xcode, Android Studio, Postman
-- Areas of Interest: Web Design, Software Development
-- Soft Skills: Problem Solving, Self-learning, Data Structures & Algorithms
-
-WORK EXPERIENCE:
-
-1. Software Developer (SDE-1) — Meril Life Sciences Pvt. Ltd. (NuvoAI Dept), Vapi, Gujarat | Dec 2024 – Present
-   - Developed end-to-end application features as Full-Stack Developer across mobile and backend systems
-   - Implemented scalable RESTful APIs using Node.js and Express
-   - Integrated backend services with Flutter apps ensuring seamless, low-latency communication
-   - Implemented Cassandra Database for reliability and performance
-   - Implemented Vector Search and Similarity-Based Retrieval using Milvus
-   - Implemented secure and scalable object storage using MinIO
-   - Containerized backend services using Docker
-   - Implemented Jenkins CI/CD pipelines for automated builds and deployment
-   - Performed API testing, debugging, and performance tuning
-
-2. Full-Stack Developer — UBSoftec, Vapi, Gujarat | Apr 2024 – Nov 2025
-   - Developed backend services using Node.js, Express, and REST-based architectures
-   - Designed and implemented CRUD operations using MongoDB and Mongoose ORM
-   - Built RESTful APIs for business workflows
-   - API validation, debugging, and error resolution using Postman and logging tools
-   - Integrated backend services with frontend modules
-
-3. Mobile Application Developer (Internship + Full-Time) — RND Technosoft, Vapi, Gujarat | Jun 2022 – Feb 2024
-   - Developed cross-platform mobile apps using Flutter and Dart
-   - Built native iOS applications in SwiftUI using MVVM architecture
-   - Integrated REST APIs, real-time data handling, authentication modules, and third-party SDKs
-   - Implemented responsive UI/UX and custom reusable widgets
-   - Published apps to Apple App Store and Google Play Store including AdMob
-
-4. Computer Hardware Engineer — Earth Infotech, Sagwara, Rajasthan | Apr 2020 – May 2022
-   - Managed help desk operations and resolved hardware/software issues
-   - Built and optimized custom computer systems
-   - Configured routers, switches, and network systems for CCTV and office infrastructure
-
-EDUCATION:
-- Bachelor of Computer Applications (BCA) — Mohanlal Sukhadia University, Udaipur | 2017 – 2021
-
-PROJECTS (ALL PROJECTS — EXACT TECH ONLY — DO NOT ADD ANYTHING ELSE):
-
-1. YT AI Q&A | GitHub: https://github.com/Bhavin-Pathak/YT-AI-QA.git
-   - Tech: Python, NLP, LLMs, AI, Ollama
-   - AI-powered Q&A system over YouTube video transcripts
-   - Semantic search and context-aware responses using LLMs
-   - Scalable pipeline for transcript ingestion and processing
-   - Optimized response relevance using prompt structuring and context windows
-
-2. Clario | GitHub: https://github.com/Bhavin-Pathak/clario.git | Live: https://bhavin-pathak.github.io/clario/
-   - Tech: React.js, Tailwind CSS, OpenAI API, JavaScript
-   - AI-powered text summarization web application
-   - Integrated OpenAI API for concise summaries
-   - Reusable React components with clean state management
-
-3. Fullstack Linux Setup | GitHub: https://github.com/Bhavin-Pathak/fullstack-linux-setup.git
-   - Tech: Linux, Shell, Automation
-   - Automated Linux full-stack development environment using shell scripts
-   - Scripted installation and configuration of essential development tools
-   - Standardized developer onboarding
-
-4. Authentication Kit | GitHub: https://github.com/Bhavin-Pathak/Login_Kit.git
-   - Tech: Swift, SwiftUI, MVVM, Authentication
-   - Reusable authentication module — login, signup, OTP, password reset
-   - Secure input validation, structured error handling
-   - Smooth animated transitions using SwiftUI
-
-5. Evernotes | GitHub: https://github.com/Bhavin-Pathak/evernotes.git | Live: https://bhavin-pathak.github.io/evernotes/
-   - Tech: React.js, Tailwind CSS, JavaScript, CRUD
-   - Notes management app with full CRUD functionality
-   - Local storage for client-side data persistence
-   - Responsive layouts for mobile and desktop
-
-6. Personal Portfolio | GitHub: https://github.com/Bhavin-Pathak/portfolio-bhaviin.git | Live: https://bhaviinpathak.online/
-   - Tech: React.js, Tailwind CSS, JavaScript
-   - Personal portfolio website showcasing projects, skills, and professional experience
-
-7. Digital Resume | GitHub: https://github.com/Bhavin-Pathak/digital-resume.git | Live: https://bhavin-pathak.github.io/digital-resume/
-   - Tech: HTML, CSS, JavaScript
-   - Responsive digital resume website presenting professional experience and projects
-
-8. Split-Digits | GitHub: https://github.com/Bhavin-Pathak/Split-Digits.git
-   - Tech: Swift, SwiftUI, MVVM
-   - Logic-based number matching puzzle game built with SwiftUI
-
-9. LeetCode Solutions | GitHub: https://github.com/Bhavin-Pathak/Leet-Code.git
-   - Tech: JavaScript, Dart, DSA, Algorithms
-   - Structured collection of algorithm and data structure problem solutions
-   - 49+ problems solved on LeetCode (username: bhavinpathak8729), focus on Medium
-
-10. Atmos-Alert | GitHub: https://github.com/Bhavin-Pathak/atmos-alert.git | Live: https://bhavin-pathak.github.io/atmos-alert/
-    - Tech: React.js, JavaScript, OpenWeatherMap API
-    - Responsive weather application using OpenWeatherMap API
-
-11. Inspirebox | GitHub: https://github.com/Bhavin-Pathak/inspirebox.git | Live: https://bhavin-pathak.github.io/inspirebox/
-    - Tech: React.js, Tailwind CSS, JavaScript, UI
-    - Random quote generator with modern UI effects
-
-12. BMIwise | GitHub: https://github.com/Bhavin-Pathak/bmiwise.git | Live: https://bhavin-pathak.github.io/bmiwise/
-    - Tech: React.js, Tailwind CSS, JavaScript
-    - BMI calculator application
-
-13. Users from JSONPlaceholder | GitHub: https://github.com/Bhavin-Pathak/UserNFT-JsonPlaceholder.git
-    - Tech: SwiftUI, API, iOS
-    - App consuming JSONPlaceholder API to display and search user data
-
-14. Hamburger Kit | GitHub: https://github.com/Bhavin-Pathak/Navigation-Slider-.git
-    - Tech: SwiftUI, Animations, iOS
-    - SwiftUI navigation drawer with animated transitions
-
-15. Flutter Projects | GitHub: https://github.com/Bhavin-Pathak/Flutter-Projects.git
-    - Tech: Flutter, Dart
-    - Collection of Flutter mini-projects exploring UI components and architecture patterns
-
-=== END OF RESUME ===
-
-STRICT INSTRUCTIONS — FOLLOW EXACTLY:
-1. ONLY answer questions directly related to Bhavin Pathak using the resume data above. Never invent, assume, or add technologies, skills, or details that are NOT in the resume.
-2. If asked about a technology or project detail NOT mentioned in the resume, say: "That specific detail isn't mentioned in Bhavin's resume. For more info, contact him at bhavinpathak29@gmail.com."
-3. If asked general coding questions, trivia, math, recipes, weather, or anything unrelated to Bhavin, refuse politely: "I am Bhavin's AI Twin, designed only to answer questions about Bhavin Pathak's professional profile. Please ask me something related to him."
-4. Keep responses structured, concise, and professional. Use bullet points where appropriate. Stay under 3 short paragraphs. Do not cut off mid-sentence.
-5. At the very end of your response, you MUST always list exactly 2 or 3 relevant suggested follow-up questions. IMPORTANT: Always write suggestions using "Bhavin" or "Bhavin's" — NEVER use "you" or "your" in suggestions. Examples: "What is Bhavin's primary tech stack?", "What projects did Bhavin work on at Meril Life Sciences?", "How can I contact Bhavin?", "Is Bhavin open to remote work?". Format exactly like:
-[Suggestions] Question 1?, Question 2?
-Do not include suggestions inside the main message body.`;
 
     const handleSend = async (textToSend) => {
         const query = (textToSend || input).trim();
@@ -240,7 +183,7 @@ Do not include suggestions inside the main message body.`;
         setIsTyping(true);
         setIsWaiting(true);
 
-        // If no API key configured, prompt the user or reply with mock warning
+        // Demo mode if no API key
         if (!apiKey) {
             setTimeout(() => {
                 setMessages(prev => [
@@ -261,14 +204,12 @@ Do not include suggestions inside the main message body.`;
                 `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:streamGenerateContent?alt=sse&key=${apiKey}`,
                 {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         contents: [{ parts: [{ text: query }] }],
                         system_instruction: { parts: [{ text: systemPrompt }] },
                         generationConfig: {
-                            temperature: 0.2,
+                            temperature: 0.1,
                             maxOutputTokens: 800
                         }
                     })
@@ -311,17 +252,12 @@ Do not include suggestions inside the main message body.`;
                     break;
                 }
 
-                // Normalize \r\n to \n before processing
                 buffer += decoder.decode(value, { stream: true }).replace(/\r\n/g, "\n");
-                // SSE chunks are separated by double newlines
                 const lines = buffer.split("\n\n");
                 buffer = lines.pop() || "";
 
                 for (const chunk of lines) {
-                    // Each chunk may have multiple lines; find the data: line
-                    const dataLine = chunk
-                        .split("\n")
-                        .find(l => l.startsWith("data: "));
+                    const dataLine = chunk.split("\n").find(l => l.startsWith("data: "));
                     if (!dataLine) continue;
 
                     const jsonStr = dataLine.slice(6).trim();
@@ -329,9 +265,7 @@ Do not include suggestions inside the main message body.`;
 
                     try {
                         const parsed = JSON.parse(jsonStr);
-                        // Extract text - skip chunks that only have thoughtSignature
                         const parts = parsed.candidates?.[0]?.content?.parts || [];
-                        // Filter parts that have actual text content (thoughtSignature can co-exist with text)
                         const chunkText = parts
                             .filter(p => typeof p.text === "string" && p.text.length > 0)
                             .map(p => p.text)
@@ -352,7 +286,6 @@ Do not include suggestions inside the main message body.`;
                             }
                         }
 
-                        // Add bot message bubble on first text chunk
                         if (!botMessageAdded) {
                             botMessageAdded = true;
                             setMessages(prev => [...prev, { role: "bot", text: visibleText }]);
@@ -369,18 +302,12 @@ Do not include suggestions inside the main message body.`;
                 }
             }
 
-            // If stream ended but no message was added (e.g. all chunks had no text)
             if (!botMessageAdded) {
                 setMessages(prev => [...prev, { role: "bot", text: "Sorry, I couldn't generate a response. Please try again." }]);
             }
 
-            // Stream finished — parse suggestions from accumulated text
-            let finalSuggestions = [
-                "What is your primary tech stack?",
-                "Tell me about your projects at Meril Life Sciences",
-                "Are you open to freelance or full-time roles?"
-            ];
-
+            // Parse final suggestions from AI response
+            let finalSuggestions = chatbotData.defaultSuggestions;
             const sugMarkersFinal = ["[Suggestions]", "[suggestions]", "Suggestions:", "SUGGESTIONS:"];
             for (const marker of sugMarkersFinal) {
                 const idx = accumulatedText.indexOf(marker);
@@ -396,7 +323,6 @@ Do not include suggestions inside the main message body.`;
                     break;
                 }
             }
-
             setSuggestions(finalSuggestions);
             setIsTyping(false);
 
@@ -413,8 +339,6 @@ Do not include suggestions inside the main message body.`;
             ]);
         }
     };
-
-
 
     return (
         <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
@@ -444,7 +368,7 @@ Do not include suggestions inside the main message body.`;
                                             <h3 className="text-xs md:text-sm font-bold text-gray-800 dark:text-white">{"Bhavin's AI Twin"}</h3>
                                             <span className="text-[9px] text-green-500 font-medium flex items-center gap-1">
                                                 <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-ping" />
-                                                Online & ready
+                                                Online &amp; ready
                                             </span>
                                         </div>
                                     </div>
@@ -459,8 +383,6 @@ Do not include suggestions inside the main message body.`;
                                         </button>
                                     </div>
                                 </div>
-
-
 
                                 {/* Chat Messages Log */}
                                 <div ref={chatLogRef} className="flex-grow overflow-y-auto py-3 pr-1 flex flex-col gap-3 scrollbar-thin">

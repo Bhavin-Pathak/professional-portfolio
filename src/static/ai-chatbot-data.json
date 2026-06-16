@@ -1,0 +1,24 @@
+{
+    "defaultSuggestions": [
+        "What is Bhavin's primary tech stack?",
+        "What projects did Bhavin build at Meril Life Sciences?",
+        "Is Bhavin open to freelance or full-time roles?"
+    ],
+    "personalInfo": {
+        "fullName": "Bhavin Pathak",
+        "location": "Vapi, Gujarat (originally from Sagwara, Rajasthan)",
+        "email": "bhavinpathak29@gmail.com",
+        "phone": "+91 9428455515",
+        "portfolio": "https://bhaviinpathak.online",
+        "linkedin": "https://www.linkedin.com/in/bhavin-pathak/",
+        "github": "https://github.com/Bhavin-Pathak",
+        "leetcode": "bhavinpathak8729",
+        "leetcodeSolved": "49+ problems, focus on Medium"
+    },
+    "professionalSummary": "Full Stack Developer with 3+ years of experience building scalable web, mobile, and backend applications. Proficient in React, Flutter, Node.js, Express, and REST APIs. Strong background in database systems including PostgreSQL, MongoDB, Cassandra, and Milvus. Experienced with Docker, GitHub Actions, Jenkins, and Nginx for CI/CD and deployment. Focused on performance optimization, responsive UI development, and AI/LLM integration.",
+    "education": {
+        "degree": "Bachelor of Computer Applications (BCA)",
+        "university": "Mohanlal Sukhadia University, Udaipur",
+        "period": "2017 – 2021"
+    }
+}
