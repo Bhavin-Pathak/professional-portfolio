@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageSquare, X, Send, Sparkles, RefreshCw } from "lucide-react";
-import { LiquidContainer } from "./LiquidContainer.js";
+
 
 // Inline markdown parser to render clean structured outputs without heavy npm packages
 const parseInlineMarkdown = (text) => {
@@ -77,11 +77,11 @@ export default function AIChatbot() {
         chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages, isTyping]);
 
-    const suggestions = [
-        "Show me your AI projects",
-        "What is your current role?",
-        "How can I contact you?"
-    ];
+    const [suggestions, setSuggestions] = useState([
+        "Tell me about your technical expertise",
+        "What are you working on at Meril Life Sciences?",
+        "Are you available for new opportunities?"
+    ]);
 
     const systemPrompt = `You are "Bhavin's AI Twin", a professional, polite, and highly capable AI assistant designed to represent Bhavin Pathak (a Full Stack Developer & AI Engineer).
 Your goal is to answer questions about Bhavin's background, skills, experiences, and project portfolio.
@@ -99,7 +99,11 @@ STRICT INSTRUCTIONS:
 1. ONLY answer questions directly related to Bhavin Pathak, his career, technical capabilities, projects, or professional availability.
 2. If the user asks general coding questions NOT related to Bhavin, or asks about completely unrelated topics (e.g. recipes, weather, geography, trivia, riddles, history, sports, writing random scripts, mathematical calculations), you MUST politely refuse. Respond with: "I am Bhavin's AI Twin, designed only to answer questions about Bhavin Pathak's professional profile, skills, and projects. Please ask me something related to him."
 3. Keep responses structured, concise, and professional.
-4. Do not make up facts. If you don't know the answer, say that you don't have that detail and suggest reaching out to Bhavin directly at bhavinpathak29@gmail.com.`;
+4. Do not make up facts. If you don't know the answer, say that you don't have that detail and suggest reaching out to Bhavin directly at bhavinpathak29@gmail.com.
+5. At the very end of your response, you MUST always list exactly 2 or 3 relevant suggested follow-up questions that the user might want to ask next based on your response. Format this list on a new line exactly like:
+[Suggestions] Question 1?, Question 2?
+Do not include the suggestions inside your normal message body. Keep the questions short, highly professional, and directly related to your current response.
+6. Keep your answers concise, structured, and easy to read. Use bullet points where appropriate, and keep your reply under 2-3 short paragraphs so it fits well in a chat window. Do not cut off mid-sentence.`;
 
     const handleSend = async (textToSend) => {
         const query = (textToSend || input).trim();
@@ -139,7 +143,7 @@ STRICT INSTRUCTIONS:
                         system_instruction: { parts: [{ text: systemPrompt }] },
                         generationConfig: {
                             temperature: 0.2,
-                            maxOutputTokens: 350
+                            maxOutputTokens: 800
                         }
                     })
                 }
@@ -150,7 +154,27 @@ STRICT INSTRUCTIONS:
             }
 
             const data = await response.json();
-            const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || "I apologize, but I could not formulate a response. Please try again.";
+            const rawReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "I apologize, but I could not formulate a response. Please try again.";
+
+            const sugIdx = rawReply.indexOf("[Suggestions]");
+            let replyText = rawReply;
+            if (sugIdx !== -1) {
+                replyText = rawReply.substring(0, sugIdx).trim();
+                const sugPart = rawReply.substring(sugIdx + 13).trim();
+                const nextSugs = sugPart
+                    .split(",")
+                    .map(s => s.trim().replace(/\[|\]|"/g, ""))
+                    .filter(Boolean);
+                if (nextSugs.length > 0) {
+                    setSuggestions(nextSugs);
+                }
+            } else {
+                setSuggestions([
+                    "Tell me about your technical expertise",
+                    "What are you working on at Meril Life Sciences?",
+                    "Are you available for new opportunities?"
+                ]);
+            }
 
             setMessages(prev => [...prev, { role: "bot", text: replyText }]);
         } catch {
@@ -181,7 +205,10 @@ STRICT INSTRUCTIONS:
                         transition={{ type: "spring", damping: 20 }}
                         className="w-[90vw] sm:w-[380px] h-[500px] mb-4 overflow-hidden relative"
                     >
-                        <LiquidContainer className="w-full h-full p-4 flex flex-col border border-gray-200/80 dark:border-white/10 shadow-2xl relative">
+                        <div className="w-full h-full p-4 flex flex-col md:backdrop-blur-xl backdrop-blur-md saturate-150 bg-white/60 dark:bg-black/40 border border-gray-200/80 dark:border-white/10 rounded-[2rem] overflow-hidden shadow-2xl relative">
+                            {/* Glossy glass gradient overlay */}
+                            <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-black/5 pointer-events-none" />
+                            <div className="relative z-10 flex-grow flex flex-col h-full overflow-hidden">
 
                             {/* Chat Header */}
                             <div className="flex items-center justify-between pb-3 border-b border-gray-200/60 dark:border-white/10">
@@ -283,7 +310,8 @@ STRICT INSTRUCTIONS:
                                 </button>
                             </form>
 
-                        </LiquidContainer>
+                            </div>
+                        </div>
                     </motion.div>
                 )}
             </AnimatePresence>
