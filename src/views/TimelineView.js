@@ -7,7 +7,7 @@ import { Github, Code, Briefcase, Award, Calendar, ExternalLink, RefreshCw, Laye
 import { pageVariants } from "../utils/animations.js";
 
 export default function TimelineView() {
-    const [filter, setFilter] = useState("all");
+    const [filter, setFilter] = useState("github");
     const [loading, setLoading] = useState(true);
     const [githubEvents, setGithubEvents] = useState([]);
     const [leetcodeData, setLeetcodeData] = useState(null);
@@ -197,50 +197,35 @@ export default function TimelineView() {
                     </div>
                 )}
 
-                {/* Dynamic Stats Row */}
-                {leetcodeData && (
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
-                        <LiquidContainer className="p-4 flex flex-col items-center justify-center text-center">
-                            <span className="text-2xl md:text-3xl font-extrabold text-blue-600 dark:text-blue-400">
-                                {leetcodeData.totalSolved || 49}
-                            </span>
-                            <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium">LeetCode Solved</span>
+                {/* LeetCode Stats Row — always visible with fallback numbers */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 w-full">
+                    {[
+                        { label: "LeetCode Solved", value: leetcodeData?.totalSolved ?? 49, color: "text-blue-500 dark:text-blue-400", size: "text-3xl md:text-4xl font-black" },
+                        { label: "Easy", value: leetcodeData?.easySolved ?? 14, color: "text-green-500 dark:text-green-400", size: "text-xl md:text-2xl font-extrabold" },
+                        { label: "Medium", value: leetcodeData?.mediumSolved ?? 29, color: "text-yellow-500 dark:text-yellow-400", size: "text-xl md:text-2xl font-extrabold" },
+                        { label: "Hard", value: leetcodeData?.hardSolved ?? 6, color: "text-red-500 dark:text-red-400", size: "text-xl md:text-2xl font-extrabold" }
+                    ].map(stat => (
+                        <LiquidContainer key={stat.label} className="p-4 flex flex-row items-center justify-start gap-3">
+                            <span className={`${stat.size} ${stat.color} leading-none tabular-nums`}>{stat.value}</span>
+                            <span className="text-[11px] text-gray-500 dark:text-gray-400 font-medium leading-tight">{stat.label}</span>
                         </LiquidContainer>
-                        <LiquidContainer className="p-4 flex flex-col items-center justify-center text-center">
-                            <span className="text-sm md:text-base font-bold text-green-600 dark:text-green-400">
-                                {leetcodeData.easySolved || 14}
-                            </span>
-                            <span className="text-[10px] text-gray-500 dark:text-gray-400 mt-1">Easy Solved</span>
-                        </LiquidContainer>
-                        <LiquidContainer className="p-4 flex flex-col items-center justify-center text-center">
-                            <span className="text-sm md:text-base font-bold text-yellow-600 dark:text-yellow-400">
-                                {leetcodeData.mediumSolved || 29}
-                            </span>
-                            <span className="text-[10px] text-gray-500 dark:text-gray-400 mt-1">Medium Solved</span>
-                        </LiquidContainer>
-                        <LiquidContainer className="p-4 flex flex-col items-center justify-center text-center">
-                            <span className="text-sm md:text-base font-bold text-red-600 dark:text-red-400">
-                                {leetcodeData.hardSolved || 6}
-                            </span>
-                            <span className="text-[10px] text-gray-500 dark:text-gray-400 mt-1">Hard Solved</span>
-                        </LiquidContainer>
-                    </div>
-                )}
+                    ))}
+                </div>
 
                 {/* Filter & Refresh Controls */}
                 <div className="flex flex-wrap items-center justify-between gap-4 w-full">
                     <div className="flex gap-2">
-                        {["all", "github", "leetcode", "milestones"].map(t => (
+                        {["github", "leetcode", "milestones"].map(t => (
                             <button
                                 key={t}
                                 onClick={() => setFilter(t)}
                                 className={`px-4 py-1.5 rounded-full text-xs md:text-sm font-semibold capitalize border transition-all cursor-pointer ${
-                                    filter === t 
-                                        ? "bg-blue-600 text-white border-blue-600 shadow-md" 
+                                    filter === t
+                                        ? "bg-blue-600 text-white border-blue-600 shadow-md"
                                         : "bg-white/50 dark:bg-white/5 text-gray-600 dark:text-gray-300 border-gray-300/60 dark:border-white/10 hover:bg-gray-100 dark:hover:bg-white/10"
                                 }`}
                             >
-                                {t === "all" ? "All Activity" : t === "github" ? "GitHub" : t === "leetcode" ? "LeetCode" : "Milestones"}
+                                {t === "github" ? "GitHub" : t === "leetcode" ? "LeetCode" : "Milestones"}
                             </button>
                         ))}
                     </div>
