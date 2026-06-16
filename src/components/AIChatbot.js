@@ -152,7 +152,23 @@ Do not include the suggestions inside your normal message body. Keep the questio
             );
 
             if (!response.ok) {
-                throw new Error("API Request Failed");
+                let errorMsg = "Sorry, I ran into a connectivity error. Please try again.";
+                try {
+                    const errData = await response.json();
+                    const errStatus = errData?.error?.status || "";
+                    const errCode = response.status;
+                    if (errCode === 429 || errStatus === "RESOURCE_EXHAUSTED") {
+                        errorMsg = "⚠️ The Gemini API quota has been exceeded for today. Please try again later, or contact Bhavin directly at **bhavinpathak29@gmail.com**.";
+                    } else if (errCode === 400) {
+                        errorMsg = "⚠️ Invalid API request. Please check the API key configuration.";
+                    } else if (errCode === 403) {
+                        errorMsg = "⚠️ API Key is invalid or has insufficient permissions. Please verify the key.";
+                    }
+                } catch (_) {}
+                setIsWaiting(false);
+                setIsTyping(false);
+                setMessages(prev => [...prev, { role: "bot", text: errorMsg }]);
+                return;
             }
 
             setIsWaiting(false);
