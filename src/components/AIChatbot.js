@@ -68,9 +68,16 @@ export default function AIChatbot() {
     ]);
     const [input, setInput] = useState("");
     const [isTyping, setIsTyping] = useState(false);
+    const [isWaiting, setIsWaiting] = useState(false);
     const apiKey = process.env.REACT_APP_GEMINI_API_KEY || "";
 
     const chatEndRef = useRef(null);
+    const typingIntervalRef = useRef(null);
+
+    // Clean up typing interval on component unmount
+    useEffect(() => {
+        return () => clearInterval(typingIntervalRef.current);
+    }, []);
 
     // Auto-scroll to bottom of chat window
     useEffect(() => {
@@ -100,7 +107,7 @@ STRICT INSTRUCTIONS:
 2. If the user asks general coding questions NOT related to Bhavin, or asks about completely unrelated topics (e.g. recipes, weather, geography, trivia, riddles, history, sports, writing random scripts, mathematical calculations), you MUST politely refuse. Respond with: "I am Bhavin's AI Twin, designed only to answer questions about Bhavin Pathak's professional profile, skills, and projects. Please ask me something related to him."
 3. Keep responses structured, concise, and professional.
 4. Do not make up facts. If you don't know the answer, say that you don't have that detail and suggest reaching out to Bhavin directly at bhavinpathak29@gmail.com.
-5. At the very end of your response, you MUST always list exactly 2 or 3 relevant suggested follow-up questions that the user might want to ask next based on your response. Format this list on a new line exactly like:
+5. At the very end of your response, you MUST always list exactly 2 or 3 relevant suggested follow-up questions that the visitor might want to ask you next based on your response. The questions should be written from the visitor's perspective asking about you (Bhavin) (e.g. asking about "your mobile projects", "your backend experience", or "your availability"). Format this list on a new line exactly like:
 [Suggestions] Question 1?, Question 2?
 Do not include the suggestions inside your normal message body. Keep the questions short, highly professional, and directly related to your current response.
 6. Keep your answers concise, structured, and easy to read. Use bullet points where appropriate, and keep your reply under 2-3 short paragraphs so it fits well in a chat window. Do not cut off mid-sentence.`;
@@ -112,8 +119,7 @@ Do not include the suggestions inside your normal message body. Keep the questio
         if (!textToSend) setInput("");
         setMessages(prev => [...prev, { role: "user", text: query }]);
         setIsTyping(true);
-
-
+        setIsWaiting(true);
 
         // If no API key configured, prompt the user or reply with mock warning
         if (!apiKey) {
@@ -126,6 +132,7 @@ Do not include the suggestions inside your normal message body. Keep the questio
                     }
                 ]);
                 setIsTyping(false);
+                setIsWaiting(false);
             }, 800);
             return;
         }
@@ -153,31 +160,56 @@ Do not include the suggestions inside your normal message body. Keep the questio
                 throw new Error("API Request Failed");
             }
 
+            setIsWaiting(false);
+
             const data = await response.json();
             const rawReply = data.candidates?.[0]?.content?.parts?.[0]?.text || "I apologize, but I could not formulate a response. Please try again.";
 
             const sugIdx = rawReply.indexOf("[Suggestions]");
             let replyText = rawReply;
+            let nextSugs = [
+                "Tell me about your technical expertise",
+                "What are you working on at Meril Life Sciences?",
+                "Are you available for new opportunities?"
+            ];
+
             if (sugIdx !== -1) {
                 replyText = rawReply.substring(0, sugIdx).trim();
                 const sugPart = rawReply.substring(sugIdx + 13).trim();
-                const nextSugs = sugPart
+                const parsedSugs = sugPart
                     .split(",")
                     .map(s => s.trim().replace(/\[|\]|"/g, ""))
                     .filter(Boolean);
-                if (nextSugs.length > 0) {
-                    setSuggestions(nextSugs);
+                if (parsedSugs.length > 0) {
+                    nextSugs = parsedSugs;
                 }
-            } else {
-                setSuggestions([
-                    "Tell me about your technical expertise",
-                    "What are you working on at Meril Life Sciences?",
-                    "Are you available for new opportunities?"
-                ]);
             }
 
-            setMessages(prev => [...prev, { role: "bot", text: replyText }]);
+            // Simulated streaming typing effect
+            clearInterval(typingIntervalRef.current);
+            setMessages(prev => [...prev, { role: "bot", text: "" }]);
+            
+            let currentText = "";
+            let charIndex = 0;
+            typingIntervalRef.current = setInterval(() => {
+                if (charIndex < replyText.length) {
+                    currentText += replyText[charIndex];
+                    setMessages(prev => {
+                        const copy = [...prev];
+                        if (copy.length > 0) {
+                            copy[copy.length - 1] = { role: "bot", text: currentText };
+                        }
+                        return copy;
+                    });
+                    charIndex++;
+                } else {
+                    clearInterval(typingIntervalRef.current);
+                    setIsTyping(false);
+                    setSuggestions(nextSugs);
+                }
+            }, 12); // Smooth typing speed
         } catch {
+            setIsWaiting(false);
             setMessages(prev => [
                 ...prev,
                 {
@@ -186,7 +218,7 @@ Do not include the suggestions inside your normal message body. Keep the questio
                 }
             ]);
         } finally {
-            setIsTyping(false);
+            // Keep typing active until stream completes
         }
     };
 
@@ -256,7 +288,7 @@ Do not include the suggestions inside your normal message body. Keep the questio
                                     </div>
                                 ))}
 
-                                {isTyping && (
+                                {isWaiting && (
                                     <div className="self-start flex flex-col items-start gap-1 max-w-[85%]">
                                         <div className="p-3 bg-slate-100 dark:bg-white/5 border border-gray-200/50 dark:border-white/5 text-gray-500 dark:text-gray-400 rounded-2xl rounded-tl-none flex items-center gap-1 shadow-sm">
                                             <RefreshCw className="w-3.5 h-3.5 animate-spin text-blue-500" />
@@ -268,7 +300,7 @@ Do not include the suggestions inside your normal message body. Keep the questio
                             </div>
 
                             {/* Prompt Suggestions */}
-                            {messages.length < 5 && (
+                            {messages[messages.length - 1]?.role === "bot" && !isTyping && (
                                 <div className="flex flex-col gap-1.5 pb-2">
                                     <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider pl-1">Suggested prompts:</span>
                                     <div className="flex flex-wrap gap-1.5">
