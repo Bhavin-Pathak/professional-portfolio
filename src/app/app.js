@@ -2,8 +2,8 @@ import { useState, useEffect, Suspense, lazy } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import DigitalWarp from "../components/DigitalWarp.js";
-
-
+import { Sun, Moon } from "lucide-react";
+import { useTheme } from "../theme/theme-provider.js";
 
 // Screens With Lazy Load 
 import HomeView from "../views/HomeView.js";
@@ -25,6 +25,7 @@ const FollowCursor = lazy(() => import("../components/FollowCursor.js"));
 export default function App() {
   const location = useLocation();
   const isRoot = location.pathname === "/";
+  const { isDark, toggleTheme } = useTheme();
 
   // If not root, skip the intro sequence for better UX
   const [isLoading, setIsLoading] = useState(true);
@@ -64,17 +65,76 @@ export default function App() {
     setIsTransitioning(false);
   };
 
+  // Show theme toggle after loading and intro are done
+  const showThemeToggle = !isLoading && !showIntro && !isTransitioning;
+
   return (
     <>
-      <div className="min-h-screen text-gray-100 overflow-x-hidden flex flex-col">
-        {/* Global Background Layer */}
-        <div className="fixed inset-0 bg-black -z-50" />
+      <div className="min-h-screen text-gray-900 dark:text-gray-100 overflow-x-hidden flex flex-col">
+        {/* Global Background Layer — adapts to theme */}
+        <div className="fixed inset-0 bg-slate-50 dark:bg-black -z-50 transition-colors duration-300" />
+
         {/* Interactive Cursor Effects - Disabled on Mobile/Tablet for performance */}
         {!isMobile && (
           <Suspense fallback={null}>
             {showIntro ? <SplashCursor /> : !isLoading && <FollowCursor />}
           </Suspense>
         )}
+
+        {/* Global Theme Toggle Button — appears after loading/intro/warp */}
+        <AnimatePresence>
+          {showThemeToggle && (
+            <motion.button
+              key="theme-toggle"
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.5 }}
+              transition={{ duration: 0.3, ease: "backOut" }}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={toggleTheme}
+              aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+              title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+              className="fixed top-3 right-4 md:top-3.5 md:right-8 z-50
+                p-2 md:p-3
+                backdrop-blur-3xl saturate-150
+                bg-black/5 dark:bg-black/30
+                border border-black/10 dark:border-white/10
+                rounded-full
+                shadow-[0_8px_32px_0_rgba(0,0,0,0.1)] dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.36)]
+                text-gray-700 dark:text-white/90
+                hover:text-black dark:hover:text-white
+                hover:bg-black/10 dark:hover:bg-white/10
+                transition-colors duration-300
+                cursor-pointer"
+            >
+              <AnimatePresence mode="wait">
+                {isDark ? (
+                  <motion.div
+                    key="sun"
+                    initial={{ rotate: -90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: 90, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Sun className="w-5 h-5" />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="moon"
+                    initial={{ rotate: 90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: -90, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Moon className="w-5 h-5" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.button>
+          )}
+        </AnimatePresence>
+
         {/* Global Background Elements (Animated Orbs) - Hidden on Loading, Intro Page and Transition */}
         {!isLoading && !showIntro && !isTransitioning && (
           <motion.div
@@ -95,7 +155,7 @@ export default function App() {
                 repeatType: "reverse",
                 ease: "easeInOut"
               }}
-              className="absolute top-[10%] left-[10%] w-[40rem] h-[40rem] bg-purple-500/40 rounded-full blur-[100px]"
+              className="absolute top-[10%] left-[10%] w-[40rem] h-[40rem] bg-purple-500/15 dark:bg-purple-500/40 rounded-full blur-[100px] transition-colors duration-300"
             />
             {/* Cyan Orb: Moves from Bottom-Right to Top-Left */}
             <motion.div
@@ -109,7 +169,7 @@ export default function App() {
                 repeatType: "reverse",
                 ease: "easeInOut"
               }}
-              className="absolute bottom-[10%] right-[10%] w-[35rem] h-[35rem] bg-cyan-500/40 rounded-full blur-[100px]"
+              className="absolute bottom-[10%] right-[10%] w-[35rem] h-[35rem] bg-cyan-500/15 dark:bg-cyan-500/40 rounded-full blur-[100px] transition-colors duration-300"
             />
           </motion.div>
         )}
@@ -123,7 +183,7 @@ export default function App() {
               <DigitalWarp key="warp" onComplete={handleWarpComplete} />
             </div>
           ) : (
-            <Suspense fallback={<div className="min-h-screen bg-black" />}>
+            <Suspense fallback={<div className="min-h-screen bg-slate-50 dark:bg-black" />}>
               <motion.div
                 key="main-content"
                 initial={{ opacity: 0 }}
