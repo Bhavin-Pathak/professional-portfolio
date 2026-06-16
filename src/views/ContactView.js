@@ -77,19 +77,15 @@ export default function ContactView() {
             exit="exit"
             className="min-h-screen w-full bg-transparent overflow-hidden flex flex-col relative font-sans"
         >
-            <Helmet>
-                <title>Connect | Bhavin Pathak — Contact</title>
-                <meta name="description" content="Get in touch with Bhavin Pathak. Available for high-impact engineering projects, collaborations, and full-time opportunities. Reach out via LinkedIn, Email, or GitHub." />
-            </Helmet>
             {/* Background Grain Effect */}
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
 
             <Helmet>
                 <title>Connect | Bhavin Pathak — Contact Info</title>
-                <meta name="description" content="Get in touch with Bhavin Pathak for professional collaborations, project inquiries, and career opportunities." />
+                <meta name="description" content="Get in touch with Bhavin Pathak. Available for high-impact engineering projects, collaborations, and career opportunities. Reach out via LinkedIn, Email, or GitHub." />
                 <link rel="canonical" href="https://bhaviinpathak.online/contact" />
                 <meta property="og:title" content="Connect | Bhavin Pathak — Contact Info" />
-                <meta property="og:description" content="Get in touch with Bhavin Pathak for professional collaborations, project inquiries, and career opportunities." />
+                <meta property="og:description" content="Get in touch with Bhavin Pathak. Available for high-impact engineering projects, collaborations, and career opportunities." />
                 <meta property="og:type" content="website" />
                 <meta property="og:url" content="https://bhaviinpathak.online/contact" />
                 <meta property="og:image" content="https://bhaviinpathak.online/images/og-image.png" />
