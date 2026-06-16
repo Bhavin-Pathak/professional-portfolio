@@ -79,8 +79,8 @@ export default function AIChatbot() {
 
     const staticResponses = {
         "show me your ai projects": "Here are Bhavin's top **AI & Machine Learning** projects:\n- **YT AI Q&A**: A Python intelligence tool using LLMs to interactively answer questions based on YouTube video content.\n- **Clario**: An AI-powered writing assistant and editor.\n- **NuvoAI Integrations**: In his current SDE-1 role at Meril Life Sciences, Bhavin is responsible for deploying and integrating custom LLMs into medical diagnostic and administrative pipelines.",
-        "what is your current role?": "Bhavin is currently working as a **Software Development Engineer (SDE-1)** at **Meril Life Sciences Pvt. Ltd.** in Vapi, Gujarat (NuvoAI Department) since December 2024.\n\nHis primary stack there includes Node.js, React.js, AI/LLMs, Express.js, and PostgreSQL.",
-        "how can i contact you?": "You can connect with Bhavin Pathak via:\n- **Email**: [bhavinpathak29@gmail.com](mailto:bhavinpathak29@gmail.com)\n- **LinkedIn**: [bhavin-pathak](https://www.linkedin.com/in/bhavin-pathak/)\n- **GitHub**: [Bhavin-Pathak](https://github.com/Bhavin-Pathak)\n- **Phone**: +91 9428455515\n\nOr click on the **Connect** page in the main navigation grid!"
+        "what is your current role": "Bhavin is currently working as a **Software Development Engineer (SDE-1)** at **Meril Life Sciences Pvt. Ltd.** in Vapi, Gujarat (NuvoAI Department) since December 2024.\n\nHis primary stack there includes Node.js, React.js, AI/LLMs, Express.js, and PostgreSQL.",
+        "how can i contact you": "You can connect with Bhavin Pathak via:\n- **Email**: [bhavinpathak29@gmail.com](mailto:bhavinpathak29@gmail.com)\n- **LinkedIn**: [bhavin-pathak](https://www.linkedin.com/in/bhavin-pathak/)\n- **GitHub**: [Bhavin-Pathak](https://github.com/Bhavin-Pathak)\n- **Phone**: +91 9428455515\n\nOr click on the **Connect** page in the main navigation grid!"
     };
 
     const systemPrompt = `You are "Bhavin's AI Twin", a professional, polite, and highly capable AI assistant designed to represent Bhavin Pathak (a Full Stack Developer & AI Engineer).
