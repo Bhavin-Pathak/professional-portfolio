@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
 import { LiquidContainer } from "../components/LiquidContainer.js";
 import Header from "../components/Header.js";
 import blogData from "../static/blog-posts.json";
@@ -32,6 +33,11 @@ export default function BlogDetailView() {
             exit="exit"
             className="min-h-screen bg-transparent overflow-x-hidden flex flex-col"
         >
+            <Helmet>
+                <title>{post.title} | Bhavin Pathak</title>
+                <meta name="description" content={post.excerpt} />
+                <meta name="keywords" content={post.tags.join(", ")} />
+            </Helmet>
             {/* Global Header with Post Metadata */}
             <Header
                 title={post.title}

@@ -25,7 +25,7 @@ export default function NotFoundView() {
                     The page you&apos;re looking for has drifted off into the digital void.
                 </p>
                 <LiquidButton onClick={() => navigate("/")} className="px-8 py-3 rounded-full">
-                    Gound Control
+                    Ground Control
                 </LiquidButton>
             </motion.div>
         </div>

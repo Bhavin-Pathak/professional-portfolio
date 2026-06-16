@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
 import projectsData from "../static/my-projects.json";
 import { LiquidContainer } from "../components/LiquidContainer.js";
 import Header from "../components/Header.js";
@@ -17,6 +18,10 @@ export default function ProjectsView() {
             exit="exit"
             className="min-h-screen bg-transparent overflow-x-hidden flex flex-col"
         >
+            <Helmet>
+                <title>Works | Bhavin Pathak — Projects</title>
+                <meta name="description" content="A curated selection of Bhavin Pathak's projects: AI tools, React apps, iOS apps, Flutter, Node.js backends, and more." />
+            </Helmet>
             <Header title={projectsData.pageTitle} subtitle={projectsData.pageSubtitle} />
 
             <div className="max-w-7xl mx-auto px-4 md:px-8 pt-28 md:pt-36 pb-12 w-full flex-grow flex flex-col justify-center">

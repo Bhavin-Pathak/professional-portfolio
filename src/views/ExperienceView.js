@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
 import experienceData from "../static/work-experience.json";
 import { LiquidContainer } from "../components/LiquidContainer.js";
 import Header from "../components/Header.js";
@@ -16,6 +17,10 @@ export default function ExperienceView() {
             exit="exit"
             className="min-h-screen bg-transparent overflow-x-hidden flex flex-col"
         >
+            <Helmet>
+                <title>Experience | Bhavin Pathak — Work History</title>
+                <meta name="description" content="Bhavin Pathak's professional journey: SDE-1 at Meril, Mobile Developer at UB Softec, iOS Developer at RnD Technosoft, and Technical Specialist at Earth Infotech." />
+            </Helmet>
             <Header title={experienceData.pageTitle} subtitle={`${expText} • ${experienceData.pageSubtitle}`} />
             <div className="max-w-5xl mx-auto px-4 md:px-8 pt-28 md:pt-36 pb-12 w-full flex-grow flex flex-col justify-center">
                 <div className="space-y-8">

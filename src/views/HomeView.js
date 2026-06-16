@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { LiquidContainer } from "../components/LiquidContainer.js";
 import { User, Code, Briefcase, Cpu, Mail, Newspaper } from "lucide-react";
 import homeData from "../static/initial-home.json";
@@ -18,6 +19,10 @@ export default function HomeView() {
     ];
     return (
         <div className="flex-grow h-full flex items-center justify-center p-4">
+            <Helmet>
+                <title>Bhavin Pathak | Full Stack Developer &amp; AI Engineer</title>
+                <meta name="description" content="Bhavin Pathak — Full Stack Developer specializing in AI-driven solutions, React, Node.js, Flutter, and scalable enterprise software. SDE-1 at Meril Life Sciences." />
+            </Helmet>
             {/* Desktop: Max width increased for horizontal layout Mobile: Standard width */}
             <LiquidContainer className="w-full md:max-w-6xl p-6 md:p-12">
                 <h1 className="text-2xl md:text-5xl font-bold text-center mb-8 md:mb-12 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400">
