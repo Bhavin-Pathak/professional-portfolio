@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageSquare, X, Send, Sparkles, Settings, Key, RefreshCw } from "lucide-react";
+import { MessageSquare, X, Send, Sparkles, RefreshCw } from "lucide-react";
 import { LiquidContainer } from "./LiquidContainer.js";
 
 // Inline markdown parser to render clean structured outputs without heavy npm packages
@@ -68,11 +68,7 @@ export default function AIChatbot() {
     ]);
     const [input, setInput] = useState("");
     const [isTyping, setIsTyping] = useState(false);
-    const [apiKey, setApiKey] = useState(() => {
-        return process.env.REACT_APP_GEMINI_API_KEY || localStorage.getItem("GEMINI_API_KEY") || "";
-    });
-    const [showSettings, setShowSettings] = useState(false);
-    const [tempKey, setTempKey] = useState("");
+    const apiKey = process.env.REACT_APP_GEMINI_API_KEY || "";
 
     const chatEndRef = useRef(null);
 
@@ -131,7 +127,7 @@ STRICT INSTRUCTIONS:
                     ...prev,
                     {
                         role: "bot",
-                        text: "I am currently running in demo mode because a **Gemini API Key** is not set. You can click the **Settings Gear icon** at the top right to paste a free Gemini API key and chat with me live, or try one of the suggested prompts below!"
+                        text: "I am currently running in demo mode because the **Gemini API Key** is not configured. Please add the `REACT_APP_GEMINI_API_KEY` environment variable, or try one of the suggested prompts below!"
                     }
                 ]);
                 setIsTyping(false);
@@ -179,17 +175,7 @@ STRICT INSTRUCTIONS:
         }
     };
 
-    const handleSaveKey = () => {
-        const trimmed = tempKey.trim();
-        localStorage.setItem("GEMINI_API_KEY", trimmed);
-        setApiKey(trimmed);
-        setShowSettings(false);
-        setTempKey("");
-        setMessages(prev => [
-            ...prev,
-            { role: "bot", text: trimmed ? "🚀 **Gemini API Key configured successfully!** Ask me any question now." : "API Key cleared. Running in static mode." }
-        ]);
-    };
+
 
     return (
         <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
@@ -223,14 +209,6 @@ STRICT INSTRUCTIONS:
                                 <div className="flex items-center gap-2">
                                     <button
                                         type="button"
-                                        onClick={() => setShowSettings(!showSettings)}
-                                        aria-label="API Settings"
-                                        className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-400 dark:text-white/40 hover:text-gray-600 dark:hover:text-white transition-colors cursor-pointer"
-                                    >
-                                        <Settings className="w-4 h-4" />
-                                    </button>
-                                    <button
-                                        type="button"
                                         onClick={() => setIsOpen(false)}
                                         aria-label="Close chatbot"
                                         className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 text-gray-400 dark:text-white/40 hover:text-gray-600 dark:hover:text-white transition-colors cursor-pointer"
@@ -240,55 +218,7 @@ STRICT INSTRUCTIONS:
                                 </div>
                             </div>
 
-                            {/* Settings Panel Drawer */}
-                            <AnimatePresence>
-                                {showSettings && (
-                                    <motion.div
-                                        initial={{ height: 0, opacity: 0 }}
-                                        animate={{ height: "auto", opacity: 1 }}
-                                        exit={{ height: 0, opacity: 0 }}
-                                        className="bg-gray-50/90 dark:bg-slate-900/90 border-b border-gray-200/60 dark:border-white/10 overflow-hidden flex flex-col p-3 rounded-lg mt-2 gap-2 text-xs"
-                                    >
-                                        <div className="flex items-center gap-1.5 text-gray-600 dark:text-gray-300 font-medium">
-                                            <Key className="w-3.5 h-3.5 text-blue-500" />
-                                            Configure Gemini API Key
-                                        </div>
-                                        <p className="text-[10px] text-gray-500 dark:text-gray-400">
-                                            Keys are saved locally in your browser. If not set, the assistant handles specific static prompt categories.
-                                        </p>
-                                        <div className="flex gap-2">
-                                            <input
-                                                type="password"
-                                                placeholder={apiKey ? "••••••••••••••••" : "Paste Gemini API Key..."}
-                                                value={tempKey}
-                                                onChange={(e) => setTempKey(e.target.value)}
-                                                className="flex-grow px-2 py-1 bg-white dark:bg-black border border-gray-300 dark:border-white/10 rounded text-xs text-gray-800 dark:text-white focus:outline-none focus:border-blue-500"
-                                            />
-                                            <button
-                                                type="button"
-                                                onClick={handleSaveKey}
-                                                className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded text-xs cursor-pointer transition-colors"
-                                            >
-                                                Save
-                                            </button>
-                                        </div>
-                                        {apiKey && (
-                                            <button
-                                                type="button"
-                                                onClick={() => {
-                                                    localStorage.removeItem("GEMINI_API_KEY");
-                                                    setApiKey("");
-                                                    setMessages(prev => [...prev, { role: "bot", text: "API Key cleared." }]);
-                                                    setShowSettings(false);
-                                                }}
-                                                className="text-[10px] text-red-500 hover:underline self-start font-medium cursor-pointer"
-                                            >
-                                                Clear Saved Key
-                                            </button>
-                                        )}
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
+
 
                             {/* Chat Messages Log */}
                             <div className="flex-grow overflow-y-auto py-3 pr-1 flex flex-col gap-3 scrollbar-thin">
