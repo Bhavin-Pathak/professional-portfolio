@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
 import { LiquidContainer } from "../components/LiquidContainer.js";
 import Header from "../components/Header.js";
 import blogDataRaw from "../static/blog-posts.json";
@@ -21,6 +22,10 @@ export default function BlogView() {
             exit="exit"
             className="min-h-screen bg-transparent overflow-x-hidden flex flex-col"
         >
+            <Helmet>
+                <title>Developer Insights | Bhavin Pathak — Blog</title>
+                <meta name="description" content="Technical articles by Bhavin Pathak on AI, healthcare, React, Node.js, PostgreSQL, Kubernetes, TypeScript, and engineering best practices." />
+            </Helmet>
             <Header
                 title={blogData.pageTitle}
                 subtitle={blogData.pageSubtitle}

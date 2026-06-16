@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
+import { Helmet } from "react-helmet-async";
 import contactData from "../static/contact-me.json";
 import aboutData from "../static/about-me.json";
 import Header from "../components/Header.js";
@@ -76,6 +77,10 @@ export default function ContactView() {
             exit="exit"
             className="min-h-screen w-full bg-transparent overflow-hidden flex flex-col relative font-sans"
         >
+            <Helmet>
+                <title>Connect | Bhavin Pathak — Contact</title>
+                <meta name="description" content="Get in touch with Bhavin Pathak. Available for high-impact engineering projects, collaborations, and full-time opportunities. Reach out via LinkedIn, Email, or GitHub." />
+            </Helmet>
             {/* Background Grain Effect */}
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
 

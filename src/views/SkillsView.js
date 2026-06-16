@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
 import skillsData from "../static/technical-skills.json";
 import { LiquidContainer } from "../components/LiquidContainer.js";
 import Header from "../components/Header.js";
@@ -68,6 +69,10 @@ export default function SkillsView() {
             exit="exit"
             className="min-h-screen bg-transparent overflow-x-hidden flex flex-col"
         >
+            <Helmet>
+                <title>The Stack | Bhavin Pathak — Tech Skills</title>
+                <meta name="description" content="Explore Bhavin Pathak's technical skill set: Swift, Flutter, React, Node.js, PostgreSQL, Firebase, Docker, and more." />
+            </Helmet>
             <Header title={skillsData.pageTitle} subtitle={skillsData.pageSubtitle} />
             <div className="max-w-7xl mx-auto px-4 md:px-8 pt-28 md:pt-36 pb-12 w-full flex-grow flex flex-col justify-center">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">

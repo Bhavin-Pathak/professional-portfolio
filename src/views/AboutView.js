@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
 import aboutData from "../static/about-me.json";
 import { LiquidContainer } from "../components/LiquidContainer.js";
 import Header from "../components/Header.js";
@@ -13,6 +14,10 @@ export default function AboutView() {
             exit="exit"
             className="min-h-screen bg-transparent overflow-x-hidden flex flex-col"
         >
+            <Helmet>
+                <title>Identity | Bhavin Pathak — Full Stack Developer</title>
+                <meta name="description" content="Learn about Bhavin Pathak — Full Stack Developer specializing in AI, Node.js, React, and Flutter. SDE-1 at Meril Life Sciences, Vapi." />
+            </Helmet>
             <Header title={aboutData.title} subtitle={aboutData.subtitle} />
             <div className="max-w-7xl mx-auto w-full p-4 md:p-8 pt-28 md:pt-36 flex-grow flex items-center justify-center">
                 <LiquidContainer className="max-w-5xl w-full p-6 md:p-8">
