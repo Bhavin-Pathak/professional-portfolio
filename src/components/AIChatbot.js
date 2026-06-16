@@ -64,6 +64,18 @@ const formatResponseText = (text) => {
     });
 };
 
+// ── Random Suggestions Picker ────────────────────────────────────────────────
+// Picks `count` unique random suggestions from the pool each time
+function getRandomSuggestions(count = 3) {
+    const pool = [...chatbotData.suggestionsPool];
+    const picked = [];
+    while (picked.length < count && pool.length > 0) {
+        const idx = Math.floor(Math.random() * pool.length);
+        picked.push(pool.splice(idx, 1)[0]);
+    }
+    return picked;
+}
+
 // ── System Prompt Builder ──────────────────────────────────────────────────────
 // Builds the full system prompt dynamically from all JSON data files.
 // Update any JSON file → AI knowledge updates automatically — no code change needed.
@@ -165,8 +177,8 @@ export default function AIChatbot() {
     // Build system prompt once from all JSON sources
     const systemPrompt = useMemo(() => buildSystemPrompt(), []);
 
-    // Default suggestions from JSON
-    const [suggestions, setSuggestions] = useState(chatbotData.defaultSuggestions);
+    // Random suggestions — pick 3 from pool on every mount/open
+    const [suggestions, setSuggestions] = useState(() => getRandomSuggestions(3));
 
     // Auto-scroll to bottom as text streams
     useEffect(() => {
@@ -306,8 +318,8 @@ export default function AIChatbot() {
                 setMessages(prev => [...prev, { role: "bot", text: "Sorry, I couldn't generate a response. Please try again." }]);
             }
 
-            // Parse final suggestions from AI response
-            let finalSuggestions = chatbotData.defaultSuggestions;
+            // Parse final suggestions from AI response; fallback to random pool picks
+            let finalSuggestions = getRandomSuggestions(3);
             const sugMarkersFinal = ["[Suggestions]", "[suggestions]", "Suggestions:", "SUGGESTIONS:"];
             for (const marker of sugMarkersFinal) {
                 const idx = accumulatedText.indexOf(marker);

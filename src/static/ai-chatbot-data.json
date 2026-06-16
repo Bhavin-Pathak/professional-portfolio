@@ -1,8 +1,29 @@
 {
-    "defaultSuggestions": [
+    "suggestionsPool": [
         "What is Bhavin's primary tech stack?",
         "What projects did Bhavin build at Meril Life Sciences?",
-        "Is Bhavin open to freelance or full-time roles?"
+        "Is Bhavin open to freelance or full-time roles?",
+        "What mobile apps has Bhavin published?",
+        "What databases does Bhavin work with?",
+        "What AI/LLM projects has Bhavin worked on?",
+        "How many years of experience does Bhavin have?",
+        "What is Bhavin's current job role?",
+        "Has Bhavin worked with Flutter?",
+        "What blogs has Bhavin written?",
+        "What DevOps tools does Bhavin know?",
+        "What is Bhavin's educational background?",
+        "What is Bhavin's most impressive project?",
+        "Has Bhavin worked on iOS apps?",
+        "What is Bhavin's LeetCode profile?",
+        "How can I contact Bhavin?",
+        "What is Bhavin's experience with Node.js?",
+        "What companies has Bhavin worked at?",
+        "Does Bhavin have experience with CI/CD pipelines?",
+        "What is Bhavin's experience with React.js?",
+        "Has Bhavin built any AI-powered web apps?",
+        "What is Bhavin's experience with Docker?",
+        "What programming languages does Bhavin know?",
+        "What is Bhavin's portfolio website?"
     ],
     "personalInfo": {
         "fullName": "Bhavin Pathak",
