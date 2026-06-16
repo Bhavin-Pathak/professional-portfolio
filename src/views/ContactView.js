@@ -39,7 +39,7 @@ export default function ContactView() {
             href: aboutData.social.linkedin,
             label: "LinkedIn",
             value: "Connect with me",
-            color: "text-blue-400",
+            color: "text-blue-600 dark:text-blue-400",
             external: true
         },
         {
@@ -47,7 +47,7 @@ export default function ContactView() {
             href: "mailto:" + aboutData.social.email,
             label: "Email",
             value: aboutData.social.email,
-            color: "text-red-400",
+            color: "text-red-600 dark:text-red-400",
             copyable: true
         },
         {
@@ -55,7 +55,7 @@ export default function ContactView() {
             href: aboutData.social.github,
             label: "GitHub",
             value: "Explore repositories",
-            color: "text-white",
+            color: "text-slate-800 dark:text-white",
             external: true
         },
         {
@@ -63,7 +63,7 @@ export default function ContactView() {
             href: "tel:" + aboutData.social.phone,
             label: "Phone",
             value: aboutData.social.phone,
-            color: "text-green-400",
+            color: "text-emerald-600 dark:text-green-400",
             copyable: true
         },
     ];
@@ -87,7 +87,7 @@ export default function ContactView() {
                     {/* Reverted Header Section */}
                     <div className="text-center mb-10 relative">
                         <div className="flex items-center justify-center gap-3 relative inline-flex">
-                            <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-white m-0">
+                            <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-slate-900 dark:text-white m-0">
                                 Get in touch
                             </h1>
 
@@ -148,16 +148,16 @@ export default function ContactView() {
                                 whileHover={{ y: -2 }}
                                 className="group relative"
                             >
-                                <div className="flex items-center justify-between p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-white/10 hover:bg-white/[0.05] transition-all duration-300">
+                                <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-900/[0.03] dark:bg-white/[0.03] border border-slate-900/5 dark:border-white/5 hover:border-slate-900/10 dark:hover:border-white/10 hover:bg-slate-900/[0.05] dark:hover:bg-white/[0.05] transition-all duration-300">
                                     <div className="flex items-center gap-3 text-left">
-                                        <div className={`p-2.5 rounded-xl bg-white/5 ${item.color} transition-transform duration-300`}>
+                                        <div className={`p-2.5 rounded-xl bg-slate-900/5 dark:bg-white/5 ${item.color} transition-transform duration-300`}>
                                             <item.icon size={18} />
                                         </div>
                                         <div className="flex flex-col">
-                                            <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest leading-none mb-1 opacity-60">
+                                            <span className="text-[9px] font-bold text-slate-500 dark:text-gray-400 uppercase tracking-widest leading-none mb-1 opacity-60">
                                                 {item.label}
                                             </span>
-                                            <span className="text-xs font-semibold text-white tracking-tight">
+                                            <span className="text-xs font-semibold text-slate-900 dark:text-white tracking-tight">
                                                 {item.value}
                                             </span>
                                         </div>
@@ -167,7 +167,7 @@ export default function ContactView() {
                                         {item.copyable && (
                                             <button
                                                 onClick={() => handleCopy(item.value, item.label)}
-                                                className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all active:scale-90"
+                                                className="p-2 rounded-lg bg-slate-900/5 dark:bg-white/5 hover:bg-slate-900/10 dark:hover:bg-white/10 text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white transition-all active:scale-90"
                                             >
                                                 {copied === item.label ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
                                             </button>
@@ -176,7 +176,7 @@ export default function ContactView() {
                                             href={item.href}
                                             target={item.external ? "_blank" : "_self"}
                                             rel="noopener noreferrer"
-                                            className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all active:scale-90"
+                                            className="p-2 rounded-lg bg-slate-900/5 dark:bg-white/5 hover:bg-slate-900/10 dark:hover:bg-white/10 text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white transition-all active:scale-90"
                                         >
                                             <ExternalLink size={14} />
                                         </a>

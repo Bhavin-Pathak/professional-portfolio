@@ -56,10 +56,10 @@ export default function BlogDetailView() {
                         >
                             {post.category}
                         </motion.div>
-                        <h1 className="text-3xl md:text-5xl font-black text-white leading-[1.1] tracking-tight mb-8">
+                        <h1 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white leading-[1.1] tracking-tight mb-8">
                             {post.title}
                         </h1>
-                        <p className="text-lg md:text-xl text-gray-400 font-medium leading-relaxed max-w-2xl mx-auto italic">
+                        <p className="text-lg md:text-xl text-slate-600 dark:text-gray-400 font-medium leading-relaxed max-w-2xl mx-auto italic">
                             &ldquo;{post.excerpt}&rdquo;
                         </p>
                     </div>
@@ -67,13 +67,13 @@ export default function BlogDetailView() {
                     {/* Article Content */}
                     <LiquidContainer className="p-8 md:p-16 mb-12 shadow-2xl relative overflow-hidden">
                         {/* Decorative Background Icon */}
-                        <Quote className="absolute top-10 right-10 w-32 h-32 text-white/5 pointer-events-none" />
+                        <Quote className="absolute top-10 right-10 w-32 h-32 text-slate-900/5 dark:text-white/5 pointer-events-none" />
 
-                        <article className="prose prose-invert prose-lg max-w-none relative z-10">
+                        <article className="prose dark:prose-invert prose-lg max-w-none relative z-10">
                             {post.content.split('\n\n').map((paragraph, i) => {
                                 if (paragraph.startsWith('###')) {
                                     return (
-                                        <h2 key={i} className="text-xl md:text-2xl font-bold text-white mt-12 mb-6 flex items-center gap-3">
+                                        <h2 key={i} className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white mt-12 mb-6 flex items-center gap-3">
                                             <span className="w-1 h-6 bg-blue-500 rounded-full" />
                                             {paragraph.replace('### ', '')}
                                         </h2>
@@ -81,7 +81,7 @@ export default function BlogDetailView() {
                                 }
                                 if (paragraph.match(/^\d\./)) {
                                     return (
-                                        <div key={i} className="my-8 p-6 rounded-2xl bg-white/5 border-l-4 border-blue-500/50 text-gray-200 leading-relaxed text-base md:text-lg font-semibold space-y-4 shadow-inner">
+                                        <div key={i} className="my-8 p-6 rounded-2xl bg-slate-900/5 dark:bg-white/5 border-l-4 border-blue-500/50 text-slate-800 dark:text-gray-200 leading-relaxed text-base md:text-lg font-semibold space-y-4 shadow-inner">
                                             {paragraph.split('\n').map((line, li) => (
                                                 <div key={li} className="flex gap-3">
                                                     <span className="text-blue-400 font-black">{line.split('.')[0]}.</span>
@@ -92,7 +92,7 @@ export default function BlogDetailView() {
                                     );
                                 }
                                 return (
-                                    <p key={i} className="text-gray-300 text-base md:text-lg leading-relaxed mb-8 font-medium opacity-90 first-letter:text-3xl first-letter:font-bold first-letter:text-blue-400 first-letter:mr-1">
+                                    <p key={i} className="text-slate-800 dark:text-gray-300 text-base md:text-lg leading-relaxed mb-8 font-medium opacity-90 first-letter:text-3xl first-letter:font-bold first-letter:text-blue-400 first-letter:mr-1">
                                         {paragraph}
                                     </p>
                                 );
@@ -101,10 +101,10 @@ export default function BlogDetailView() {
                     </LiquidContainer>
 
                     {/* Footer / Interaction */}
-                    <div className="flex flex-col md:flex-row items-center justify-between gap-8 mt-16 pt-8 border-t border-white/10">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-8 mt-16 pt-8 border-t border-slate-900/10 dark:border-white/10">
                         <div className="flex flex-wrap gap-2 justify-center md:justify-start">
                             {post.tags.map((tag, i) => (
-                                <span key={i} className="flex items-center gap-2 text-[10px] font-black px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-gray-400 uppercase tracking-widest hover:text-white hover:border-blue-500/50 transition-all cursor-default">
+                                <span key={i} className="flex items-center gap-2 text-[10px] font-black px-4 py-2 rounded-xl bg-slate-900/5 dark:bg-white/5 border border-slate-900/10 dark:border-white/10 text-slate-500 dark:text-gray-400 uppercase tracking-widest hover:text-slate-900 dark:hover:text-white hover:border-blue-500/50 transition-all cursor-default">
                                     <Tag className="w-3 h-3 text-blue-500" /> {tag}
                                 </span>
                             ))}
@@ -119,7 +119,7 @@ export default function BlogDetailView() {
                                     alert("Article link copied to clipboard!");
                                 }
                             }}
-                            className="flex items-center gap-3 px-5 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-sm font-bold hover:bg-white/10 transition-all group"
+                            className="flex items-center gap-3 px-5 py-2.5 rounded-xl bg-slate-900/5 dark:bg-white/5 border border-slate-900/10 dark:border-white/10 text-slate-800 dark:text-white text-sm font-bold hover:bg-slate-900/10 dark:hover:bg-white/10 transition-all group"
                         >
                             <Share2 className="w-4 h-4 group-hover:rotate-12 transition-transform" /> Share Story
                         </button>
