@@ -21,6 +21,13 @@ export default function ProjectsView() {
             <Helmet>
                 <title>Works | Bhavin Pathak — Projects</title>
                 <meta name="description" content="A curated selection of Bhavin Pathak's projects: AI tools, React apps, iOS apps, Flutter, Node.js backends, and more." />
+                <link rel="canonical" href="https://bhavinpathak.dev/projects" />
+                <meta property="og:title" content="Works | Bhavin Pathak — Projects" />
+                <meta property="og:description" content="A curated selection of Bhavin Pathak's projects: AI tools, React apps, iOS apps, Flutter, Node.js backends, and more." />
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://bhavinpathak.dev/projects" />
+                <meta property="og:image" content="https://bhavinpathak.dev/images/og-image.png" />
+                <meta name="twitter:card" content="summary_large_image" />
             </Helmet>
             <Header title={projectsData.pageTitle} subtitle={projectsData.pageSubtitle} />
 

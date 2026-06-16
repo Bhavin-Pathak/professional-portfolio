@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://bhavinpathak.dev/sitemap.xml

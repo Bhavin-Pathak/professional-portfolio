@@ -5,6 +5,7 @@ import Header from "../components/Header.js";
 import { Linkedin, Github, Mail, Phone, ExternalLink, Copy, Check } from "lucide-react";
 import { pageVariants } from "../utils/animations.js";
 import { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 
 
 export default function ContactView() {
@@ -78,6 +79,18 @@ export default function ContactView() {
         >
             {/* Background Grain Effect */}
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+
+            <Helmet>
+                <title>Connect | Bhavin Pathak — Contact Info</title>
+                <meta name="description" content="Get in touch with Bhavin Pathak for professional collaborations, project inquiries, and career opportunities." />
+                <link rel="canonical" href="https://bhavinpathak.dev/contact" />
+                <meta property="og:title" content="Connect | Bhavin Pathak — Contact Info" />
+                <meta property="og:description" content="Get in touch with Bhavin Pathak for professional collaborations, project inquiries, and career opportunities." />
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://bhavinpathak.dev/contact" />
+                <meta property="og:image" content="https://bhavinpathak.dev/images/og-image.png" />
+                <meta name="twitter:card" content="summary_large_image" />
+            </Helmet>
 
             <Header title={contactData.title} subtitle={contactData.subtitle} />
 

@@ -25,6 +25,13 @@ export default function BlogView() {
             <Helmet>
                 <title>Developer Insights | Bhavin Pathak — Blog</title>
                 <meta name="description" content="Technical articles by Bhavin Pathak on AI, healthcare, React, Node.js, PostgreSQL, Kubernetes, TypeScript, and engineering best practices." />
+                <link rel="canonical" href="https://bhavinpathak.dev/blog" />
+                <meta property="og:title" content="Developer Insights | Bhavin Pathak — Blog" />
+                <meta property="og:description" content="Technical articles by Bhavin Pathak on AI, healthcare, React, Node.js, PostgreSQL, Kubernetes, TypeScript, and engineering best practices." />
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://bhavinpathak.dev/blog" />
+                <meta property="og:image" content="https://bhavinpathak.dev/images/og-image.png" />
+                <meta name="twitter:card" content="summary_large_image" />
             </Helmet>
             <Header
                 title={blogData.pageTitle}

@@ -4,6 +4,8 @@ import { LiquidContainer } from "../components/LiquidContainer.js";
 import Header from "../components/Header.js";
 import { Linkedin, Github, Code, DownloadCloud } from "lucide-react";
 import { pageVariants } from "../utils/animations.js";
+import { Helmet } from "react-helmet-async";
+
 export default function AboutView() {
     return (
         <motion.div
@@ -13,6 +15,17 @@ export default function AboutView() {
             exit="exit"
             className="min-h-screen bg-transparent overflow-x-hidden flex flex-col"
         >
+            <Helmet>
+                <title>Identity | Bhavin Pathak — About Me</title>
+                <meta name="description" content="Learn more about Bhavin Pathak, a Full Stack Developer and SDE-1 specializing in React, Node.js, and AI solutions." />
+                <link rel="canonical" href="https://bhavinpathak.dev/about" />
+                <meta property="og:title" content="Identity | Bhavin Pathak — About Me" />
+                <meta property="og:description" content="Learn more about Bhavin Pathak, a Full Stack Developer and SDE-1 specializing in React, Node.js, and AI solutions." />
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://bhavinpathak.dev/about" />
+                <meta property="og:image" content="https://bhavinpathak.dev/images/og-image.png" />
+                <meta name="twitter:card" content="summary_large_image" />
+            </Helmet>
             <Header title={aboutData.title} subtitle={aboutData.subtitle} />
             <div className="max-w-7xl mx-auto w-full p-4 md:p-8 pt-28 md:pt-36 flex-grow flex items-center justify-center">
                 <LiquidContainer className="max-w-5xl w-full p-6 md:p-8">

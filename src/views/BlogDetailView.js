@@ -6,6 +6,7 @@ import Header from "../components/Header.js";
 import blogData from "../static/blog-posts.json";
 import { Tag, Quote, Share2 } from "lucide-react";
 import { pageVariants } from "../utils/animations.js";
+import { Helmet } from "react-helmet-async";
 
 
 export default function BlogDetailView() {
@@ -32,6 +33,17 @@ export default function BlogDetailView() {
             exit="exit"
             className="min-h-screen bg-transparent overflow-x-hidden flex flex-col"
         >
+            <Helmet>
+                <title>{`${post.title} | Bhavin Pathak — Blog`}</title>
+                <meta name="description" content={post.excerpt} />
+                <link rel="canonical" href={`https://bhavinpathak.dev/blog/${post.id}`} />
+                <meta property="og:title" content={`${post.title} | Bhavin Pathak — Blog`} />
+                <meta property="og:description" content={post.excerpt} />
+                <meta property="og:type" content="article" />
+                <meta property="og:url" content={`https://bhavinpathak.dev/blog/${post.id}`} />
+                <meta property="og:image" content="https://bhavinpathak.dev/images/og-image.png" />
+                <meta name="twitter:card" content="summary_large_image" />
+            </Helmet>
             {/* Global Header with Post Metadata */}
             <Header
                 title={post.title}
