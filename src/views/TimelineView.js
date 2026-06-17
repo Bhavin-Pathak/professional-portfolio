@@ -11,10 +11,9 @@ export default function TimelineView() {
     const [loading, setLoading] = useState(true);
     const [githubEvents, setGithubEvents] = useState([]);
     const [githubStats, setGithubStats] = useState({
+        avatarUrl: "https://avatars.githubusercontent.com/u/105209903?v=4",
         publicRepos: "--",
-        followers: "--",
-        recentCommits: "--",
-        recentPRs: "--"
+        followers: "--"
     });
     const [leetcodeData, setLeetcodeData] = useState(null);
     const [error, setError] = useState(false);
@@ -84,24 +83,10 @@ export default function TimelineView() {
 
             const [ghData, ghProfileData, lcData] = await Promise.all([ghPromise, ghProfilePromise, lcPromise]);
 
-            // Calculate Github stats
-            let commitCount = 0;
-            let prCount = 0;
-            if (Array.isArray(ghData)) {
-                ghData.forEach(event => {
-                    if (event.type === "PushEvent") {
-                        commitCount += event.payload?.commits?.length || 0;
-                    } else if (event.type === "PullRequestEvent") {
-                        prCount += 1;
-                    }
-                });
-            }
-
             setGithubStats({
+                avatarUrl: ghProfileData?.avatar_url ?? "https://avatars.githubusercontent.com/u/105209903?v=4",
                 publicRepos: ghProfileData?.public_repos ?? "--",
-                followers: ghProfileData?.followers ?? "--",
-                recentCommits: commitCount,
-                recentPRs: prCount
+                followers: ghProfileData?.followers ?? "--"
             });
 
             // Format GitHub Events into Timeline Items
@@ -272,26 +257,70 @@ export default function TimelineView() {
                                 transition={{ duration: 0.3 }}
                                 className="grid grid-cols-2 md:grid-cols-4 gap-3 w-full"
                             >
-                                {[
-                                    { label: "Public Repos", value: githubStats.publicRepos, color: "text-indigo-500 dark:text-indigo-400" },
-                                    { label: "Recent Commits", value: githubStats.recentCommits, color: "text-pink-500 dark:text-pink-400" },
-                                    { label: "Active PRs", value: githubStats.recentPRs, color: "text-cyan-500 dark:text-cyan-400" },
-                                    { label: "Followers", value: githubStats.followers, color: "text-violet-500 dark:text-violet-400" }
-                                ].map(stat => (
-                                    <LiquidContainer
-                                        key={`${stat.label}-${githubStats ? "loaded" : "loading"}`}
-                                        className="p-5 border border-gray-200/80 dark:border-white/10 min-h-[105px]"
-                                    >
-                                        <div className="flex flex-col items-center justify-center text-center gap-1.5 h-full w-full">
-                                            <span className={`text-3xl md:text-4xl font-black ${stat.color} leading-none tabular-nums ${loading ? "animate-pulse opacity-70" : ""}`}>
-                                                {stat.value}
-                                            </span>
-                                            <span className="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider leading-none">
-                                                {stat.label}
-                                            </span>
-                                        </div>
-                                    </LiquidContainer>
-                                ))}
+                                {/* Card 1: Avatar Profile */}
+                                <LiquidContainer
+                                    key={`avatar-${githubStats ? "loaded" : "loading"}`}
+                                    className="p-4 border border-gray-200/80 dark:border-white/10 min-h-[105px]"
+                                >
+                                    <div className="flex flex-col items-center justify-center text-center gap-1 h-full w-full">
+                                        <img
+                                            src={githubStats.avatarUrl}
+                                            alt="Bhavin Pathak"
+                                            className="w-11 h-11 rounded-full border-2 border-indigo-500 shadow-sm object-cover"
+                                        />
+                                        <span className="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider leading-none mt-1">
+                                            Bhavin-Pathak
+                                        </span>
+                                    </div>
+                                </LiquidContainer>
+
+                                {/* Card 2: Public Repos */}
+                                <LiquidContainer
+                                    key={`repos-${githubStats ? "loaded" : "loading"}`}
+                                    className="p-5 border border-gray-200/80 dark:border-white/10 min-h-[105px]"
+                                >
+                                    <div className="flex flex-col items-center justify-center text-center gap-1.5 h-full w-full">
+                                        <span className="text-3xl md:text-4xl font-black text-indigo-500 dark:text-indigo-400 leading-none tabular-nums">
+                                            {githubStats.publicRepos}
+                                        </span>
+                                        <span className="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider leading-none">
+                                            Public Repos
+                                        </span>
+                                    </div>
+                                </LiquidContainer>
+
+                                {/* Card 3: Followers */}
+                                <LiquidContainer
+                                    key={`followers-${githubStats ? "loaded" : "loading"}`}
+                                    className="p-5 border border-gray-200/80 dark:border-white/10 min-h-[105px]"
+                                >
+                                    <div className="flex flex-col items-center justify-center text-center gap-1.5 h-full w-full">
+                                        <span className="text-3xl md:text-4xl font-black text-violet-500 dark:text-violet-400 leading-none tabular-nums">
+                                            {githubStats.followers}
+                                        </span>
+                                        <span className="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider leading-none">
+                                            Followers
+                                        </span>
+                                    </div>
+                                </LiquidContainer>
+
+                                {/* Card 4: Follow Button */}
+                                <LiquidContainer
+                                    key="follow-button"
+                                    className="p-4 border border-gray-200/80 dark:border-white/10 min-h-[105px]"
+                                >
+                                    <div className="flex flex-col items-center justify-center text-center h-full w-full">
+                                        <a
+                                            href="https://github.com/Bhavin-Pathak"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="w-full py-2.5 px-4 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs md:text-sm shadow-md transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer"
+                                        >
+                                            <Github className="w-3.5 h-3.5" />
+                                            Follow
+                                        </a>
+                                    </div>
+                                </LiquidContainer>
                             </motion.div>
                         )}
 
