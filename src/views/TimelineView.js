@@ -7,9 +7,15 @@ import { Github, Code, Briefcase, Award, Calendar, ExternalLink, RefreshCw, Laye
 import { pageVariants } from "../utils/animations.js";
 
 export default function TimelineView() {
-    const [filter, setFilter] = useState("github");
+    const [filter, setFilter] = useState("milestones");
     const [loading, setLoading] = useState(true);
     const [githubEvents, setGithubEvents] = useState([]);
+    const [githubStats, setGithubStats] = useState({
+        publicRepos: 25,
+        followers: 5,
+        recentCommits: 15,
+        recentPRs: 2
+    });
     const [leetcodeData, setLeetcodeData] = useState(null);
     const [error, setError] = useState(false);
 
@@ -66,12 +72,37 @@ export default function TimelineView() {
                 .then(res => (res.ok ? res.json() : []))
                 .catch(() => []);
 
+            // Fetch GitHub public profile details
+            const ghProfilePromise = fetch("https://api.github.com/users/Bhavin-Pathak")
+                .then(res => (res.ok ? res.json() : null))
+                .catch(() => null);
+
             // Fetch LeetCode status
             const lcPromise = fetch("https://leetcode-api-faisalshohag.vercel.app/bhavinpathak8729/")
                 .then(res => (res.ok ? res.json() : null))
                 .catch(() => null);
 
-            const [ghData, lcData] = await Promise.all([ghPromise, lcPromise]);
+            const [ghData, ghProfileData, lcData] = await Promise.all([ghPromise, ghProfilePromise, lcPromise]);
+
+            // Calculate Github stats
+            let commitCount = 0;
+            let prCount = 0;
+            if (Array.isArray(ghData)) {
+                ghData.forEach(event => {
+                    if (event.type === "PushEvent") {
+                        commitCount += event.payload?.commits?.length || 0;
+                    } else if (event.type === "PullRequestEvent") {
+                        prCount += 1;
+                    }
+                });
+            }
+
+            setGithubStats({
+                publicRepos: ghProfileData?.public_repos ?? 25,
+                followers: ghProfileData?.followers ?? 5,
+                recentCommits: commitCount || 15,
+                recentPRs: prCount || 2
+            });
 
             // Format GitHub Events into Timeline Items
             const parsedGH = Array.isArray(ghData) ? ghData.slice(0, 15).map(event => {
@@ -197,25 +228,105 @@ export default function TimelineView() {
                     </div>
                 )}
 
-                {/* LeetCode Stats Row — always visible with fallback numbers */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 w-full">
-                    {[
-                        { label: "LeetCode Solved", value: leetcodeData?.totalSolved ?? 49, color: "text-blue-500 dark:text-blue-400", size: "text-3xl md:text-4xl font-black" },
-                        { label: "Easy", value: leetcodeData?.easySolved ?? 14, color: "text-green-500 dark:text-green-400", size: "text-xl md:text-2xl font-extrabold" },
-                        { label: "Medium", value: leetcodeData?.mediumSolved ?? 29, color: "text-yellow-500 dark:text-yellow-400", size: "text-xl md:text-2xl font-extrabold" },
-                        { label: "Hard", value: leetcodeData?.hardSolved ?? 6, color: "text-red-500 dark:text-red-400", size: "text-xl md:text-2xl font-extrabold" }
-                    ].map(stat => (
-                        <LiquidContainer key={`${stat.label}-${leetcodeData ? "loaded" : "loading"}`} className="p-4 flex flex-row items-center justify-start gap-3">
-                            <span className={`${stat.size} ${stat.color} leading-none tabular-nums ${loading ? "animate-pulse opacity-70" : ""}`}>{stat.value}</span>
-                            <span className="text-[11px] text-gray-500 dark:text-gray-400 font-medium leading-tight">{stat.label}</span>
-                        </LiquidContainer>
-                    ))}
+                {/* Dynamic Stats Row based on active filter */}
+                <div className="w-full">
+                    <AnimatePresence mode="wait">
+                        {filter === "leetcode" && (
+                            <motion.div
+                                key="leetcode-stats"
+                                initial={{ opacity: 0, y: 15 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -15 }}
+                                transition={{ duration: 0.3 }}
+                                className="grid grid-cols-2 md:grid-cols-4 gap-3 w-full"
+                            >
+                                {[
+                                    { label: "Total Solved", value: leetcodeData?.totalSolved ?? 49, color: "text-blue-500 dark:text-blue-400" },
+                                    { label: "Easy Solved", value: leetcodeData?.easySolved ?? 14, color: "text-green-500 dark:text-green-400" },
+                                    { label: "Medium Solved", value: leetcodeData?.mediumSolved ?? 29, color: "text-yellow-500 dark:text-yellow-400" },
+                                    { label: "Hard Solved", value: leetcodeData?.hardSolved ?? 6, color: "text-red-500 dark:text-red-400" }
+                                ].map(stat => (
+                                    <LiquidContainer
+                                        key={`${stat.label}-${leetcodeData ? "loaded" : "loading"}`}
+                                        className="p-5 flex flex-col items-center justify-center text-center gap-1.5 border border-gray-200/80 dark:border-white/10 min-h-[105px]"
+                                    >
+                                        <span className={`text-3xl md:text-4xl font-black ${stat.color} leading-none tabular-nums ${loading ? "animate-pulse opacity-70" : ""}`}>
+                                            {stat.value}
+                                        </span>
+                                        <span className="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider leading-none">
+                                            {stat.label}
+                                        </span>
+                                    </LiquidContainer>
+                                ))}
+                            </motion.div>
+                        )}
+
+                        {filter === "github" && (
+                            <motion.div
+                                key="github-stats"
+                                initial={{ opacity: 0, y: 15 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -15 }}
+                                transition={{ duration: 0.3 }}
+                                className="grid grid-cols-2 md:grid-cols-4 gap-3 w-full"
+                            >
+                                {[
+                                    { label: "Public Repos", value: githubStats.publicRepos, color: "text-indigo-500 dark:text-indigo-400" },
+                                    { label: "Recent Commits", value: githubStats.recentCommits, color: "text-pink-500 dark:text-pink-400" },
+                                    { label: "Active PRs", value: githubStats.recentPRs, color: "text-cyan-500 dark:text-cyan-400" },
+                                    { label: "Followers", value: githubStats.followers, color: "text-violet-500 dark:text-violet-400" }
+                                ].map(stat => (
+                                    <LiquidContainer
+                                        key={`${stat.label}-${githubStats ? "loaded" : "loading"}`}
+                                        className="p-5 flex flex-col items-center justify-center text-center gap-1.5 border border-gray-200/80 dark:border-white/10 min-h-[105px]"
+                                    >
+                                        <span className={`text-3xl md:text-4xl font-black ${stat.color} leading-none tabular-nums ${loading ? "animate-pulse opacity-70" : ""}`}>
+                                            {stat.value}
+                                        </span>
+                                        <span className="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider leading-none">
+                                            {stat.label}
+                                        </span>
+                                    </LiquidContainer>
+                                ))}
+                            </motion.div>
+                        )}
+
+                        {filter === "milestones" && (
+                            <motion.div
+                                key="milestones-stats"
+                                initial={{ opacity: 0, y: 15 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -15 }}
+                                transition={{ duration: 0.3 }}
+                                className="grid grid-cols-2 md:grid-cols-4 gap-3 w-full"
+                            >
+                                {[
+                                    { label: "Experience", value: "3+ Yrs", color: "text-amber-500 dark:text-amber-400" },
+                                    { label: "Tech Roles", value: "4 Roles", color: "text-emerald-500 dark:text-emerald-400" },
+                                    { label: "Featured Projects", value: "15+", color: "text-orange-500 dark:text-orange-400" },
+                                    { label: "Key Milestones", value: "4 Major", color: "text-rose-500 dark:text-rose-400" }
+                                ].map(stat => (
+                                    <LiquidContainer
+                                        key={stat.label}
+                                        className="p-5 flex flex-col items-center justify-center text-center gap-1.5 border border-gray-200/80 dark:border-white/10 min-h-[105px]"
+                                    >
+                                        <span className={`text-2xl md:text-3xl font-black ${stat.color} leading-none`}>
+                                            {stat.value}
+                                        </span>
+                                        <span className="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider leading-none">
+                                            {stat.label}
+                                        </span>
+                                    </LiquidContainer>
+                                ))}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
 
                 {/* Filter & Refresh Controls */}
                 <div className="flex flex-wrap items-center justify-between gap-4 w-full">
                     <div className="flex gap-2">
-                        {["github", "leetcode", "milestones"].map(t => (
+                        {["milestones", "leetcode", "github"].map(t => (
                             <button
                                 key={t}
                                 onClick={() => setFilter(t)}
