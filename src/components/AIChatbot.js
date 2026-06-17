@@ -12,11 +12,16 @@ import {
 // ── Welcome message streams in character by character ─────────────────────────
 const WELCOME_TEXT = "Hi! I'm **Bhavin's Neural Twin** — ask me anything about Bhavin's skills, projects, work experience, or availability!";
 
-function useTypewriter(text, speed = 18) {
+function useTypewriter(text, speed = 18, trigger = true) {
     const [displayed, setDisplayed] = useState("");
     const [done, setDone] = useState(false);
 
     useEffect(() => {
+        if (!trigger) {
+            setDisplayed("");
+            setDone(false);
+            return;
+        }
         setDisplayed("");
         setDone(false);
         let i = 0;
@@ -29,7 +34,7 @@ function useTypewriter(text, speed = 18) {
             }
         }, speed);
         return () => clearInterval(timer);
-    }, [text, speed]);
+    }, [text, speed, trigger]);
 
     return { displayed, done };
 }
@@ -43,17 +48,28 @@ export default function AIChatbot() {
     const [isTyping, setIsTyping] = useState(false);
     const [isWaiting, setIsWaiting] = useState(false);
     const [suggestions, setSuggestions] = useState(() => getRandomSuggestions(3));
+    const [showPopup, setShowPopup] = useState(true);
+    const [status, setStatus] = useState("online"); // online, warning, offline
+    const [requestTimes, setRequestTimes] = useState([]);
     const apiKey = process.env.REACT_APP_GEMINI_API_KEY || "";
     const chatLogRef = useRef(null);
 
     // Build system prompt once (memoized)
     const systemPrompt = useMemo(() => buildSystemPrompt(), []);
 
-    // Typewriter for welcome message
+    // Typewriter for welcome message (only triggers when open)
     const { displayed: welcomeText, done: welcomeDone } = useTypewriter(
         WELCOME_TEXT,
-        16
+        16,
+        isOpen
     );
+
+    // Dismiss welcome speech bubble popup when chatbot opens
+    useEffect(() => {
+        if (isOpen) {
+            setShowPopup(false);
+        }
+    }, [isOpen]);
 
     // Mount guard — prevents chat panel flash on initial render
     useEffect(() => {
@@ -86,8 +102,20 @@ export default function AIChatbot() {
         setIsTyping(true);
         setIsWaiting(true);
 
-        // No API key — demo mode
+        // Track request rate limits (Gemini Free tier is 15 RPM)
+        const now = Date.now();
+        const recent = [...requestTimes, now].filter(t => now - t < 60000);
+        setRequestTimes(recent);
+
+        if (recent.length >= 8) {
+            setStatus("warning"); // Limit warning
+        } else {
+            setStatus("online");
+        }
+
+        // No API key — demo mode / offline
         if (!apiKey) {
+            setStatus("offline");
             setTimeout(() => {
                 setMessages(prev => [
                     ...prev,
@@ -120,11 +148,13 @@ export default function AIChatbot() {
                 let errorMsg = "Something went wrong on my end. Please try again in a moment.";
                 try {
                     const errData = await response.json();
-                    const status = errData?.error?.status || "";
-                    if (response.status === 429 || status === "RESOURCE_EXHAUSTED") {
+                    const statusVal = errData?.error?.status || "";
+                    if (response.status === 429 || statusVal === "RESOURCE_EXHAUSTED") {
                         errorMsg = "I'm taking a short breather — my daily request limit has been reached. Come back in a bit, or reach out to Bhavin directly at **bhavinpathak29@gmail.com**. 💬";
+                        setStatus("offline");
                     } else if (response.status === 403) {
                         errorMsg = "The API key seems to have a permissions issue. Please verify the configuration.";
+                        setStatus("offline");
                     }
                 } catch (parseErr) { /* use default error message */ }
                 setIsWaiting(false);
@@ -132,6 +162,13 @@ export default function AIChatbot() {
                 setMessages(prev => [...prev, { role: "bot", text: errorMsg }]);
                 setSuggestions(getRandomSuggestions(3));
                 return;
+            }
+
+            // Successfully connected to API: check status again
+            if (recent.length >= 8) {
+                setStatus("warning");
+            } else {
+                setStatus("online");
             }
 
             setIsWaiting(false);
@@ -195,6 +232,7 @@ export default function AIChatbot() {
 
         } catch (err) {
             console.error("Neural Twin Error:", err);
+            setStatus("offline");
             setIsWaiting(false);
             setIsTyping(false);
             setMessages(prev => [
@@ -203,7 +241,7 @@ export default function AIChatbot() {
             ]);
             setSuggestions(getRandomSuggestions(3));
         }
-    }, [input, isTyping, apiKey, systemPrompt]);
+    }, [input, isTyping, apiKey, systemPrompt, requestTimes]);
 
     if (!isMounted) return null;
 
@@ -233,9 +271,16 @@ export default function AIChatbot() {
                                         <h3 className="text-xs md:text-sm font-bold text-gray-800 dark:text-white leading-tight">
                                             Bhavin&apos;s Neural Twin
                                         </h3>
-                                        <span className="flex items-center gap-1 text-[10px] text-green-500 font-semibold">
-                                            <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block animate-pulse" />
-                                            Online
+                                        <span className={`flex items-center gap-1 text-[10px] font-semibold ${
+                                            status === "online" ? "text-green-500" :
+                                            status === "warning" ? "text-yellow-500" : "text-red-500"
+                                        }`}>
+                                            <span className={`w-1.5 h-1.5 rounded-full inline-block ${
+                                                status === "online" ? "bg-green-500 animate-pulse" :
+                                                status === "warning" ? "bg-yellow-500 animate-pulse" : "bg-red-500"
+                                            }`} />
+                                            {status === "online" ? "Online" :
+                                             status === "warning" ? "Busy" : "Offline"}
                                         </span>
                                     </div>
                                 </div>
@@ -291,7 +336,7 @@ export default function AIChatbot() {
                             {/* Suggestions */}
                             {!isTyping && messages[messages.length - 1]?.role !== "user" && (
                                 <div className="flex flex-col gap-1.5 pb-2 shrink-0">
-                                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider pl-1">Ask me:</span>
+                                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider pl-1">Ask about Bhavin:</span>
                                     <div className="flex flex-wrap gap-1.5">
                                         {suggestions.map((s, idx) => (
                                             <button
@@ -330,6 +375,35 @@ export default function AIChatbot() {
                                 </button>
                             </form>
                         </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* ── Welcome Speech Bubble Popup (Above chatbot bubble when closed) ── */}
+            <AnimatePresence>
+                {!isOpen && showPopup && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 15, scale: 0.8 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 15, scale: 0.8 }}
+                        transition={{ delay: 2.0, duration: 0.4 }}
+                        className="absolute bottom-20 right-0 z-50 w-64 p-3.5 md:backdrop-blur-xl backdrop-blur-md saturate-150 bg-white/70 dark:bg-black/50 border border-gray-200/80 dark:border-white/10 rounded-2xl rounded-br-none shadow-xl cursor-pointer hover:scale-[1.02] transition-transform"
+                        onClick={() => setIsOpen(true)}
+                    >
+                        <button
+                            type="button"
+                            onClick={(e) => { e.stopPropagation(); setShowPopup(false); }}
+                            className="absolute top-1.5 right-1.5 p-1 rounded hover:bg-gray-100 dark:hover:bg-white/10 text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors cursor-pointer"
+                        >
+                            <X className="w-3 h-3" />
+                        </button>
+                        <div className="flex gap-2">
+                            <div className="flex-1 text-xs text-gray-700 dark:text-gray-200 font-semibold leading-relaxed pr-3">
+                                Hi, I&apos;m Bhavin&apos;s Neural Twin! Ask me anything about Bhavin. 🤖
+                            </div>
+                        </div>
+                        {/* Little triangle pointer at the bottom right */}
+                        <div className="absolute -bottom-2 right-5 w-4 h-4 bg-white/70 dark:bg-black/50 border-r border-b border-gray-200/80 dark:border-white/10 transform rotate-45 pointer-events-none" />
                     </motion.div>
                 )}
             </AnimatePresence>
