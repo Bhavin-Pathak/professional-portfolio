@@ -146,19 +146,22 @@ export function buildSystemPrompt() {
 
     const workSection = `WORK EXPERIENCE:\n\n${jobs.map((job, i) => {
         const tech = job.technologies.join(", ");
-        const resp = job.responsibilities.map(r => `   - ${r}`).join("\n");
+        // Limit to top 3 key responsibilities to save tokens
+        const resp = job.responsibilities.slice(0, 3).map(r => `   - ${r}`).join("\n");
         return `${i + 1}. ${job.position} — ${job.company} | ${job.period}\n   Tech: ${tech}\n${resp}`;
     }).join("\n\n")}`;
 
     const educationSection = `EDUCATION:\n- ${education.degree} — ${education.university} | ${education.period}`;
 
-    const projectsSection = `PROJECTS (ALL — EXACT TECH ONLY — DO NOT INVENT ANYTHING):\n\n${projects.map((p, i) => {
+    const projectsSection = `PROJECTS (TOP FEATURED):\n\n${projects.slice(0, 6).map((p, i) => {
         const live = p.homepage ? ` | Live: ${p.homepage}` : "";
-        return `${i + 1}. ${p.name} | GitHub: ${p.html_url}${live}\n   - Tech: ${p.language}, ${p.topics.join(", ")}\n   - ${p.description}`;
+        // Cap descriptions to save tokens
+        const shortDesc = p.description.length > 80 ? p.description.slice(0, 80) + "..." : p.description;
+        return `${i + 1}. ${p.name} | GitHub: ${p.html_url}${live}\n   - Tech: ${p.language}, ${p.topics.slice(0, 3).join(", ")}\n   - ${shortDesc}`;
     }).join("\n\n")}`;
 
-    const blogsSection = `BLOG POSTS BY BHAVIN:\n\n${posts.map((post, i) =>
-        `${i + 1}. "${post.title}" (${post.category}, ${post.date}, ${post.readTime})\n   Tags: ${post.tags.join(", ")}\n   Summary: ${post.excerpt}`
+    const blogsSection = `BLOG POSTS BY BHAVIN:\n\n${posts.slice(0, 4).map((post, i) =>
+        `${i + 1}. "${post.title}" (${post.category}, ${post.readTime})\n   Summary: ${post.excerpt.length > 60 ? post.excerpt.slice(0, 60) + "..." : post.excerpt}`
     ).join("\n\n")}`;
 
     return `You are "Bhavin's Neural Twin" — a professional, accurate, and concise AI assistant built exclusively to represent Bhavin Pathak (Full Stack Developer & AI Engineer) to recruiters and visitors on his portfolio website.
