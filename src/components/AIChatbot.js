@@ -152,7 +152,7 @@ export default function AIChatbot() {
                     const errData = await response.json();
                     const statusVal = errData?.error?.status || "";
                     if (response.status === 429 || statusVal === "RESOURCE_EXHAUSTED") {
-                        errorMsg = "I've hit my free tier limit (10 Requests/Min or 250 Requests/Day). Please wait a moment and try again, or reach out to Bhavin directly at **bhavinpathak29@gmail.com**! 💬";
+                        errorMsg = "I've hit my free tier limit (10 Requests/Min or 250 Requests/Day). The minute limit resets within **1 minute** and the daily limit resets at **midnight Pacific Time**. In the meantime, you can connect with me directly at **bhavinpathak29@gmail.com** or **+91 9428455515**!!";
                         setStatus("offline");
                     } else if (response.status === 403) {
                         errorMsg = "The API key seems to have a permissions issue. Please verify the configuration.";
@@ -241,16 +241,14 @@ export default function AIChatbot() {
                                         <h3 className="text-xs md:text-sm font-bold text-gray-800 dark:text-white leading-tight">
                                             Bhavin&apos;s Neural Twin
                                         </h3>
-                                        <span className={`flex items-center gap-1 text-[10px] font-semibold ${
-                                            status === "online" ? "text-green-500" :
+                                        <span className={`flex items-center gap-1 text-[10px] font-semibold ${status === "online" ? "text-green-500" :
                                             status === "warning" ? "text-yellow-500" : "text-red-500"
-                                        }`}>
-                                            <span className={`w-1.5 h-1.5 rounded-full inline-block ${
-                                                status === "online" ? "bg-green-500 animate-pulse" :
+                                            }`}>
+                                            <span className={`w-1.5 h-1.5 rounded-full inline-block ${status === "online" ? "bg-green-500 animate-pulse" :
                                                 status === "warning" ? "bg-yellow-500 animate-pulse" : "bg-red-500"
-                                            }`} />
+                                                }`} />
                                             {status === "online" ? "Online" :
-                                             status === "warning" ? "Busy" : "Offline"}
+                                                status === "warning" ? "Busy" : "Offline"}
                                         </span>
                                     </div>
                                 </div>
