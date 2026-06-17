@@ -6,8 +6,7 @@ import {
     getRandomSuggestions,
     parseAISuggestions,
     stripSuggestionsBlock,
-    buildSystemPrompt,
-    getLocalAnswer
+    buildSystemPrompt
 } from "../utils/chatbotUtils";
 
 // ── Welcome message streams in character by character ─────────────────────────
@@ -116,17 +115,20 @@ export default function AIChatbot() {
             setStatus("online");
         }
 
-        // No API key — local fallback search Q&A (no tokens used)
+        // No API key — demo mode / offline
         if (!apiKey) {
             setStatus("offline");
             setTimeout(() => {
-                const localAns = getLocalAnswer(query);
-                const visible = stripSuggestionsBlock(localAns);
-                setMessages(prev => [...prev, { role: "bot", text: visible }]);
-                setSuggestions(parseAISuggestions(localAns));
+                setMessages(prev => [
+                    ...prev,
+                    {
+                        role: "bot",
+                        text: "I'm running in **demo mode** — the Gemini API key isn't configured yet. Add `REACT_APP_GEMINI_API_KEY` to get started!"
+                    }
+                ]);
                 setIsTyping(false);
                 setIsWaiting(false);
-            }, 400);
+            }, 700);
             return;
         }
 
