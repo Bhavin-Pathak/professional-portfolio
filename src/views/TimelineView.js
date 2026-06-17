@@ -10,6 +10,7 @@ export default function TimelineView() {
     const [filter, setFilter] = useState("milestones");
     const [loading, setLoading] = useState(true);
     const [githubEvents, setGithubEvents] = useState([]);
+    const [imgError, setImgError] = useState(false);
     const [githubStats, setGithubStats] = useState({
         avatarUrl: "https://avatars.githubusercontent.com/u/105209903?v=4",
         publicRepos: "--",
@@ -66,8 +67,8 @@ export default function TimelineView() {
         setLoading(true);
         setError(false);
         try {
-            // Fetch GitHub public events
-            const ghPromise = fetch("https://api.github.com/users/Bhavin-Pathak/events/public")
+            // Fetch GitHub public repositories
+            const ghPromise = fetch("https://api.github.com/users/Bhavin-Pathak/repos")
                 .then(res => (res.ok ? res.json() : []))
                 .catch(() => []);
 
@@ -89,43 +90,20 @@ export default function TimelineView() {
                 followers: ghProfileData?.followers ?? "--"
             });
 
-            // Format GitHub Events into Timeline Items
-            const parsedGH = Array.isArray(ghData) ? ghData.slice(0, 15).map(event => {
-                let title = "GitHub Activity";
-                let description = "";
-                let link = `https://github.com/${event.repo?.name}`;
-
-                if (event.type === "PushEvent") {
-                    const commitCount = event.payload?.commits?.length || 0;
-                    const commitMsg = event.payload?.commits?.[0]?.message || "Working on code updates";
-                    title = `Pushed ${commitCount} commit${commitCount > 1 ? "s" : ""} to ${event.repo?.name.split("/")[1]}`;
-                    description = `"${commitMsg}"`;
-                } else if (event.type === "CreateEvent") {
-                    title = `Created ${event.payload?.ref_type || "repository"} in ${event.repo?.name.split("/")[1]}`;
-                    description = `Initialized branch or repository references.`;
-                } else if (event.type === "PullRequestEvent") {
-                    title = `${event.payload?.action === "opened" ? "Opened" : "Closed"} Pull Request in ${event.repo?.name.split("/")[1]}`;
-                    description = event.payload?.pull_request?.title || "";
-                    link = event.payload?.pull_request?.html_url || link;
-                } else if (event.type === "IssuesEvent") {
-                    title = `${event.payload?.action === "opened" ? "Opened" : "Closed"} issue in ${event.repo?.name.split("/")[1]}`;
-                    description = event.payload?.issue?.title || "";
-                    link = event.payload?.issue?.html_url || link;
-                } else {
-                    title = `Interacted with ${event.repo?.name.split("/")[1]}`;
-                    description = `Event Type: ${event.type}`;
-                }
-
+            // Format GitHub Repositories into Timeline Items
+            const parsedGH = Array.isArray(ghData) ? ghData.map(repo => {
+                const languageStr = repo.language ? ` | ${repo.language}` : "";
+                const starsStr = repo.stargazers_count > 0 ? ` ★ ${repo.stargazers_count}` : "";
                 return {
-                    id: event.id,
+                    id: `repo-${repo.id}`,
                     type: "github",
-                    title,
-                    description,
-                    date: event.created_at,
+                    title: repo.name,
+                    description: repo.description || "A public software development repository.",
+                    date: repo.pushed_at || repo.updated_at || repo.created_at,
                     icon: Github,
                     color: "from-blue-600 to-indigo-600",
-                    link,
-                    category: "GitHub Commits"
+                    link: repo.html_url,
+                    category: `Repository${languageStr}${starsStr}`
                 };
             }) : [];
 
@@ -263,11 +241,19 @@ export default function TimelineView() {
                                     className="p-4 border border-gray-200/80 dark:border-white/10 min-h-[105px]"
                                 >
                                     <div className="flex flex-col items-center justify-center text-center gap-1 h-full w-full">
-                                        <img
-                                            src={githubStats.avatarUrl}
-                                            alt="Bhavin Pathak"
-                                            className="w-11 h-11 rounded-full border-2 border-indigo-500 shadow-sm object-cover"
-                                        />
+                                        {!imgError ? (
+                                            <img
+                                                src={githubStats.avatarUrl}
+                                                alt="Bhavin Pathak"
+                                                referrerPolicy="no-referrer"
+                                                className="w-11 h-11 rounded-full border-2 border-indigo-500 shadow-sm object-cover"
+                                                onError={() => setImgError(true)}
+                                            />
+                                        ) : (
+                                            <div className="w-11 h-11 rounded-full border-2 border-indigo-500 shadow-sm bg-indigo-50 dark:bg-indigo-950/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold text-xs">
+                                                BP
+                                            </div>
+                                        )}
                                         <span className="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider leading-none mt-1">
                                             Bhavin-Pathak
                                         </span>
