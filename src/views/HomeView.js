@@ -148,7 +148,7 @@ export default function HomeView() {
                                 <div className={`absolute inset-0 opacity-0 group-hover:opacity-10 dark:group-hover:opacity-20 bg-gradient-to-br ${item.color} transition-opacity duration-300 pointer-events-none`} />
 
                                 <div className="flex flex-col gap-3 w-full">
-                                    <div className="flex items-center gap-3">
+                                    <div className="flex flex-row sm:flex-col items-center sm:items-start gap-3">
                                         {/* Icon — with translateZ for 3D depth */}
                                         <div 
                                             className="transform-gpu transition-all duration-300 shrink-0"
