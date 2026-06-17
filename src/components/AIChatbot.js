@@ -102,13 +102,15 @@ export default function AIChatbot() {
         setIsTyping(true);
         setIsWaiting(true);
 
-        // Track request rate limits (Gemini Free tier is 15 RPM)
+        // Track request rate limits (Your API Key tier is 10 RPM)
         const now = Date.now();
         const recent = [...requestTimes, now].filter(t => now - t < 60000);
         setRequestTimes(recent);
 
-        if (recent.length >= 8) {
-            setStatus("warning"); // Limit warning
+        if (recent.length >= 10) {
+            setStatus("offline"); // Rate limit reached
+        } else if (recent.length >= 6) {
+            setStatus("warning"); // Warning threshold (approaching 10 RPM)
         } else {
             setStatus("online");
         }
@@ -150,7 +152,7 @@ export default function AIChatbot() {
                     const errData = await response.json();
                     const statusVal = errData?.error?.status || "";
                     if (response.status === 429 || statusVal === "RESOURCE_EXHAUSTED") {
-                        errorMsg = "I'm taking a short breather — my daily request limit has been reached. Come back in a bit, or reach out to Bhavin directly at **bhavinpathak29@gmail.com**. 💬";
+                        errorMsg = "I've hit my free tier limit (10 Requests/Min or 250 Requests/Day). Please wait a moment and try again, or reach out to Bhavin directly at **bhavinpathak29@gmail.com**! 💬";
                         setStatus("offline");
                     } else if (response.status === 403) {
                         errorMsg = "The API key seems to have a permissions issue. Please verify the configuration.";
@@ -165,7 +167,9 @@ export default function AIChatbot() {
             }
 
             // Successfully connected to API: check status again
-            if (recent.length >= 8) {
+            if (recent.length >= 10) {
+                setStatus("offline");
+            } else if (recent.length >= 6) {
                 setStatus("warning");
             } else {
                 setStatus("online");
