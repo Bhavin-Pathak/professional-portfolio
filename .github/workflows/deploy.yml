@@ -23,7 +23,6 @@ jobs:
         env:
           CI: false
           DISABLE_ESLINT_PLUGIN: true
-          REACT_APP_GEMINI_API_KEY: ${{ secrets.REACT_APP_GEMINI_API_KEY }}
           REACT_APP_HF_API_KEY: ${{ secrets.REACT_APP_HF_API_KEY }}
           REACT_APP_GITHUB_REPOS_URL: ${{ secrets.REACT_APP_GITHUB_REPOS_URL }}
           REACT_APP_GITHUB_PROFILE_URL: ${{ secrets.REACT_APP_GITHUB_PROFILE_URL }}
