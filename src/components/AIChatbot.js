@@ -10,7 +10,7 @@ import {
 } from "../utils/chatbotUtils";
 
 // ── Welcome message streams in character by character ─────────────────────────
-const WELCOME_TEXT = "Hi! I'm **BhavinGPT** — ask me anything about Bhavin's skills, projects, work experience, or availability!";
+const WELCOME_TEXT = "Hi! I'm **Bhavin's Neural Twin** — ask me anything about Bhavin's skills, projects, work experience, or availability!";
 
 function useTypewriter(text, speed = 18) {
     const [displayed, setDisplayed] = useState("");
@@ -194,7 +194,7 @@ export default function AIChatbot() {
             setIsTyping(false);
 
         } catch (err) {
-            console.error("BhavinGPT Error:", err);
+            console.error("Neural Twin Error:", err);
             setIsWaiting(false);
             setIsTyping(false);
             setMessages(prev => [
@@ -231,7 +231,7 @@ export default function AIChatbot() {
                                     </div>
                                     <div>
                                         <h3 className="text-xs md:text-sm font-bold text-gray-800 dark:text-white leading-tight">
-                                            BhavinGPT
+                                            Bhavin&apos;s Neural Twin
                                         </h3>
                                         <span className="flex items-center gap-1 text-[10px] text-green-500 font-semibold">
                                             <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block animate-pulse" />
@@ -282,7 +282,7 @@ export default function AIChatbot() {
                                     <div className="self-start max-w-[85%]">
                                         <div className="p-3 bg-slate-100 dark:bg-white/5 border border-gray-200/50 dark:border-white/5 rounded-2xl rounded-tl-none flex items-center gap-2 shadow-sm">
                                             <RefreshCw className="w-3.5 h-3.5 animate-spin text-blue-500 shrink-0" />
-                                            <span className="text-[10px] text-gray-400 font-medium italic">BhavinGPT is thinking...</span>
+                                            <span className="text-[10px] text-gray-400 font-medium italic">Neural Twin is thinking...</span>
                                         </div>
                                     </div>
                                 )}
@@ -340,7 +340,7 @@ export default function AIChatbot() {
                 onClick={() => setIsOpen(prev => !prev)}
                 whileHover={{ scale: 1.08 }}
                 whileTap={{ scale: 0.92 }}
-                aria-label="Toggle BhavinGPT chat"
+                aria-label="Toggle Bhavin's Neural Twin chat"
                 className={`p-4 rounded-full text-white cursor-pointer relative shadow-2xl transition-all duration-300 flex items-center justify-center ${isOpen
                     ? "bg-gray-700 dark:bg-white/10"
                     : "bg-blue-600 hover:bg-blue-700"
