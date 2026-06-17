@@ -57,23 +57,23 @@ export default function AIChatbot() {
     const chatLogRef = useRef(null);
 
     useEffect(() => {
-        const savedKey = localStorage.getItem("custom_gemini_api_key") || "";
+        const savedKey = localStorage.getItem("custom_hf_api_key") || "";
         setCustomKeyInput(savedKey);
         setHasCustomKey(!!savedKey);
     }, []);
 
     const apiKey = useMemo(() => {
         if (hasCustomKey) {
-            const localKey = localStorage.getItem("custom_gemini_api_key");
+            const localKey = localStorage.getItem("custom_hf_api_key");
             if (localKey) return localKey.trim();
         }
-        return process.env.REACT_APP_GEMINI_API_KEY || "";
+        return process.env.REACT_APP_HF_API_KEY || "";
     }, [hasCustomKey]);
 
     const handleSaveCustomKey = () => {
         const trimmed = customKeyInput.trim();
         if (trimmed) {
-            localStorage.setItem("custom_gemini_api_key", trimmed);
+            localStorage.setItem("custom_hf_api_key", trimmed);
             setHasCustomKey(true);
             setShowSettings(false);
             setStatus("online");
@@ -81,7 +81,7 @@ export default function AIChatbot() {
     };
 
     const handleResetDefaultKey = () => {
-        localStorage.removeItem("custom_gemini_api_key");
+        localStorage.removeItem("custom_hf_api_key");
         setCustomKeyInput("");
         setHasCustomKey(false);
         setShowSettings(false);
@@ -157,7 +157,7 @@ export default function AIChatbot() {
                     ...prev,
                     {
                         role: "bot",
-                        text: "I'm running in **demo mode** — the Gemini API key isn't configured yet. Click the gear icon (⚙️) at the top to paste your own Gemini API key and start chatting!"
+                        text: "I'm running in **demo mode** — the Hugging Face token isn't configured yet. Click the gear icon (⚙️) at the top to paste your own Hugging Face token (`hf_...`) and start chatting!"
                     }
                 ]);
                 setIsTyping(false);
@@ -168,14 +168,21 @@ export default function AIChatbot() {
 
         try {
             const response = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`,
+                "https://router.huggingface.co/v1/chat/completions",
                 {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${apiKey}`
+                    },
                     body: JSON.stringify({
-                        contents: [{ parts: [{ text: query }] }],
-                        system_instruction: { parts: [{ text: systemPrompt }] },
-                        generationConfig: { temperature: 0.1, maxOutputTokens: 800 }
+                        model: "meta-llama/Meta-Llama-3-8B-Instruct",
+                        messages: [
+                            { role: "system", content: systemPrompt },
+                            { role: "user", content: query }
+                        ],
+                        max_tokens: 500,
+                        temperature: 0.2
                     })
                 }
             );
@@ -184,16 +191,20 @@ export default function AIChatbot() {
                 let errorMsg = "Something went wrong on my end. Please try again in a moment.";
                 try {
                     const errData = await response.json();
-                    const statusVal = errData?.error?.status || "";
-                    if (response.status === 429 || statusVal === "RESOURCE_EXHAUSTED") {
+                    const errMsg = typeof errData?.error === "string" ? errData.error : JSON.stringify(errData?.error || "");
+                    if (response.status === 429 || errMsg.includes("rate limit") || errMsg.includes("Too many requests")) {
                         if (hasCustomKey) {
-                            errorMsg = "Your custom Gemini API key has hit the rate limit (quota exhausted). Please verify your Google AI Studio billing/usage limits, or reset to default settings.";
+                            errorMsg = "Your custom Hugging Face token has hit the rate limit (quota exhausted). Please verify your Hugging Face account settings, or reset to default settings.";
                         } else {
-                            errorMsg = "I've hit my default free-tier limit (10 Requests/Min or 250 Requests/Day). The limit resets within **1 minute**. You can connect with me directly at **bhavinpathak29@gmail.com**, or click the gear icon (⚙️) at the top to paste your own Gemini API Key and continue chatting instantly!";
+                            errorMsg = "I've hit my default free-tier Hugging Face limit. The limit resets within **1 minute**. You can connect with me directly at **bhavinpathak29@gmail.com**, or click the gear icon (⚙️) at the top to paste your own Hugging Face Token (`hf_...`) and continue chatting instantly!";
                         }
                         setStatus("offline");
-                    } else if (response.status === 403) {
-                        errorMsg = "The API key seems to have a permissions issue. Please verify the configuration.";
+                    } else if (response.status === 503 || errMsg.includes("loading")) {
+                        const estTime = Math.round(errData?.estimated_time || 20);
+                        errorMsg = `My AI model is currently initializing on Hugging Face servers (estimated setup time: **${estTime} seconds**). Please wait a moment and try sending your message again!`;
+                        setStatus("warning");
+                    } else if (response.status === 401 || response.status === 403) {
+                        errorMsg = "The Hugging Face token seems to be invalid or expired. Please verify the configuration in settings.";
                         setStatus("offline");
                     }
                 } catch (parseErr) { /* use default error message */ }
@@ -216,12 +227,7 @@ export default function AIChatbot() {
             setIsWaiting(false);
 
             const data = await response.json();
-            const candidates = data.candidates || [];
-            const parts = candidates[0]?.content?.parts || [];
-            const fullText = parts
-                .filter(p => typeof p.text === "string" && p.text.length > 0)
-                .map(p => p.text)
-                .join("");
+            const fullText = data.choices?.[0]?.message?.content || "";
 
             if (!fullText) {
                 setMessages(prev => [
@@ -321,15 +327,15 @@ export default function AIChatbot() {
                                             <span>API Settings</span>
                                         </div>
                                         <p className="text-[11px] text-gray-600 dark:text-gray-400 leading-relaxed font-medium">
-                                            By default, this chatbot uses Bhavin&apos;s free-tier Gemini API key. If it reaches the rate limit (10 RPM), or if you prefer to use your own, paste your personal key below. It will be stored securely in your browser&apos;s local storage.
+                                            By default, this chatbot uses Bhavin&apos;s free-tier Hugging Face token. If it reaches the rate limit, or if you prefer to use your own, paste your personal token below. It will be stored securely in your browser&apos;s local storage.
                                         </p>
                                         <div className="flex flex-col gap-1.5">
                                             <label className="text-[10px] text-gray-400 font-bold uppercase tracking-wider pl-1">
-                                                Custom Gemini API Key
+                                                Custom Hugging Face Token
                                             </label>
                                             <input
                                                 type="password"
-                                                placeholder={hasCustomKey ? "••••••••••••••••••••••••" : "Paste your AIzaSy... key"}
+                                                placeholder={hasCustomKey ? "••••••••••••••••••••••••" : "Paste your hf_... token"}
                                                 value={customKeyInput}
                                                 onChange={(e) => setCustomKeyInput(e.target.value)}
                                                 className="bg-slate-100 dark:bg-black/40 border border-gray-200 dark:border-white/15 px-3 py-2 rounded-xl text-xs text-gray-800 dark:text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
