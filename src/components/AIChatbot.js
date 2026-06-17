@@ -148,7 +148,7 @@ export default function AIChatbot() {
                         "Authorization": `Bearer ${apiKey}`
                     },
                     body: JSON.stringify({
-                        model: "meta-llama/Meta-Llama-3-8B-Instruct",
+                        model: "meta-llama/Llama-3.3-70B-Instruct",
                         messages: [
                             { role: "system", content: systemPrompt },
                             { role: "user", content: query }
