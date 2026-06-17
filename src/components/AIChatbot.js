@@ -132,7 +132,7 @@ export default function AIChatbot() {
 
         try {
             const response = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:streamGenerateContent?alt=sse&key=${apiKey}`,
+                `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -173,61 +173,27 @@ export default function AIChatbot() {
 
             setIsWaiting(false);
 
-            const reader = response.body.getReader();
-            const decoder = new TextDecoder("utf-8");
-            let buffer = "";
-            let accumulated = "";
-            let botAdded = false;
+            const data = await response.json();
+            const candidates = data.candidates || [];
+            const parts = candidates[0]?.content?.parts || [];
+            const fullText = parts
+                .filter(p => typeof p.text === "string" && p.text.length > 0)
+                .map(p => p.text)
+                .join("");
 
-            let readingStream = true;
-            while (readingStream) {
-                const { done, value } = await reader.read();
-                if (done) { readingStream = false; break; }
-
-                buffer += decoder.decode(value, { stream: true }).replace(/\r\n/g, "\n");
-                const chunks = buffer.split("\n\n");
-                buffer = chunks.pop() || "";
-
-                for (const chunk of chunks) {
-                    const dataLine = chunk.split("\n").find(l => l.startsWith("data: "));
-                    if (!dataLine) continue;
-                    const jsonStr = dataLine.slice(6).trim();
-                    if (!jsonStr || jsonStr === "[DONE]") continue;
-
-                    try {
-                        const parsed = JSON.parse(jsonStr);
-                        const parts = parsed.candidates?.[0]?.content?.parts || [];
-                        const chunkText = parts
-                            .filter(p => typeof p.text === "string" && p.text.length > 0)
-                            .map(p => p.text)
-                            .join("");
-                        if (!chunkText) continue;
-
-                        accumulated += chunkText;
-                        const visible = stripSuggestionsBlock(accumulated);
-
-                        if (!botAdded) {
-                            botAdded = true;
-                            setMessages(prev => [...prev, { role: "bot", text: visible }]);
-                        } else {
-                            setMessages(prev => {
-                                const copy = [...prev];
-                                copy[copy.length - 1] = { role: "bot", text: visible };
-                                return copy;
-                            });
-                        }
-                    } catch (chunkErr) { /* skip malformed SSE chunk */ }
-                }
-            }
-
-            if (!botAdded) {
+            if (!fullText) {
                 setMessages(prev => [
                     ...prev,
                     { role: "bot", text: "Sorry, I couldn't generate a response. Please try again." }
                 ]);
+                setSuggestions(getRandomSuggestions(3));
+                setIsTyping(false);
+                return;
             }
 
-            setSuggestions(parseAISuggestions(accumulated));
+            const visible = stripSuggestionsBlock(fullText);
+            setMessages(prev => [...prev, { role: "bot", text: visible }]);
+            setSuggestions(parseAISuggestions(fullText));
             setIsTyping(false);
 
         } catch (err) {
