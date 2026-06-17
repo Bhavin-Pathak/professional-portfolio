@@ -193,3 +193,49 @@ STRICT INSTRUCTIONS:
 [Suggestions] Question 1?, Question 2?
 Do not include suggestions in the main body.`;
 }
+
+// ── Search Q&A Fallback (No API Key Required) ────────────────────
+export function getLocalAnswer(query) {
+    const q = (query || "").toLowerCase();
+
+    // 1. Skills / Tech Stack
+    if (q.includes("skill") || q.includes("stack") || q.includes("tech") || q.includes("language") || q.includes("tool") || q.includes("database") || q.includes("react") || q.includes("node") || q.includes("flutter") || q.includes("swift") || q.includes("python") || q.includes("js") || q.includes("javascript") || q.includes("docker")) {
+        const categories = skillsData.categories.map(cat => {
+            const skillList = cat.skills.map(s => s.name).join(", ");
+            return `- **${cat.name}**: ${skillList}`;
+        }).join("\n");
+        return `### Technical Skills\nHere is a summary of my core technical stack:\n\n${categories}\n\n[Suggestions] What projects has Bhavin built?, Where does Bhavin work?, Tell me about Bhavin.`;
+    }
+
+    // 2. Experience / Work
+    if (q.includes("experience") || q.includes("work") || q.includes("job") || q.includes("company") || q.includes("employer") || q.includes("meril") || q.includes("softec") || q.includes("rnd") || q.includes("nuvo")) {
+        const jobs = workData.jobs.map(job => {
+            return `- **${job.position}** at **${job.company}** (${job.period})\n  *Tech:* ${job.technologies.join(", ")}`;
+        }).join("\n\n");
+        return `### Work Experience\nI have over 3 years of professional developer experience:\n\n${jobs}\n\n[Suggestions] What projects has Bhavin built?, How to contact Bhavin?, What is Bhavin's tech stack?`;
+    }
+
+    // 3. Projects
+    if (q.includes("project") || q.includes("works") || q.includes("portfolio") || q.includes("yt") || q.includes("clario") || q.includes("evernotes") || q.includes("split")) {
+        const projs = projectsData.projects.slice(0, 5).map(p => {
+            return `- **${p.name}** (${p.language}): ${p.description}`;
+        }).join("\n");
+        return `### Featured Projects\nHere are some of my top software projects:\n\n${projs}\n\n[Suggestions] What is Bhavin's tech stack?, What is Bhavin's experience?, How to contact Bhavin?`;
+    }
+
+    // 4. Contact / Hire / Phone / Email / Salary / Availability / Location
+    if (q.includes("contact") || q.includes("reach") || q.includes("email") || q.includes("phone") || q.includes("hire") || q.includes("call") || q.includes("linkedin") || q.includes("location") || q.includes("where") || q.includes("address") || q.includes("availability") || q.includes("freelance") || q.includes("salary")) {
+        const { personalInfo } = chatbotData;
+        return `### Contact & Availability\nYou can connect with me directly:\n\n- **Email:** ${personalInfo.email}\n- **Phone:** ${personalInfo.phone}\n- **LinkedIn:** [LinkedIn](${personalInfo.linkedin})\n- **GitHub:** [GitHub](${personalInfo.github})\n- **Portfolio:** [Website](${personalInfo.portfolio})\n- **Location:** ${personalInfo.location}\n\n[Suggestions] What are Bhavin's skills?, Tell me about Bhavin., Show me Bhavin's experience.`;
+    }
+
+    // 5. Education
+    if (q.includes("education") || q.includes("college") || q.includes("degree") || q.includes("qualification") || q.includes("university") || q.includes("bca") || q.includes("study") || q.includes("school")) {
+        const { education } = chatbotData;
+        return `### Education & Qualifications\nI hold the following degree:\n\n- **Degree:** ${education.degree}\n- **University:** ${education.university}\n- **Period:** ${education.period}\n\n[Suggestions] What is Bhavin's professional role?, What are Bhavin's skills?, How to contact Bhavin?`;
+    }
+
+    // 6. Default Fallback
+    const { professionalSummary } = chatbotData;
+    return `### Hello! I'm Bhavin's Neural Twin\nI'm a local assistant representing Bhavin Pathak. ${professionalSummary}\n\nAsk me about Bhavin's skills, experience, projects, or education!\n\n[Suggestions] What is Bhavin's tech stack?, Show me Bhavin's experience., How to contact Bhavin?`;
+}

@@ -6,7 +6,8 @@ import {
     getRandomSuggestions,
     parseAISuggestions,
     stripSuggestionsBlock,
-    buildSystemPrompt
+    buildSystemPrompt,
+    getLocalAnswer
 } from "../utils/chatbotUtils";
 
 // ── Welcome message streams in character by character ─────────────────────────
@@ -115,20 +116,17 @@ export default function AIChatbot() {
             setStatus("online");
         }
 
-        // No API key — demo mode / offline
+        // No API key — local fallback search Q&A (no tokens used)
         if (!apiKey) {
             setStatus("offline");
             setTimeout(() => {
-                setMessages(prev => [
-                    ...prev,
-                    {
-                        role: "bot",
-                        text: "I'm running in **demo mode** — the Gemini API key isn't configured yet. Add `REACT_APP_GEMINI_API_KEY` to get started!"
-                    }
-                ]);
+                const localAns = getLocalAnswer(query);
+                const visible = stripSuggestionsBlock(localAns);
+                setMessages(prev => [...prev, { role: "bot", text: visible }]);
+                setSuggestions(parseAISuggestions(localAns));
                 setIsTyping(false);
                 setIsWaiting(false);
-            }, 700);
+            }, 400);
             return;
         }
 
@@ -152,7 +150,7 @@ export default function AIChatbot() {
                     const errData = await response.json();
                     const statusVal = errData?.error?.status || "";
                     if (response.status === 429 || statusVal === "RESOURCE_EXHAUSTED") {
-                        errorMsg = "I've hit my free tier limit (10 Requests/Min or 250 Requests/Day). The minute limit resets within **1 minute** and the daily limit resets at **midnight Pacific Time**. In the meantime, you can connect with me directly at **bhavinpathak29@gmail.com** or **+91 9428455515**!!";
+                        errorMsg = "I've hit my free tier limit (10 Requests/Min or 250 Requests/Day). The minute limit resets within **1 minute** and the daily limit resets at **midnight Pacific Time**. In the meantime, you can connect with me directly at **bhavinpathak29@gmail.com** or **+91 9428455515**";
                         setStatus("offline");
                     } else if (response.status === 403) {
                         errorMsg = "The API key seems to have a permissions issue. Please verify the configuration.";
