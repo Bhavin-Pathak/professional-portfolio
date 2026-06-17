@@ -205,8 +205,8 @@ export default function TimelineView() {
                         { label: "Medium", value: leetcodeData?.mediumSolved ?? 29, color: "text-yellow-500 dark:text-yellow-400", size: "text-xl md:text-2xl font-extrabold" },
                         { label: "Hard", value: leetcodeData?.hardSolved ?? 6, color: "text-red-500 dark:text-red-400", size: "text-xl md:text-2xl font-extrabold" }
                     ].map(stat => (
-                        <LiquidContainer key={stat.label} className="p-4 flex flex-row items-center justify-start gap-3">
-                            <span className={`${stat.size} ${stat.color} leading-none tabular-nums`}>{stat.value}</span>
+                        <LiquidContainer key={`${stat.label}-${leetcodeData ? "loaded" : "loading"}`} className="p-4 flex flex-row items-center justify-start gap-3">
+                            <span className={`${stat.size} ${stat.color} leading-none tabular-nums ${loading ? "animate-pulse opacity-70" : ""}`}>{stat.value}</span>
                             <span className="text-[11px] text-gray-500 dark:text-gray-400 font-medium leading-tight">{stat.label}</span>
                         </LiquidContainer>
                     ))}
