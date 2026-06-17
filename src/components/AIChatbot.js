@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageSquare, X, Send, Bot, RefreshCw } from "lucide-react";
+import { MessageSquare, X, Send, Bot, RefreshCw, Settings, Key } from "lucide-react";
 import {
     formatResponseText,
     getRandomSuggestions,
@@ -51,8 +51,42 @@ export default function AIChatbot() {
     const [showPopup, setShowPopup] = useState(true);
     const [status, setStatus] = useState("online"); // online, warning, offline
     const [requestTimes, setRequestTimes] = useState([]);
-    const apiKey = process.env.REACT_APP_GEMINI_API_KEY || "";
+    const [customKeyInput, setCustomKeyInput] = useState("");
+    const [hasCustomKey, setHasCustomKey] = useState(false);
+    const [showSettings, setShowSettings] = useState(false);
     const chatLogRef = useRef(null);
+
+    useEffect(() => {
+        const savedKey = localStorage.getItem("custom_gemini_api_key") || "";
+        setCustomKeyInput(savedKey);
+        setHasCustomKey(!!savedKey);
+    }, []);
+
+    const apiKey = useMemo(() => {
+        if (hasCustomKey) {
+            const localKey = localStorage.getItem("custom_gemini_api_key");
+            if (localKey) return localKey.trim();
+        }
+        return process.env.REACT_APP_GEMINI_API_KEY || "";
+    }, [hasCustomKey]);
+
+    const handleSaveCustomKey = () => {
+        const trimmed = customKeyInput.trim();
+        if (trimmed) {
+            localStorage.setItem("custom_gemini_api_key", trimmed);
+            setHasCustomKey(true);
+            setShowSettings(false);
+            setStatus("online");
+        }
+    };
+
+    const handleResetDefaultKey = () => {
+        localStorage.removeItem("custom_gemini_api_key");
+        setCustomKeyInput("");
+        setHasCustomKey(false);
+        setShowSettings(false);
+        setStatus("online");
+    };
 
     // Build system prompt once (memoized)
     const systemPrompt = useMemo(() => buildSystemPrompt(), []);
@@ -123,7 +157,7 @@ export default function AIChatbot() {
                     ...prev,
                     {
                         role: "bot",
-                        text: "I'm running in **demo mode** — the Gemini API key isn't configured yet. Add `REACT_APP_GEMINI_API_KEY` to get started!"
+                        text: "I'm running in **demo mode** — the Gemini API key isn't configured yet. Click the gear icon (⚙️) at the top to paste your own Gemini API key and start chatting!"
                     }
                 ]);
                 setIsTyping(false);
@@ -152,7 +186,11 @@ export default function AIChatbot() {
                     const errData = await response.json();
                     const statusVal = errData?.error?.status || "";
                     if (response.status === 429 || statusVal === "RESOURCE_EXHAUSTED") {
-                        errorMsg = "I've hit my free tier limit (10 Requests/Min or 250 Requests/Day). The minute limit resets within **1 minute** and the daily limit resets at **midnight Pacific Time**. In the meantime, you can connect with me directly at **bhavinpathak29@gmail.com** or **+91 9428455515**";
+                        if (hasCustomKey) {
+                            errorMsg = "Your custom Gemini API key has hit the rate limit (quota exhausted). Please verify your Google AI Studio billing/usage limits, or reset to default settings.";
+                        } else {
+                            errorMsg = "I've hit my default free-tier limit (10 Requests/Min or 250 Requests/Day). The limit resets within **1 minute**. You can connect with me directly at **bhavinpathak29@gmail.com**, or click the gear icon (⚙️) at the top to paste your own Gemini API Key and continue chatting instantly!";
+                        }
                         setStatus("offline");
                     } else if (response.status === 403) {
                         errorMsg = "The API key seems to have a permissions issue. Please verify the configuration.";
@@ -211,7 +249,7 @@ export default function AIChatbot() {
             ]);
             setSuggestions(getRandomSuggestions(3));
         }
-    }, [input, isTyping, apiKey, systemPrompt, requestTimes]);
+    }, [input, isTyping, apiKey, systemPrompt, requestTimes, hasCustomKey]);
 
     if (!isMounted) return null;
 
@@ -252,96 +290,164 @@ export default function AIChatbot() {
                                         </span>
                                     </div>
                                 </div>
-                                <button
-                                    type="button"
-                                    onClick={() => setIsOpen(false)}
-                                    aria-label="Close chat"
-                                    className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors cursor-pointer"
-                                >
-                                    <X className="w-4 h-4" />
-                                </button>
-                            </div>
-
-                            {/* Messages */}
-                            <div ref={chatLogRef} className="flex-1 overflow-y-auto py-3 pr-1 flex flex-col gap-3 scrollbar-thin min-h-0">
-
-                                {/* Welcome typewriter (streams in on first open, before real messages) */}
-                                {messages.length === 0 && (
-                                    <div className="self-start max-w-[85%]">
-                                        <div className="p-3 rounded-2xl rounded-tl-none bg-slate-100 dark:bg-white/5 border border-gray-200/50 dark:border-white/5 shadow-sm text-xs md:text-sm text-gray-800 dark:text-gray-200 font-medium leading-relaxed">
-                                            {formatResponseText(welcomeText)}
-                                            {!welcomeDone && <span className="inline-block w-0.5 h-3.5 bg-blue-500 ml-0.5 animate-pulse align-middle" />}
-                                        </div>
-                                    </div>
-                                )}
-
-                                {messages.map((msg, index) => (
-                                    <div
-                                        key={index}
-                                        className={`flex flex-col max-w-[85%] ${msg.role === "user" ? "self-end items-end" : "self-start items-start"}`}
+                                <div className="flex items-center gap-1">
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowSettings(prev => !prev)}
+                                        aria-label="Toggle settings"
+                                        className={`p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 transition-colors cursor-pointer ${
+                                            showSettings ? "text-indigo-500" : "text-gray-400 hover:text-gray-600 dark:hover:text-white"
+                                        }`}
                                     >
-                                        <div
-                                            className={`p-3 rounded-2xl text-xs md:text-sm font-medium leading-relaxed border ${msg.role === "user"
-                                                ? "bg-blue-600 text-white border-blue-700 rounded-tr-none"
-                                                : "bg-slate-100 dark:bg-white/5 text-gray-800 dark:text-gray-200 border-gray-200/50 dark:border-white/5 rounded-tl-none shadow-sm"
-                                                }`}
-                                        >
-                                            {msg.role === "bot" ? formatResponseText(msg.text) : msg.text}
-                                        </div>
-                                    </div>
-                                ))}
-
-                                {isWaiting && (
-                                    <div className="self-start max-w-[85%]">
-                                        <div className="p-3 bg-slate-100 dark:bg-white/5 border border-gray-200/50 dark:border-white/5 rounded-2xl rounded-tl-none flex items-center gap-2 shadow-sm">
-                                            <RefreshCw className="w-3.5 h-3.5 animate-spin text-blue-500 shrink-0" />
-                                            <span className="text-[10px] text-gray-400 font-medium italic">Neural Twin is thinking...</span>
-                                        </div>
-                                    </div>
-                                )}
+                                        <Settings className="w-4 h-4" />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsOpen(false)}
+                                        aria-label="Close chat"
+                                        className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors cursor-pointer"
+                                    >
+                                        <X className="w-4 h-4" />
+                                    </button>
+                                </div>
                             </div>
 
-                            {/* Suggestions */}
-                            {!isTyping && messages[messages.length - 1]?.role !== "user" && (
-                                <div className="flex flex-col gap-1.5 pb-2 shrink-0">
-                                    <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider pl-1">Ask about Bhavin:</span>
-                                    <div className="flex flex-wrap gap-1.5">
-                                        {suggestions.map((s, idx) => (
+                            {/* Content */}
+                            {showSettings ? (
+                                <div className="flex-1 flex flex-col justify-between py-4 min-h-0">
+                                    <div className="flex flex-col gap-4 overflow-y-auto pr-1">
+                                        <div className="flex items-center gap-2 text-indigo-500 dark:text-indigo-400 font-bold text-xs uppercase tracking-wider">
+                                            <Key className="w-4 h-4" />
+                                            <span>API Settings</span>
+                                        </div>
+                                        <p className="text-[11px] text-gray-600 dark:text-gray-400 leading-relaxed font-medium">
+                                            By default, this chatbot uses Bhavin&apos;s free-tier Gemini API key. If it reaches the rate limit (10 RPM), or if you prefer to use your own, paste your personal key below. It will be stored securely in your browser&apos;s local storage.
+                                        </p>
+                                        <div className="flex flex-col gap-1.5">
+                                            <label className="text-[10px] text-gray-400 font-bold uppercase tracking-wider pl-1">
+                                                Custom Gemini API Key
+                                            </label>
+                                            <input
+                                                type="password"
+                                                placeholder={hasCustomKey ? "••••••••••••••••••••••••" : "Paste your AIzaSy... key"}
+                                                value={customKeyInput}
+                                                onChange={(e) => setCustomKeyInput(e.target.value)}
+                                                className="bg-slate-100 dark:bg-black/40 border border-gray-200 dark:border-white/15 px-3 py-2 rounded-xl text-xs text-gray-800 dark:text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="flex flex-col gap-2 pt-4 border-t border-gray-200/60 dark:border-white/10 shrink-0">
+                                        <button
+                                            type="button"
+                                            onClick={handleSaveCustomKey}
+                                            disabled={!customKeyInput.trim()}
+                                            className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white font-bold rounded-xl text-xs shadow-md transition-colors duration-200 cursor-pointer"
+                                        >
+                                            Save API Key
+                                        </button>
+                                        {hasCustomKey && (
                                             <button
                                                 type="button"
-                                                key={idx}
-                                                onClick={() => handleSend(s)}
-                                                className="text-[10px] text-left bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-gray-600 dark:text-gray-300 px-2.5 py-1.5 rounded-full border border-gray-200 dark:border-white/10 cursor-pointer font-medium transition-colors"
+                                                onClick={handleResetDefaultKey}
+                                                className="w-full py-2 bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 text-gray-600 dark:text-gray-300 font-bold rounded-xl text-xs border border-gray-200 dark:border-white/10 transition-colors duration-200 cursor-pointer"
                                             >
-                                                {s}
+                                                Reset to Default Key
                                             </button>
-                                        ))}
+                                        )}
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowSettings(false)}
+                                            className="w-full py-2 bg-gray-500/10 hover:bg-gray-500/20 text-gray-500 dark:text-gray-400 font-bold rounded-xl text-xs transition-colors duration-200 cursor-pointer"
+                                        >
+                                            Back to Chat
+                                        </button>
                                     </div>
                                 </div>
-                            )}
+                            ) : (
+                                <>
+                                    {/* Messages */}
+                                    <div ref={chatLogRef} className="flex-1 overflow-y-auto py-3 pr-1 flex flex-col gap-3 scrollbar-thin min-h-0">
 
-                            {/* Input */}
-                            <form
-                                onSubmit={(e) => { e.preventDefault(); handleSend(); }}
-                                className="flex gap-2 pt-2 border-t border-gray-200/60 dark:border-white/10 shrink-0"
-                            >
-                                <input
-                                    type="text"
-                                    placeholder="Ask about Bhavin..."
-                                    value={input}
-                                    onChange={(e) => setInput(e.target.value)}
-                                    disabled={isTyping}
-                                    className="flex-grow bg-slate-100 dark:bg-black/40 border border-gray-200 dark:border-white/15 px-3 py-2 rounded-xl text-xs md:text-sm text-gray-800 dark:text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all disabled:opacity-60"
-                                />
-                                <button
-                                    type="submit"
-                                    disabled={isTyping || !input.trim()}
-                                    aria-label="Send message"
-                                    className="p-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-xl transition-colors duration-200 flex items-center justify-center cursor-pointer shadow-md"
-                                >
-                                    <Send className="w-3.5 h-3.5" />
-                                </button>
-                            </form>
+                                        {/* Welcome typewriter (streams in on first open, before real messages) */}
+                                        {messages.length === 0 && (
+                                            <div className="self-start max-w-[85%]">
+                                                <div className="p-3 rounded-2xl rounded-tl-none bg-slate-100 dark:bg-white/5 border border-gray-200/50 dark:border-white/5 shadow-sm text-xs md:text-sm text-gray-800 dark:text-gray-200 font-medium leading-relaxed">
+                                                    {formatResponseText(welcomeText)}
+                                                    {!welcomeDone && <span className="inline-block w-0.5 h-3.5 bg-blue-500 ml-0.5 animate-pulse align-middle" />}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {messages.map((msg, index) => (
+                                            <div
+                                                key={index}
+                                                className={`flex flex-col max-w-[85%] ${msg.role === "user" ? "self-end items-end" : "self-start items-start"}`}
+                                            >
+                                                <div
+                                                    className={`p-3 rounded-2xl text-xs md:text-sm font-medium leading-relaxed border ${msg.role === "user"
+                                                        ? "bg-blue-600 text-white border-blue-700 rounded-tr-none"
+                                                        : "bg-slate-100 dark:bg-white/5 text-gray-800 dark:text-gray-200 border-gray-200/50 dark:border-white/5 rounded-tl-none shadow-sm"
+                                                        }`}
+                                                >
+                                                    {msg.role === "bot" ? formatResponseText(msg.text) : msg.text}
+                                                </div>
+                                            </div>
+                                        ))}
+
+                                        {isWaiting && (
+                                            <div className="self-start max-w-[85%]">
+                                                <div className="p-3 bg-slate-100 dark:bg-white/5 border border-gray-200/50 dark:border-white/5 rounded-2xl rounded-tl-none flex items-center gap-2 shadow-sm">
+                                                    <RefreshCw className="w-3.5 h-3.5 animate-spin text-blue-500 shrink-0" />
+                                                    <span className="text-[10px] text-gray-400 font-medium italic">Neural Twin is thinking...</span>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Suggestions */}
+                                    {!isTyping && messages[messages.length - 1]?.role !== "user" && (
+                                        <div className="flex flex-col gap-1.5 pb-2 shrink-0">
+                                            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider pl-1">Ask about Bhavin:</span>
+                                            <div className="flex flex-wrap gap-1.5">
+                                                {suggestions.map((s, idx) => (
+                                                    <button
+                                                        type="button"
+                                                        key={idx}
+                                                        onClick={() => handleSend(s)}
+                                                        className="text-[10px] text-left bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-gray-600 dark:text-gray-300 px-2.5 py-1.5 rounded-full border border-gray-200 dark:border-white/10 cursor-pointer font-medium transition-colors"
+                                                    >
+                                                        {s}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Input */}
+                                    <form
+                                        onSubmit={(e) => { e.preventDefault(); handleSend(); }}
+                                        className="flex gap-2 pt-2 border-t border-gray-200/60 dark:border-white/10 shrink-0"
+                                    >
+                                        <input
+                                            type="text"
+                                            placeholder="Ask about Bhavin..."
+                                            value={input}
+                                            onChange={(e) => setInput(e.target.value)}
+                                            disabled={isTyping}
+                                            className="flex-grow bg-slate-100 dark:bg-black/40 border border-gray-200 dark:border-white/15 px-3 py-2 rounded-xl text-xs md:text-sm text-gray-800 dark:text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all disabled:opacity-60"
+                                        />
+                                        <button
+                                            type="submit"
+                                            disabled={isTyping || !input.trim()}
+                                            aria-label="Send message"
+                                            className="p-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-xl transition-colors duration-200 flex items-center justify-center cursor-pointer shadow-md"
+                                        >
+                                            <Send className="w-3.5 h-3.5" />
+                                        </button>
+                                    </form>
+                                </>
+                            )}
                         </div>
                     </motion.div>
                 )}
