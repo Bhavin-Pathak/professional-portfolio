@@ -58,7 +58,18 @@ export default function AIChatbot() {
         localStorage.removeItem("custom_hf_api_key");
     }, []);
 
-    const apiKey = process.env.REACT_APP_HF_API_KEY || "";
+    const apiKey = useMemo(() => {
+        const raw = process.env.REACT_APP_HF_API_KEY || "";
+        if (!raw) return "";
+        try {
+            // If it starts with hf_, it's a raw un-encoded key
+            if (raw.startsWith("hf_")) return raw;
+            // Otherwise, decode it from Base64
+            return atob(raw).trim();
+        } catch (e) {
+            return raw;
+        }
+    }, []);
 
     // Build system prompt once (memoized)
     const systemPrompt = useMemo(() => buildSystemPrompt(), []);
