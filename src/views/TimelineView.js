@@ -11,10 +11,10 @@ export default function TimelineView() {
     const [loading, setLoading] = useState(true);
     const [githubEvents, setGithubEvents] = useState([]);
     const [githubStats, setGithubStats] = useState({
-        publicRepos: 25,
-        followers: 5,
-        recentCommits: 15,
-        recentPRs: 2
+        publicRepos: "--",
+        followers: "--",
+        recentCommits: "--",
+        recentPRs: "--"
     });
     const [leetcodeData, setLeetcodeData] = useState(null);
     const [error, setError] = useState(false);
@@ -98,10 +98,10 @@ export default function TimelineView() {
             }
 
             setGithubStats({
-                publicRepos: ghProfileData?.public_repos ?? 25,
-                followers: ghProfileData?.followers ?? 5,
-                recentCommits: commitCount || 15,
-                recentPRs: prCount || 2
+                publicRepos: ghProfileData?.public_repos ?? "--",
+                followers: ghProfileData?.followers ?? "--",
+                recentCommits: commitCount,
+                recentPRs: prCount
             });
 
             // Format GitHub Events into Timeline Items
@@ -241,21 +241,23 @@ export default function TimelineView() {
                                 className="grid grid-cols-2 md:grid-cols-4 gap-3 w-full"
                             >
                                 {[
-                                    { label: "Total Solved", value: leetcodeData?.totalSolved ?? 49, color: "text-blue-500 dark:text-blue-400" },
-                                    { label: "Easy Solved", value: leetcodeData?.easySolved ?? 14, color: "text-green-500 dark:text-green-400" },
-                                    { label: "Medium Solved", value: leetcodeData?.mediumSolved ?? 29, color: "text-yellow-500 dark:text-yellow-400" },
-                                    { label: "Hard Solved", value: leetcodeData?.hardSolved ?? 6, color: "text-red-500 dark:text-red-400" }
+                                    { label: "Total Solved", value: leetcodeData?.totalSolved ?? "--", color: "text-blue-500 dark:text-blue-400" },
+                                    { label: "Easy Solved", value: leetcodeData?.easySolved ?? "--", color: "text-green-500 dark:text-green-400" },
+                                    { label: "Medium Solved", value: leetcodeData?.mediumSolved ?? "--", color: "text-yellow-500 dark:text-yellow-400" },
+                                    { label: "Hard Solved", value: leetcodeData?.hardSolved ?? "--", color: "text-red-500 dark:text-red-400" }
                                 ].map(stat => (
                                     <LiquidContainer
                                         key={`${stat.label}-${leetcodeData ? "loaded" : "loading"}`}
-                                        className="p-5 flex flex-col items-center justify-center text-center gap-1.5 border border-gray-200/80 dark:border-white/10 min-h-[105px]"
+                                        className="p-5 border border-gray-200/80 dark:border-white/10 min-h-[105px]"
                                     >
-                                        <span className={`text-3xl md:text-4xl font-black ${stat.color} leading-none tabular-nums ${loading ? "animate-pulse opacity-70" : ""}`}>
-                                            {stat.value}
-                                        </span>
-                                        <span className="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider leading-none">
-                                            {stat.label}
-                                        </span>
+                                        <div className="flex flex-col items-center justify-center text-center gap-1.5 h-full w-full">
+                                            <span className={`text-3xl md:text-4xl font-black ${stat.color} leading-none tabular-nums ${loading ? "animate-pulse opacity-70" : ""}`}>
+                                                {stat.value}
+                                            </span>
+                                            <span className="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider leading-none">
+                                                {stat.label}
+                                            </span>
+                                        </div>
                                     </LiquidContainer>
                                 ))}
                             </motion.div>
@@ -278,14 +280,16 @@ export default function TimelineView() {
                                 ].map(stat => (
                                     <LiquidContainer
                                         key={`${stat.label}-${githubStats ? "loaded" : "loading"}`}
-                                        className="p-5 flex flex-col items-center justify-center text-center gap-1.5 border border-gray-200/80 dark:border-white/10 min-h-[105px]"
+                                        className="p-5 border border-gray-200/80 dark:border-white/10 min-h-[105px]"
                                     >
-                                        <span className={`text-3xl md:text-4xl font-black ${stat.color} leading-none tabular-nums ${loading ? "animate-pulse opacity-70" : ""}`}>
-                                            {stat.value}
-                                        </span>
-                                        <span className="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider leading-none">
-                                            {stat.label}
-                                        </span>
+                                        <div className="flex flex-col items-center justify-center text-center gap-1.5 h-full w-full">
+                                            <span className={`text-3xl md:text-4xl font-black ${stat.color} leading-none tabular-nums ${loading ? "animate-pulse opacity-70" : ""}`}>
+                                                {stat.value}
+                                            </span>
+                                            <span className="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider leading-none">
+                                                {stat.label}
+                                            </span>
+                                        </div>
                                     </LiquidContainer>
                                 ))}
                             </motion.div>
@@ -308,14 +312,16 @@ export default function TimelineView() {
                                 ].map(stat => (
                                     <LiquidContainer
                                         key={stat.label}
-                                        className="p-5 flex flex-col items-center justify-center text-center gap-1.5 border border-gray-200/80 dark:border-white/10 min-h-[105px]"
+                                        className="p-5 border border-gray-200/80 dark:border-white/10 min-h-[105px]"
                                     >
-                                        <span className={`text-2xl md:text-3xl font-black ${stat.color} leading-none`}>
-                                            {stat.value}
-                                        </span>
-                                        <span className="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider leading-none">
-                                            {stat.label}
-                                        </span>
+                                        <div className="flex flex-col items-center justify-center text-center gap-1.5 h-full w-full">
+                                            <span className={`text-2xl md:text-3xl font-black ${stat.color} leading-none`}>
+                                                {stat.value}
+                                            </span>
+                                            <span className="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider leading-none">
+                                                {stat.label}
+                                            </span>
+                                        </div>
                                     </LiquidContainer>
                                 ))}
                             </motion.div>
