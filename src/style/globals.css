@@ -50,7 +50,8 @@ html {
         margin: 0 !important;
     }
 
-    html, body {
+    html,
+    body {
         background: white !important;
         margin: 0 !important;
         padding: 0 !important;
@@ -58,7 +59,9 @@ html {
         overflow: hidden !important;
     }
 
-    #root, noscript, .initial-loader {
+    #root,
+    noscript,
+    .initial-loader {
         display: none !important;
     }
 

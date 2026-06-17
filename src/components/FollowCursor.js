@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { motion, useSpring, useMotionValue, AnimatePresence } from 'framer-motion';
 
 const FollowCursor = () => {
+    const targetX = useMotionValue(-100);
+    const targetY = useMotionValue(-100);
     const mouseX = useMotionValue(-100);
     const mouseY = useMotionValue(-100);
     const [isPointer, setIsPointer] = useState(false);
@@ -14,19 +16,34 @@ const FollowCursor = () => {
     const primaryGlow = "rgba(37, 99, 235, 0.3)";
 
     // Ultra-snappier spring configuration for the "follower"
-    const followerConfig = { damping: 30, stiffness: 600 };
+    const followerConfig = { damping: 32, stiffness: 450 };
 
-    const followerX = useSpring(mouseX, followerConfig);
-    const followerY = useSpring(mouseY, followerConfig);
+    const followerX = useSpring(targetX, followerConfig);
+    const followerY = useSpring(targetY, followerConfig);
 
     useEffect(() => {
         const handleMouseMove = (e) => {
-            mouseX.set(e.clientX);
-            mouseY.set(e.clientY);
-
             const target = e.target;
             const isClickable = target.closest('button, a, [role="button"], input, textarea, .cursor-pointer');
             setIsPointer(!!isClickable);
+
+            // Precision dot tracks the actual mouse coordinates
+            mouseX.set(e.clientX);
+            mouseY.set(e.clientY);
+
+            if (isClickable) {
+                const rect = isClickable.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+
+                // Lock outer follower ring target to the center of the hovered element
+                targetX.set(centerX);
+                targetY.set(centerY);
+            } else {
+                // Otherwise track mouse coordinates normally
+                targetX.set(e.clientX);
+                targetY.set(e.clientY);
+            }
         };
 
         const handleClick = (e) => {
@@ -44,7 +61,7 @@ const FollowCursor = () => {
             window.removeEventListener('mousemove', handleMouseMove);
             window.removeEventListener('mousedown', handleClick);
         };
-    }, [mouseX, mouseY]);
+    }, [mouseX, mouseY, targetX, targetY]);
 
     return (
         <div className="fixed inset-0 pointer-events-none z-[9999] overflow-hidden">

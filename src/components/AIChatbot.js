@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageSquare, X, Send, Bot, RefreshCw } from "lucide-react";
+import { MessageSquare, X, Send, Bot, RefreshCw, Volume2, VolumeX } from "lucide-react";
 import {
     formatResponseText,
     getRandomSuggestions,
     stripSuggestionsBlock,
-    buildSystemPrompt
+    buildSystemPrompt,
+    logAnalyticsEvent
 } from "../utils/chatbotUtils";
 
 // ── Welcome message streams in character by character ─────────────────────────
@@ -53,6 +54,12 @@ export default function AIChatbot() {
     const chatLogRef = useRef(null);
     const messagesRef = useRef([]);
 
+    const [isVoiceEnabled, setIsVoiceEnabled] = useState(() => {
+        return localStorage.getItem("chatbot_voice_enabled") === "true";
+    });
+    const sessionStartTimeRef = useRef(Date.now());
+    const lastSpokenIndexRef = useRef(-1);
+
     useEffect(() => {
         messagesRef.current = messages;
     }, [messages]);
@@ -61,6 +68,63 @@ export default function AIChatbot() {
     useEffect(() => {
         localStorage.removeItem("custom_hf_api_key");
     }, []);
+
+    // Cancel speech when closed or toggled off
+    useEffect(() => {
+        if (!isOpen) {
+            window.speechSynthesis?.cancel();
+        }
+    }, [isOpen]);
+
+    const toggleVoice = () => {
+        const nextState = !isVoiceEnabled;
+        setIsVoiceEnabled(nextState);
+        localStorage.setItem("chatbot_voice_enabled", String(nextState));
+        if (!nextState) {
+            window.speechSynthesis?.cancel();
+        }
+    };
+
+    const cleanMarkdownForSpeech = (text) => {
+        if (!text) return "";
+        return text
+            .replace(/\*\*([^*]+)\*\*/g, "$1")
+            .replace(/`([^`]+)`/g, "$1")
+            .replace(/\[([^\]]+)\]\(([^)]+)\)/g, "$1")
+            .replace(/###?\s+/g, "")
+            .replace(/-\s+/g, "")
+            .replace(/\[Suggestions\].*$/i, "")
+            .trim();
+    };
+
+    const speakText = useCallback((text) => {
+        if (!isVoiceEnabled || !window.speechSynthesis) return;
+        window.speechSynthesis.cancel();
+        const cleaned = cleanMarkdownForSpeech(text);
+        if (!cleaned) return;
+
+        const utterance = new SpeechSynthesisUtterance(cleaned);
+        const voices = window.speechSynthesis.getVoices();
+        const enVoice = voices.find(v => v.lang.startsWith("en-") && v.name.includes("Google")) ||
+                        voices.find(v => v.lang.startsWith("en-")) ||
+                        voices[0];
+        if (enVoice) {
+            utterance.voice = enVoice;
+        }
+        window.speechSynthesis.speak(utterance);
+    }, [isVoiceEnabled]);
+
+    // Speak new bot messages
+    useEffect(() => {
+        const lastIdx = messages.length - 1;
+        if (lastIdx >= 0 && lastIdx > lastSpokenIndexRef.current) {
+            const lastMsg = messages[lastIdx];
+            if (lastMsg.role === "bot" && isVoiceEnabled) {
+                speakText(lastMsg.text);
+            }
+            lastSpokenIndexRef.current = lastIdx;
+        }
+    }, [messages, isVoiceEnabled, speakText]);
 
     const apiKey = useMemo(() => {
         const raw = process.env.REACT_APP_HF_API_KEY || "";
@@ -117,11 +181,62 @@ export default function AIChatbot() {
     const handleSend = useCallback(async (textToSend) => {
         const query = (textToSend || input).trim();
         if (!query || isTyping) return;
+
+        // Log analytics events
+        if (textToSend) {
+            logAnalyticsEvent("suggestion_click", { text: query });
+        } else {
+            logAnalyticsEvent("chat_query", { text: query });
+        }
+
         if (!textToSend) setInput("");
 
         const excludeList = [query, ...messagesRef.current.map(m => m.text)];
 
         setMessages(prev => [...prev, { role: "user", text: query }]);
+
+        // ── Developer Command / Easter Egg Processor ──────────────────────────
+        if (query.startsWith("/")) {
+            setIsTyping(true);
+            setIsWaiting(true);
+            setTimeout(() => {
+                const cmd = query.toLowerCase().trim();
+                logAnalyticsEvent("command_execution", { command: cmd });
+                
+                setIsWaiting(false);
+                setIsTyping(false);
+
+                if (cmd === "/clear") {
+                    setMessages([]);
+                    lastSpokenIndexRef.current = -1;
+                    setTimeout(() => {
+                        setMessages([{ role: "bot", text: "System cleared. Type `/clear`, `/stats`, or `/joke` to execute terminal commands." }]);
+                    }, 50);
+                } else if (cmd === "/joke") {
+                    const JOKES = [
+                        "Why do programmers wear glasses? Because they can't C#.",
+                        "There are 10 types of people in the world: those who understand binary, and those who don't.",
+                        "How many programmers does it take to change a light bulb? None, that's a hardware problem.",
+                        "What is a programmer's favorite hangout place? Foo Bar.",
+                        "A SQL query goes into a bar, walks up to two tables and asks, 'Can I join you?'",
+                        "['hip', 'hip'] (hip hip array!)",
+                        "What is an object-oriented way to become wealthy? Inheritance.",
+                        "Why did the programmer quit his job? Because he didn't get arrays."
+                    ];
+                    const randomJoke = JOKES[Math.floor(Math.random() * JOKES.length)];
+                    setMessages(prev => [...prev, { role: "bot", text: `Here is a developer joke for you:\n\n**${randomJoke}**` }]);
+                } else if (cmd === "/stats") {
+                    const totalMessages = messagesRef.current.filter(m => m.role === "user").length + 1;
+                    const sessionDuration = Math.round((Date.now() - sessionStartTimeRef.current) / 1000);
+                    const statsText = `### Chatbot Session Stats\n\n- **User Queries sent**: ${totalMessages}\n- **System Status**: ${status === "online" ? "Online (Healthy)" : status === "warning" ? "Busy" : "Offline"}\n- **Session Duration**: ${sessionDuration} seconds\n- **Voice Mode**: ${isVoiceEnabled ? "Enabled 🔊" : "Disabled 🔇"}`;
+                    setMessages(prev => [...prev, { role: "bot", text: statsText }]);
+                } else {
+                    setMessages(prev => [...prev, { role: "bot", text: `Unknown command: \`${query}\`.\n\nAvailable commands:\n- \`/clear\` : Clear message history\n- \`/joke\` : Hear a programmer joke\n- \`/stats\` : View session statistics` }]);
+                }
+            }, 600);
+            return;
+        }
+
         setIsTyping(true);
         setIsWaiting(true);
 
@@ -240,7 +355,7 @@ export default function AIChatbot() {
             ]);
             setSuggestions(getRandomSuggestions(3, excludeList));
         }
-    }, [input, isTyping, apiKey, systemPrompt, requestTimes]);
+    }, [input, isTyping, apiKey, systemPrompt, requestTimes, isVoiceEnabled, status]);
 
     if (!isMounted) return null;
 
@@ -282,6 +397,18 @@ export default function AIChatbot() {
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-1">
+                                    <button
+                                        type="button"
+                                        onClick={toggleVoice}
+                                        title={isVoiceEnabled ? "Mute Neural Twin" : "Enable Voice Assistant"}
+                                        className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors cursor-pointer"
+                                    >
+                                        {isVoiceEnabled ? (
+                                            <Volume2 className="w-4 h-4 text-blue-500 animate-pulse" />
+                                        ) : (
+                                            <VolumeX className="w-4 h-4" />
+                                        )}
+                                    </button>
                                     <button
                                         type="button"
                                         onClick={() => setIsOpen(false)}

@@ -6,6 +6,7 @@ import Header from "../components/Header.js";
 import { Github, Code, Briefcase, Award, Calendar, ExternalLink, RefreshCw, Layers, AlertCircle } from "lucide-react";
 import { pageVariants } from "../utils/animations.js";
 import { formatDate, formatLeetcodeSubmissions, formatGithubRepositories } from "../utils/timelineUtils.js";
+import { logAnalyticsEvent } from "../utils/chatbotUtils.js";
 
 const GITHUB_REPOS_URL = process.env.REACT_APP_GITHUB_REPOS_URL || "https://api.github.com/users/Bhavin-Pathak/repos";
 const GITHUB_PROFILE_URL = process.env.REACT_APP_GITHUB_PROFILE_URL || "https://api.github.com/users/Bhavin-Pathak";
@@ -389,6 +390,13 @@ export default function TimelineView() {
                                                         href={item.link}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
+                                                        onClick={() => {
+                                                            logAnalyticsEvent("timeline_click", {
+                                                                itemTitle: item.title,
+                                                                itemLink: item.link,
+                                                                category: item.category
+                                                            });
+                                                        }}
                                                         className="inline-flex items-center gap-1.5 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold self-start md:self-center bg-blue-500/5 hover:bg-blue-500/10 px-3 py-1.5 rounded-full border border-blue-500/20 transition-all cursor-pointer whitespace-nowrap"
                                                     >
                                                         View Live <ExternalLink className="w-3 h-3" />

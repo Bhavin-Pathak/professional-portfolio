@@ -208,3 +208,20 @@ STRICT INSTRUCTIONS:
 Do not include suggestions in the main body.`;
 }
 
+// ── Log Analytics Event to LocalStorage ─────────────────────────────────────────
+export function logAnalyticsEvent(type, data) {
+    try {
+        const events = JSON.parse(localStorage.getItem("chatbot_analytics_events") || "[]");
+        events.push({
+            id: Math.random().toString(36).substring(2, 9) + Date.now().toString(36),
+            type,
+            data,
+            timestamp: Date.now()
+        });
+        localStorage.setItem("chatbot_analytics_events", JSON.stringify(events));
+    } catch (e) {
+        console.error("Failed to log analytics event:", e);
+    }
+}
+
+

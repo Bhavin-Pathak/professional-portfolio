@@ -16,7 +16,7 @@ export default function Header({ title, subtitle, backTo, tag: Tag = "h1" }) {
     }, []);
 
     return (
-        <div className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 
+        <div className={`fixed -top-2 left-0 right-0 pt-2 z-40 transition-all duration-300 
             ${isScrolled 
                 ? "bg-white/80 dark:bg-black/50 backdrop-blur-md border-b border-gray-200/60 dark:border-white/5" 
                 : "bg-transparent"}`}>
