@@ -4,7 +4,6 @@ import { MessageSquare, X, Send, Bot, RefreshCw } from "lucide-react";
 import {
     formatResponseText,
     getRandomSuggestions,
-    parseAISuggestions,
     stripSuggestionsBlock,
     buildSystemPrompt
 } from "../utils/chatbotUtils";
@@ -52,6 +51,11 @@ export default function AIChatbot() {
     const [status, setStatus] = useState("online"); // online, warning, offline
     const [requestTimes, setRequestTimes] = useState([]);
     const chatLogRef = useRef(null);
+    const messagesRef = useRef([]);
+
+    useEffect(() => {
+        messagesRef.current = messages;
+    }, [messages]);
 
     // Clean up any legacy custom API key from local storage
     useEffect(() => {
@@ -114,6 +118,8 @@ export default function AIChatbot() {
         const query = (textToSend || input).trim();
         if (!query || isTyping) return;
         if (!textToSend) setInput("");
+
+        const excludeList = [query, ...messagesRef.current.map(m => m.text)];
 
         setMessages(prev => [...prev, { role: "user", text: query }]);
         setIsTyping(true);
@@ -190,7 +196,7 @@ export default function AIChatbot() {
                 setIsWaiting(false);
                 setIsTyping(false);
                 setMessages(prev => [...prev, { role: "bot", text: errorMsg }]);
-                setSuggestions(getRandomSuggestions(3));
+                setSuggestions(getRandomSuggestions(3, excludeList));
                 return;
             }
 
@@ -213,14 +219,14 @@ export default function AIChatbot() {
                     ...prev,
                     { role: "bot", text: "Sorry, I couldn't generate a response. Please try again." }
                 ]);
-                setSuggestions(getRandomSuggestions(3));
+                setSuggestions(getRandomSuggestions(3, excludeList));
                 setIsTyping(false);
                 return;
             }
 
             const visible = stripSuggestionsBlock(fullText);
             setMessages(prev => [...prev, { role: "bot", text: visible }]);
-            setSuggestions(parseAISuggestions(fullText));
+            setSuggestions(getRandomSuggestions(3, excludeList));
             setIsTyping(false);
 
         } catch (err) {
@@ -232,7 +238,7 @@ export default function AIChatbot() {
                 ...prev,
                 { role: "bot", text: "I ran into a connectivity issue. Please check your network and try again." }
             ]);
-            setSuggestions(getRandomSuggestions(3));
+            setSuggestions(getRandomSuggestions(3, excludeList));
         }
     }, [input, isTyping, apiKey, systemPrompt, requestTimes]);
 

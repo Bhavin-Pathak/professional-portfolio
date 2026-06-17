@@ -83,12 +83,26 @@ export const formatResponseText = (text) => {
 };
 
 // ── Random Suggestions Picker ─────────────────────────────────────────────────
-export function getRandomSuggestions(count = 3) {
-    const pool = [...chatbotData.suggestionsPool];
+export function getRandomSuggestions(count = 3, excludeList = []) {
+    let pool = [...chatbotData.suggestionsPool];
+    if (excludeList && excludeList.length > 0) {
+        // Normalize strings for robust matching
+        const normalizedExclude = excludeList.map(q => q.toLowerCase().trim());
+        pool = pool.filter(q => !normalizedExclude.includes(q.toLowerCase().trim()));
+    }
     const picked = [];
     while (picked.length < count && pool.length > 0) {
         const idx = Math.floor(Math.random() * pool.length);
         picked.push(pool.splice(idx, 1)[0]);
+    }
+    // Fallback if pool is empty
+    if (picked.length < count && chatbotData.suggestionsPool.length > 0) {
+        const fallbackPool = [...chatbotData.suggestionsPool];
+        while (picked.length < count && fallbackPool.length > 0) {
+            const idx = Math.floor(Math.random() * fallbackPool.length);
+            const item = fallbackPool.splice(idx, 1)[0];
+            if (!picked.includes(item)) picked.push(item);
+        }
     }
     return picked;
 }
