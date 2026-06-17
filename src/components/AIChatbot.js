@@ -343,7 +343,7 @@ export default function AIChatbot() {
                                                 type="button"
                                                 key={idx}
                                                 onClick={() => handleSend(s)}
-                                                className="text-[10px] bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-gray-600 dark:text-gray-300 px-2.5 py-1 rounded-full border border-gray-200 dark:border-white/10 cursor-pointer font-medium transition-colors"
+                                                className="text-[10px] text-left bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-gray-600 dark:text-gray-300 px-2.5 py-1.5 rounded-full border border-gray-200 dark:border-white/10 cursor-pointer font-medium transition-colors"
                                             >
                                                 {s}
                                             </button>
@@ -384,9 +384,8 @@ export default function AIChatbot() {
                 {!isOpen && showPopup && (
                     <motion.div
                         initial={{ opacity: 0, y: 15, scale: 0.8 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 15, scale: 0.8 }}
-                        transition={{ delay: 2.0, duration: 0.4 }}
+                        animate={{ opacity: 1, y: 0, scale: 1, transition: { delay: 2.0, duration: 0.4 } }}
+                        exit={{ opacity: 0, y: 15, scale: 0.8, transition: { duration: 0.15 } }}
                         className="absolute bottom-20 right-0 z-50 w-64 p-3.5 md:backdrop-blur-xl backdrop-blur-md saturate-150 bg-white/70 dark:bg-black/50 border border-gray-200/80 dark:border-white/10 rounded-2xl rounded-br-none shadow-xl cursor-pointer hover:scale-[1.02] transition-transform"
                         onClick={() => setIsOpen(true)}
                     >

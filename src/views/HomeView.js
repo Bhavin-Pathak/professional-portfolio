@@ -19,6 +19,8 @@ export default function HomeView() {
             color: "from-blue-500 to-cyan-500", 
             iconColorLight: "text-blue-600", 
             borderLight: "border-blue-200",
+            description: "Who I am, my professional background, core programming values, and structural goals.",
+            detail: "SDE-1 @ NuvoAI",
             gridClass: "col-span-1 sm:col-span-2 md:col-span-2 lg:col-span-3 min-h-[9rem] sm:min-h-[13rem] md:min-h-[14rem]" 
         },
         { 
@@ -28,6 +30,8 @@ export default function HomeView() {
             color: "from-purple-500 to-pink-500", 
             iconColorLight: "text-purple-600", 
             borderLight: "border-purple-200",
+            description: "A summary of core backend frameworks, frontend engines, and mobile architectures.",
+            detail: "React • Node • Swift • SQL",
             gridClass: "col-span-1 sm:col-span-2 md:col-span-1 lg:col-span-3 min-h-[9rem] sm:min-h-[13rem] md:min-h-[14rem]" 
         },
         { 
@@ -37,6 +41,8 @@ export default function HomeView() {
             color: "from-green-500 to-emerald-500", 
             iconColorLight: "text-green-600", 
             borderLight: "border-green-200",
+            description: "A deep dive into built solutions: production applications, AI agents, and open-source packages.",
+            detail: "15+ Projects Showcase",
             gridClass: "col-span-1 sm:col-span-2 md:col-span-2 lg:col-span-4 min-h-[9rem] sm:min-h-[13rem] md:min-h-[14rem]" 
         },
         { 
@@ -46,6 +52,8 @@ export default function HomeView() {
             color: "from-orange-500 to-red-500", 
             iconColorLight: "text-orange-600", 
             borderLight: "border-orange-200",
+            description: "Professional journey and roles engineered at Meril NuvoAI, UB Softec, and RnD Technosoft.",
+            detail: "3+ Years Professional",
             gridClass: "col-span-1 sm:col-span-1 md:col-span-1 lg:col-span-2 min-h-[9rem] sm:min-h-[13rem] md:min-h-[14rem]" 
         },
         { 
@@ -55,6 +63,8 @@ export default function HomeView() {
             color: "from-indigo-500 to-violet-500", 
             iconColorLight: "text-indigo-600", 
             borderLight: "border-indigo-200",
+            description: "Live real-time feed loading active GitHub repository commits and LeetCode problem solving.",
+            detail: "Real-Time Dev Metrics",
             gridClass: "col-span-1 sm:col-span-1 md:col-span-1 lg:col-span-2 min-h-[9rem] sm:min-h-[12rem] md:min-h-[13rem]" 
         },
         { 
@@ -64,6 +74,8 @@ export default function HomeView() {
             color: "from-yellow-500 to-orange-500", 
             iconColorLight: "text-yellow-600", 
             borderLight: "border-yellow-200",
+            description: "Writing and sharing guides about full stack technologies, Postgres scaling, and AI architectures.",
+            detail: "Engineering Blogs",
             gridClass: "col-span-1 sm:col-span-1 md:col-span-1 lg:col-span-2 min-h-[9rem] sm:min-h-[12rem] md:min-h-[13rem]" 
         },
         { 
@@ -73,6 +85,8 @@ export default function HomeView() {
             color: "from-gray-500 to-slate-500", 
             iconColorLight: "text-slate-600", 
             borderLight: "border-slate-200",
+            description: "Let's collaborate! Reach out for job proposals, general networking, or system discussions.",
+            detail: "Get In Touch",
             gridClass: "col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-2 min-h-[9rem] sm:min-h-[12rem] md:min-h-[13rem]" 
         },
     ];
@@ -124,41 +138,57 @@ export default function HomeView() {
                             <TiltCard
                                 onClick={() => navigate(item.path)}
                                 aria-label={`Go to ${item.label} page`}
-                                className="relative group w-full h-full rounded-2xl overflow-hidden
+                                className="relative group w-full h-full rounded-[2rem] overflow-hidden
                                     border border-gray-200/80 dark:border-white/10
                                     bg-white/40 dark:bg-white/5
                                     hover:bg-gray-50 dark:hover:bg-white/10
-                                    transition-all duration-200 flex flex-row sm:flex-col items-center justify-start sm:justify-center p-4 sm:p-6 gap-4 cursor-pointer"
+                                    transition-all duration-200 flex flex-col justify-between p-6 cursor-pointer"
                             >
                                 {/* Background Gradient on Hover */}
                                 <div className={`absolute inset-0 opacity-0 group-hover:opacity-10 dark:group-hover:opacity-20 bg-gradient-to-br ${item.color} transition-opacity duration-300 pointer-events-none`} />
 
-                                {/* Icon — with translateZ for 3D depth */}
-                                <div 
-                                    className="transform-gpu transition-all duration-300"
-                                    style={{ transform: "translateZ(40px)" }}
-                                >
-                                    {isDark ? (
-                                        <div className={`p-3.5 rounded-2xl bg-gradient-to-br ${item.color} shadow-lg group-hover:scale-110 transition-transform duration-200`}>
-                                            <item.icon className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
+                                <div className="flex flex-col gap-3 w-full">
+                                    <div className="flex items-center gap-3">
+                                        {/* Icon — with translateZ for 3D depth */}
+                                        <div 
+                                            className="transform-gpu transition-all duration-300 shrink-0"
+                                            style={{ transform: "translateZ(40px)" }}
+                                        >
+                                            {isDark ? (
+                                                <div className={`p-2.5 rounded-xl bg-gradient-to-br ${item.color} shadow-lg group-hover:scale-110 transition-transform duration-200`}>
+                                                    <item.icon className="w-5 h-5 text-white" />
+                                                </div>
+                                            ) : (
+                                                <div className={`p-2.5 rounded-xl border-2 ${item.borderLight} bg-white group-hover:scale-110 transition-transform duration-200`}>
+                                                    <item.icon className={`w-5 h-5 ${item.iconColorLight}`} />
+                                                </div>
+                                            )}
                                         </div>
-                                    ) : (
-                                        <div className={`p-3.5 rounded-2xl border-2 ${item.borderLight} bg-white group-hover:scale-110 transition-transform duration-200`}>
-                                            <item.icon className={`w-6 h-6 sm:w-8 sm:h-8 ${item.iconColorLight}`} />
-                                        </div>
-                                    )}
+
+                                        {/* Label — with translateZ for 3D depth */}
+                                        <span 
+                                            className="text-base md:text-lg font-bold text-gray-800 dark:text-white/90 group-hover:text-gray-900 dark:group-hover:text-white tracking-wide transform-gpu transition-colors duration-200"
+                                            style={{ transform: "translateZ(25px)" }}
+                                        >
+                                            {item.label}
+                                        </span>
+                                    </div>
+
+                                    {/* Description */}
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 font-medium leading-relaxed">
+                                        {item.description}
+                                    </p>
                                 </div>
 
-                                {/* Label — with translateZ for 3D depth */}
-                                <span 
-                                    className="text-base sm:text-lg font-medium text-gray-800 dark:text-white/90 group-hover:text-gray-900 dark:group-hover:text-white tracking-wide transform-gpu transition-colors duration-200"
-                                    style={{ transform: "translateZ(25px)" }}
-                                >
-                                    {item.label}
-                                </span>
-
-                                {/* Mobile Arrow */}
-                                <div className="sm:hidden ml-auto text-gray-400 dark:text-white/40">→</div>
+                                {/* Bottom Pill Detail / Arrow row */}
+                                <div className="flex items-center justify-between mt-4 w-full">
+                                    {item.detail && (
+                                        <div className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-gray-200/50 dark:bg-white/5 border border-gray-300/30 dark:border-white/5 text-gray-600 dark:text-gray-400 tracking-wider">
+                                            {item.detail}
+                                        </div>
+                                    )}
+                                    <div className="text-gray-400 dark:text-white/40 group-hover:translate-x-1 transition-transform duration-250">→</div>
+                                </div>
                             </TiltCard>
                         </motion.div>
                     ))}
