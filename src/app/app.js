@@ -32,6 +32,7 @@ export default function App() {
   const [showIntro, setShowIntro] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
 
   useEffect(() => {
     if (!isRoot) {
@@ -50,6 +51,24 @@ export default function App() {
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, [isRoot]);
+
+  // Setup interaction listener to defer heavy desktop animations (custom cursors)
+  useEffect(() => {
+    if (isMobile) return;
+    const handleInteraction = () => {
+      setHasInteracted(true);
+    };
+    window.addEventListener("mousemove", handleInteraction, { once: true });
+    window.addEventListener("mousedown", handleInteraction, { once: true });
+    window.addEventListener("keydown", handleInteraction, { once: true });
+    window.addEventListener("touchstart", handleInteraction, { once: true });
+    return () => {
+      window.removeEventListener("mousemove", handleInteraction);
+      window.removeEventListener("mousedown", handleInteraction);
+      window.removeEventListener("keydown", handleInteraction);
+      window.removeEventListener("touchstart", handleInteraction);
+    };
+  }, [isMobile]);
 
   const handleLoadingComplete = () => {
     setIsLoading(false);
@@ -74,7 +93,7 @@ export default function App() {
         <div className="fixed inset-0 bg-slate-50 dark:bg-black -z-50 transition-colors duration-300" />
 
         {/* Cursor Effects — Desktop only */}
-        {!isMobile && (
+        {!isMobile && hasInteracted && (
           <Suspense fallback={null}>
             {showIntro ? <SplashCursor /> : !isLoading && <FollowCursor />}
           </Suspense>
