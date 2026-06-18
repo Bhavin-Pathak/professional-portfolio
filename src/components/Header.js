@@ -16,7 +16,10 @@ export default function Header({ title, subtitle, backTo, tag: Tag = "h1" }) {
     }, []);
 
     return (
-        <div className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${isScrolled ? "bg-black/50 backdrop-blur-md" : "bg-transparent"}`}>
+        <div className={`fixed -top-2 left-0 right-0 pt-2 z-40 transition-all duration-300 
+            ${isScrolled 
+                ? "bg-white/80 dark:bg-black/50 backdrop-blur-md border-b border-gray-200/60 dark:border-white/5" 
+                : "bg-transparent"}`}>
             <div className="w-full h-16 flex items-center justify-center relative px-4 md:px-8">
                 {/* Back Button */}
                 <div className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-50">
@@ -29,11 +32,11 @@ export default function Header({ title, subtitle, backTo, tag: Tag = "h1" }) {
                     transition={{ duration: 0.6, ease: "backOut", delay: 0.2 }}
                     className="text-center pt-1 px-4 max-w-[85%] flex flex-col items-center justify-center gap-0.5"
                 >
-                    <Tag className="text-sm md:text-xl font-black text-white tracking-tight leading-tight line-clamp-1">
+                    <Tag className="text-sm md:text-xl font-black text-gray-900 dark:text-white tracking-tight leading-tight line-clamp-1">
                         {title}
                     </Tag>
                     {subtitle && (
-                        <p className="text-[7px] md:text-[10px] text-blue-400 font-black uppercase tracking-[0.2em] opacity-80 truncate w-full">
+                        <p className="text-[10px] md:text-[12px] text-blue-400 font-black uppercase tracking-[0.2em] opacity-80 truncate w-full">
                             {subtitle}
                         </p>
                     )}
