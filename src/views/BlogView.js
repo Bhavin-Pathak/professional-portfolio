@@ -1,11 +1,12 @@
 import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
 import { LiquidContainer } from "../components/LiquidContainer.js";
 import Header from "../components/Header.js";
 import blogDataRaw from "../static/blog-posts.json";
 import { BookOpen, ExternalLink } from "lucide-react";
 import { pageVariants } from "../utils/animations.js";
 import { useNavigate } from "react-router-dom";
-import SEO from "../components/SEO.js";
+
 
 export default function BlogView() {
     const navigate = useNavigate();
@@ -21,11 +22,17 @@ export default function BlogView() {
             exit="exit"
             className="min-h-screen bg-transparent overflow-x-hidden flex flex-col"
         >
-            <SEO
-                title="Insights"
-                description="Read the latest articles and insights from Bhavin Pathak on technology, software development, AI, and career growth."
-                url="/blog"
-            />
+            <Helmet>
+                <title>Developer Insights | Bhavin Pathak — Blog</title>
+                <meta name="description" content="Technical articles by Bhavin Pathak on AI, healthcare, React, Node.js, PostgreSQL, Kubernetes, TypeScript, and engineering best practices." />
+                <link rel="canonical" href="https://bhaviinpathak.online/blog" />
+                <meta property="og:title" content="Developer Insights | Bhavin Pathak — Blog" />
+                <meta property="og:description" content="Technical articles by Bhavin Pathak on AI, healthcare, React, Node.js, PostgreSQL, Kubernetes, TypeScript, and engineering best practices." />
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://bhaviinpathak.online/blog" />
+                <meta property="og:image" content="https://bhaviinpathak.online/images/og-image.png" />
+                <meta name="twitter:card" content="summary_large_image" />
+            </Helmet>
             <Header
                 title={blogData.pageTitle}
                 subtitle={blogData.pageSubtitle}
@@ -40,33 +47,33 @@ export default function BlogView() {
                             transition={{ type: "spring", stiffness: 300 }}
                             className="h-full"
                         >
-                            <LiquidContainer delay={idx * 0.1} className="p-6 flex flex-col h-full bg-white/5 hover:bg-white/10 transition-colors">
+                            <LiquidContainer delay={idx * 0.1} className="p-6 flex flex-col h-full hover:bg-gray-50/50 dark:hover:bg-white/10 transition-colors">
                                 <div className="flex justify-between items-start mb-4">
-                                    <h3 className="text-lg font-bold text-white group-hover:text-blue-400 transition-colors line-clamp-1">
+                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white line-clamp-1">
                                         {post.title}
                                     </h3>
-                                    <span className="px-2 py-1 bg-white/10 rounded text-xs text-gray-300 whitespace-nowrap ml-2">
+                                    <span className="px-2 py-1 bg-gray-100 dark:bg-white/10 rounded text-xs text-gray-600 dark:text-gray-300 whitespace-nowrap ml-2">
                                         {post.category}
                                     </span>
                                 </div>
 
-                                <p className="text-gray-400 text-sm mb-6 flex-grow leading-relaxed line-clamp-1">
+                                <p className="text-gray-600 dark:text-gray-400 text-sm mb-6 flex-grow leading-relaxed line-clamp-1">
                                     {post.excerpt}
                                 </p>
 
                                 <div className="flex flex-wrap gap-2 mb-6">
-                                    <span className="text-xs text-blue-300 bg-blue-500/10 px-2 py-1 rounded border border-blue-500/20">
+                                    <span className="text-xs text-blue-600 dark:text-blue-300 bg-blue-50 dark:bg-blue-500/10 px-2 py-1 rounded border border-blue-200 dark:border-blue-500/20">
                                         {post.date}
                                     </span>
                                 </div>
 
-                                <div className="flex gap-4 pt-4 border-t border-white/10 mt-auto">
-                                    <div className="flex items-center gap-2 text-sm text-gray-300">
+                                <div className="flex gap-4 pt-4 border-t border-gray-200 dark:border-white/10 mt-auto">
+                                    <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
                                         <BookOpen className="w-4 h-4" /> Professional
                                     </div>
                                     <button
                                         onClick={() => navigate(`/blog/${post.id}`)}
-                                        className="flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300 transition-colors ml-auto group/btn"
+                                        className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors ml-auto group/btn"
                                     >
                                         <ExternalLink className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" /> Read Article
                                     </button>
