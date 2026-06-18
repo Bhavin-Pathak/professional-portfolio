@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bhavin Pathak</title>
+    <!-- Basic styling for non-JS users -->
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #030303;
+            color: #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 400px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        p {
+            color: #9ca3af;
+            margin-bottom: 1.5rem;
+        }
+
+        a {
+            color: #60a5fa;
+            text-decoration: none;
+            padding: 12px 24px;
+            border: 1px solid #60a5fa;
+            border-radius: 8px;
+            display: inline-block;
+            transition: all 0.2s;
+        }
+
+        a:hover {
+            background: #60a5fa;
+            color: #030303;
+        }
+
+        .loading {
+            display: none;
+            margin-top: 1rem;
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+    </style>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            var loadingEl = document.querySelector('.loading');
+            if (loadingEl) loadingEl.style.display = 'block';
+        });
+        var l = window.location;
+        l.replace(
+            l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+            l.pathname.split('/').slice(0, 1).join('/') + '/?p=' +
+            l.pathname.slice(1).replace(/&/g, '~and~') +
+            (l.search ? '&q=' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+            l.hash
+        );
+    </script>
+</head>
+
+<body>
+    <noscript>
+        <meta http-equiv="refresh" content="0;url=https://bhaviinpathak.online/">
+    </noscript>
+    <div class="container">
+        <h1>Bhavin Pathak</h1>
+        <p>Full Stack Developer & Technical Architect</p>
+        <a href="https://bhaviinpathak.online/">Visit Homepage</a>
+        <p class="loading">Redirecting...</p>
+    </div>
+</body>
+
+</html>
