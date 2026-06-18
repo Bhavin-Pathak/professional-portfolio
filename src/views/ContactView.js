@@ -1,11 +1,12 @@
 import { motion, AnimatePresence } from "framer-motion";
+import { Helmet } from "react-helmet-async";
 import contactData from "../static/contact-me.json";
 import aboutData from "../static/about-me.json";
 import Header from "../components/Header.js";
 import { Linkedin, Github, Mail, Phone, ExternalLink, Copy, Check } from "lucide-react";
 import { pageVariants } from "../utils/animations.js";
 import { useState, useEffect } from "react";
-import SEO from "../components/SEO.js";
+
 
 export default function ContactView() {
     const [copied, setCopied] = useState("");
@@ -39,7 +40,7 @@ export default function ContactView() {
             href: aboutData.social.linkedin,
             label: "LinkedIn",
             value: "Connect with me",
-            color: "text-blue-400",
+            color: "text-blue-600 dark:text-blue-400",
             external: true
         },
         {
@@ -47,7 +48,7 @@ export default function ContactView() {
             href: "mailto:" + aboutData.social.email,
             label: "Email",
             value: aboutData.social.email,
-            color: "text-red-400",
+            color: "text-red-600 dark:text-red-400",
             copyable: true
         },
         {
@@ -55,7 +56,7 @@ export default function ContactView() {
             href: aboutData.social.github,
             label: "GitHub",
             value: "Explore repositories",
-            color: "text-white",
+            color: "text-slate-800 dark:text-white",
             external: true
         },
         {
@@ -63,7 +64,7 @@ export default function ContactView() {
             href: "tel:" + aboutData.social.phone,
             label: "Phone",
             value: aboutData.social.phone,
-            color: "text-green-400",
+            color: "text-emerald-600 dark:text-green-400",
             copyable: true
         },
     ];
@@ -74,15 +75,25 @@ export default function ContactView() {
             initial="initial"
             animate="animate"
             exit="exit"
-            className="h-screen w-screen bg-[#030303] overflow-hidden flex flex-col relative font-sans"
+            className="min-h-screen w-full bg-transparent overflow-hidden flex flex-col relative font-sans"
         >
-            <SEO
-                title="Connect"
-                description="Get in touch with Bhavin Pathak for collaborations, technical consulting, or just to say hi. Available for high-impact software projects."
-                url="/contact"
-            />
             {/* Background Grain Effect */}
-            <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+            <div 
+                className="absolute inset-0 opacity-[0.03] pointer-events-none" 
+                style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }} 
+            />
+
+            <Helmet>
+                <title>Connect | Bhavin Pathak — Contact Info</title>
+                <meta name="description" content="Get in touch with Bhavin Pathak. Available for high-impact engineering projects, collaborations, and career opportunities. Reach out via LinkedIn, Email, or GitHub." />
+                <link rel="canonical" href="https://bhaviinpathak.online/contact" />
+                <meta property="og:title" content="Connect | Bhavin Pathak — Contact Info" />
+                <meta property="og:description" content="Get in touch with Bhavin Pathak. Available for high-impact engineering projects, collaborations, and career opportunities." />
+                <meta property="og:type" content="website" />
+                <meta property="og:url" content="https://bhaviinpathak.online/contact" />
+                <meta property="og:image" content="https://bhaviinpathak.online/images/og-image.png" />
+                <meta name="twitter:card" content="summary_large_image" />
+            </Helmet>
 
             <Header title={contactData.title} subtitle={contactData.subtitle} />
 
@@ -92,7 +103,7 @@ export default function ContactView() {
                     {/* Reverted Header Section */}
                     <div className="text-center mb-10 relative">
                         <div className="flex items-center justify-center gap-3 relative inline-flex">
-                            <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-white m-0">
+                            <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-slate-900 dark:text-white m-0">
                                 Get in touch
                             </h1>
 
@@ -153,26 +164,26 @@ export default function ContactView() {
                                 whileHover={{ y: -2 }}
                                 className="group relative"
                             >
-                                <div className="flex items-center justify-between p-4 rounded-2xl bg-white/[0.03] border border-white/5 hover:border-white/10 hover:bg-white/[0.05] transition-all duration-300">
-                                    <div className="flex items-center gap-3 text-left">
-                                        <div className={`p-2.5 rounded-xl bg-white/5 ${item.color} transition-transform duration-300`}>
+                                <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-900/[0.03] dark:bg-white/[0.03] border border-slate-900/5 dark:border-white/5 hover:border-slate-900/10 dark:hover:border-white/10 hover:bg-slate-900/[0.05] dark:hover:bg-white/[0.05] transition-all duration-300 min-w-0">
+                                    <div className="flex items-center gap-3 text-left min-w-0 mr-2">
+                                        <div className={`p-2.5 rounded-xl bg-slate-900/5 dark:bg-white/5 ${item.color} transition-transform duration-300 shrink-0`}>
                                             <item.icon size={18} />
                                         </div>
-                                        <div className="flex flex-col">
-                                            <span className="text-[9px] font-bold text-gray-500 uppercase tracking-widest leading-none mb-1 opacity-60">
+                                        <div className="flex flex-col min-w-0">
+                                            <span className="text-[9px] font-bold text-slate-500 dark:text-gray-400 uppercase tracking-widest leading-none mb-1 opacity-60">
                                                 {item.label}
                                             </span>
-                                            <span className="text-xs font-semibold text-white tracking-tight">
+                                            <span className="text-xs font-semibold text-slate-900 dark:text-white tracking-tight truncate">
                                                 {item.value}
                                             </span>
                                         </div>
                                     </div>
 
-                                    <div className="flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                    <div className="flex gap-1.5 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-300 shrink-0">
                                         {item.copyable && (
                                             <button
                                                 onClick={() => handleCopy(item.value, item.label)}
-                                                className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all active:scale-90"
+                                                className="p-2 rounded-lg bg-slate-900/5 dark:bg-white/5 hover:bg-slate-900/10 dark:hover:bg-white/10 text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white transition-all active:scale-90"
                                             >
                                                 {copied === item.label ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
                                             </button>
@@ -181,7 +192,7 @@ export default function ContactView() {
                                             href={item.href}
                                             target={item.external ? "_blank" : "_self"}
                                             rel="noopener noreferrer"
-                                            className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all active:scale-90"
+                                            className="p-2 rounded-lg bg-slate-900/5 dark:bg-white/5 hover:bg-slate-900/10 dark:hover:bg-white/10 text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white transition-all active:scale-90"
                                         >
                                             <ExternalLink size={14} />
                                         </a>
