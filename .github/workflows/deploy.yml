@@ -16,36 +16,17 @@ jobs:
       - name: Checkout 🛎️
         uses: actions/checkout@v4
 
-      - name: Install and Build 🔧
+      - name: Build 🔧
         run: |
           npm install --legacy-peer-deps
-          npm run sitemap
           npm run build
-          cp build/index.html build/404.html
         env:
           CI: false
           DISABLE_ESLINT_PLUGIN: true
-
-      - name: Commit and Push 📝
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          
-          # Stage the sitemap changes first
-          git add public/sitemap.xml
-          
-          # Pull latest changes using autostash to avoid "unstaged changes" error
-          git pull origin main --rebase --autostash
-          
-          # Commit and push only if there are changes
-          if ! git diff --cached --quiet; then
-            git commit -m "Auto-update sitemap [skip ci]"
-            git push origin main
-          else
-            echo "No changes to sitemap."
-          fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REACT_APP_HF_API_KEY: ${{ secrets.REACT_APP_HF_API_KEY }}
+          REACT_APP_GITHUB_REPOS_URL: ${{ secrets.REACT_APP_GITHUB_REPOS_URL }}
+          REACT_APP_GITHUB_PROFILE_URL: ${{ secrets.REACT_APP_GITHUB_PROFILE_URL }}
+          REACT_APP_LEETCODE_API_URL: ${{ secrets.REACT_APP_LEETCODE_API_URL }}
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
