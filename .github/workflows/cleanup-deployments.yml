@@ -1,0 +1,64 @@
+name: Cleanup Deployments
+
+on:
+  workflow_dispatch:
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      deployments: write
+    steps:
+      - name: Cleanup deployments
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            
+            // 1. Fetch all deployments
+            const response = await github.rest.repos.listDeployments({
+              owner,
+              repo,
+              per_page: 100
+            });
+            
+            const deployments = response.data;
+            console.log(`Found ${deployments.length} deployments.`);
+            
+            if (deployments.length <= 5) {
+              console.log("5 or fewer deployments found. Nothing to clean up.");
+              return;
+            }
+            
+            // Keep the first 5 (newest), delete the rest
+            const toDelete = deployments.slice(5);
+            console.log(`Deleting ${toDelete.length} older deployments...`);
+            
+            for (const dep of toDelete) {
+              console.log(`Processing deployment ID: ${dep.id} (${dep.created_at})...`);
+              try {
+                // To delete a deployment, we first need to make it inactive
+                await github.rest.repos.createDeploymentStatus({
+                  owner,
+                  repo,
+                  deployment_id: dep.id,
+                  state: 'inactive',
+                });
+                console.log(`  Set status to inactive.`);
+              } catch (e) {
+                console.log(`  Could not set status to inactive: ${e.message}`);
+              }
+              
+              try {
+                await github.rest.repos.deleteDeployment({
+                  owner,
+                  repo,
+                  deployment_id: dep.id
+                });
+                console.log(`  Deleted successfully.`);
+              } catch (e) {
+                console.log(`  Failed to delete deployment ${dep.id}: ${e.message}`);
+              }
+            }
+            console.log("Cleanup complete!");
