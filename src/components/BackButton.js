@@ -24,11 +24,12 @@ export function BackButton({ to, className = "" }) {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
-            whileHover={{ scale: 1.1, x: -5, backgroundColor: "rgba(255, 255, 255, 0.2)" }}
+            whileHover={{ scale: 1.1, x: -5 }}
             whileTap={{ scale: 0.9 }}
             onClick={handleBack}
             className={`p-2 md:p-3 
         backdrop-blur-3xl saturate-150 bg-black/5 dark:bg-black/30 
+        hover:bg-black/10 dark:hover:bg-white/10
         border border-black/10 dark:border-white/10 rounded-full 
         shadow-[0_8px_32px_0_rgba(0,0,0,0.1)] dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] 
         text-gray-800 dark:text-white/90 hover:text-black dark:hover:text-white transition-all duration-300 ${className}`}
