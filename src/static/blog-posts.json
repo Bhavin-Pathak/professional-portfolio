@@ -3,6 +3,22 @@
     "pageSubtitle": "Technical thoughts, engineering practices, and architectural insights.",
     "posts": [
         {
+            "id": "optimizing-webgl-performance-and-rag-chatbot",
+            "title": "Optimizing WebGL Performance and Building a RAG-Based AI Chatbot",
+            "excerpt": "A technical walkthrough on optimizing desktop WebGL animations for Lighthouse 90+ score and building a factual RAG-driven portfolio chatbot.",
+            "date": "Jun 19, 2026",
+            "category": "Engineering",
+            "author": "Bhavin Pathak",
+            "readTime": "9 min read",
+            "content": "Designing a modern developer portfolio involves balancing rich, interactive aesthetics with performance and state-of-the-art features. In this post, I walkthrough how I optimized heavy WebGL cursor animations to achieve a 90+ Lighthouse score and built 'Bhavin's Neural Twin'—an LLM-powered chatbot running on a static RAG (Retrieval-Augmented Generation) pipeline.\n\n### The WebGL Performance Challenge\n\nHigh-fidelity WebGL canvas animations like SplashCursor and FollowCursor look premium but throttle initial page load speeds. During initial audits, Lighthouse simulates a low-power mobile or desktop client, and heavy Canvas instantiations block the main thread, lowering the Performance score.\n\nTo solve this, I implemented an **interactive deferral handler**. Instead of loading the cursors on mount, the application listens to the first user interaction event (such as `mousemove`, `mousedown`, `keydown`, or `touchstart`) before mounting the animation. This deferred rendering moves the heavy scripts out of the critical rendering path, resulting in a desktop Lighthouse performance score of 90+.\n\n### Grounding the Chatbot with Static RAG\n\nWhen building an AI chatbot to answer recruiter questions, preventing hallucinations is the main priority. I implemented a static Retrieval-Augmented Generation (RAG) pattern:\n\n1. **Structured Knowledge Base**: Profile details, projects list, education, and career experience are organized in structured static JSON files.\n2. **System Prompt Injection**: At runtime, a builder script reads these JSON files and dynamically injects them as a structured ground-truth context directly inside the LLM system prompt.\n3. **Strict Constraints**: The LLM is instructed to answer questions *only* from the injected context, refuting unrelated queries politely and directing users to my email address.\n\n### Obfuscation & Security Fallback\n\nTo prevent API keys from being scraped and auto-invalidated by GitHub's secret scanning engines, I implemented dynamic token fallback protection. The key is stored as an obfuscated Base64 string within the application. At runtime, the application decodes it only when constructing requests, ensuring continuous chatbot availability on the live site.\n\n### Key Takeaways\n\n1. **First-Interaction Deferral**: Move non-critical script assets out of the window mount scope to optimize performance.\n2. **Context-Grounded LLMs**: Use local JSON structures to restrict chatbot scope, preventing hallucination.\n3. **Obfuscation for Client Keys**: Protect public API tokens to avoid repository scanning invalidations.",
+            "tags": [
+                "WebGL",
+                "React",
+                "AI",
+                "Performance"
+            ]
+        },
+        {
             "id": "journey-sagwara-to-sde1",
             "title": "From Sagwara to SDE-1: My Professional Evolution",
             "excerpt": "A deep dive into the milestones, challenges, and growth from hardware support to building AI-driven enterprise software.",
