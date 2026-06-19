@@ -25,6 +25,45 @@ export default function TimelineView() {
     const [leetcodeData, setLeetcodeData] = useState(null);
     const [error, setError] = useState(false);
 
+    // Compute LeetCode visual variables
+    const leetcodeStats = (() => {
+        const totalSolved = leetcodeData?.totalSolved || 0;
+        const easySolved = leetcodeData?.easySolved || 0;
+        const mediumSolved = leetcodeData?.mediumSolved || 0;
+        const hardSolved = leetcodeData?.hardSolved || 0;
+
+        const totalQuestions = leetcodeData?.totalQuestions || 3300;
+        const totalEasy = leetcodeData?.totalEasy || 820;
+        const totalMedium = leetcodeData?.totalMedium || 1720;
+        const totalHard = leetcodeData?.totalHard || 760;
+
+        const totalPercent = totalQuestions > 0 ? Math.round((totalSolved / totalQuestions) * 100) : 0;
+        const easyPercent = totalEasy > 0 ? Math.round((easySolved / totalEasy) * 100) : 0;
+        const mediumPercent = totalMedium > 0 ? Math.round((mediumSolved / totalMedium) * 100) : 0;
+        const hardPercent = totalHard > 0 ? Math.round((hardSolved / totalHard) * 100) : 0;
+
+        const r = 36;
+        const circumference = 2 * Math.PI * r;
+        const strokeDashoffset = circumference - (totalPercent / 100) * circumference;
+
+        return {
+            totalSolved,
+            easySolved,
+            mediumSolved,
+            hardSolved,
+            totalQuestions,
+            totalEasy,
+            totalMedium,
+            totalHard,
+            totalPercent,
+            easyPercent,
+            mediumPercent,
+            hardPercent,
+            circumference,
+            strokeDashoffset
+        };
+    })();
+
     // Static Professional Milestones
     const milestones = [
         {
@@ -163,28 +202,109 @@ export default function TimelineView() {
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -15 }}
                                 transition={{ duration: 0.3 }}
-                                className="grid grid-cols-2 md:grid-cols-4 gap-3 w-full"
+                                className="w-full font-bold"
                             >
-                                {[
-                                    { label: "Total Solved", value: leetcodeData?.totalSolved ?? "--", color: "text-blue-500 dark:text-blue-400" },
-                                    { label: "Easy Solved", value: leetcodeData?.easySolved ?? "--", color: "text-green-500 dark:text-green-400" },
-                                    { label: "Medium Solved", value: leetcodeData?.mediumSolved ?? "--", color: "text-yellow-500 dark:text-yellow-400" },
-                                    { label: "Hard Solved", value: leetcodeData?.hardSolved ?? "--", color: "text-red-500 dark:text-red-400" }
-                                ].map(stat => (
-                                    <LiquidContainer
-                                        key={`${stat.label}-${leetcodeData ? "loaded" : "loading"}`}
-                                        className="p-5 border border-gray-200/80 dark:border-white/10 min-h-[105px]"
-                                    >
-                                        <div className="flex flex-col items-center justify-center text-center gap-1.5 h-full w-full">
-                                            <span className={`text-3xl md:text-4xl font-black ${stat.color} leading-none tabular-nums ${loading ? "animate-pulse opacity-70" : ""}`}>
-                                                {stat.value}
-                                            </span>
-                                            <span className="text-[10px] md:text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider leading-none">
-                                                {stat.label}
+                                <LiquidContainer className="p-6 md:p-8 border border-gray-200/80 dark:border-white/10 w-full min-h-[180px]">
+                                    <div className="flex flex-col md:flex-row items-center gap-8 w-full">
+                                        {/* Circular Progress Ring */}
+                                        <div className="flex flex-col items-center justify-center gap-2 shrink-0">
+                                            <div className="relative w-28 h-28 flex items-center justify-center">
+                                                <svg className="w-full h-full transform -rotate-90">
+                                                    {/* Background circle */}
+                                                    <circle
+                                                        cx="56"
+                                                        cy="56"
+                                                        r="36"
+                                                        className="stroke-gray-100 dark:stroke-white/5 fill-transparent"
+                                                        strokeWidth="8"
+                                                    />
+                                                    {/* Progress circle */}
+                                                    <motion.circle
+                                                        cx="56"
+                                                        cy="56"
+                                                        r="36"
+                                                        className="stroke-amber-500 fill-transparent"
+                                                        strokeWidth="8"
+                                                        strokeDasharray={226.2}
+                                                        initial={{ strokeDashoffset: 226.2 }}
+                                                        animate={{ strokeDashoffset: leetcodeStats.strokeDashoffset }}
+                                                        transition={{ duration: 0.8, ease: "easeOut" }}
+                                                        strokeLinecap="round"
+                                                    />
+                                                </svg>
+                                                {/* Text Overlay */}
+                                                <div className="absolute flex flex-col items-center justify-center">
+                                                    <span className="text-2xl font-black text-gray-900 dark:text-white tabular-nums leading-none">
+                                                        {leetcodeData ? leetcodeStats.totalSolved : "--"}
+                                                    </span>
+                                                    <span className="text-[10px] text-gray-400 font-bold uppercase mt-0.5 leading-none">
+                                                        Solved
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <span className="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider">
+                                                {leetcodeData ? `${leetcodeStats.totalPercent}% Progress` : "Loading..."}
                                             </span>
                                         </div>
-                                    </LiquidContainer>
-                                ))}
+
+                                        {/* Difficulty Breakdown Bars */}
+                                        <div className="flex-grow w-full flex flex-col gap-4">
+                                            {/* Easy */}
+                                            <div className="flex flex-col gap-1 w-full">
+                                                <div className="flex justify-between items-end text-xs font-bold">
+                                                    <span className="text-green-600 dark:text-green-400 uppercase tracking-wider">Easy</span>
+                                                    <span className="text-gray-500 dark:text-gray-400 tabular-nums">
+                                                        {leetcodeData ? leetcodeStats.easySolved : "--"} <span className="text-[10px] opacity-60">/ {leetcodeStats.totalEasy}</span>
+                                                    </span>
+                                                </div>
+                                                <div className="w-full h-2.5 bg-gray-100 dark:bg-white/5 rounded-full overflow-hidden">
+                                                    <motion.div
+                                                        className="h-full bg-green-500 dark:bg-green-400 rounded-full"
+                                                        initial={{ width: 0 }}
+                                                        animate={{ width: leetcodeData ? `${leetcodeStats.easyPercent}%` : 0 }}
+                                                        transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            {/* Medium */}
+                                            <div className="flex flex-col gap-1 w-full">
+                                                <div className="flex justify-between items-end text-xs font-bold">
+                                                    <span className="text-yellow-600 dark:text-yellow-400 uppercase tracking-wider">Medium</span>
+                                                    <span className="text-gray-500 dark:text-gray-400 tabular-nums">
+                                                        {leetcodeData ? leetcodeStats.mediumSolved : "--"} <span className="text-[10px] opacity-60">/ {leetcodeStats.totalMedium}</span>
+                                                    </span>
+                                                </div>
+                                                <div className="w-full h-2.5 bg-gray-100 dark:bg-white/5 rounded-full overflow-hidden">
+                                                    <motion.div
+                                                        className="h-full bg-yellow-500 dark:bg-yellow-400 rounded-full"
+                                                        initial={{ width: 0 }}
+                                                        animate={{ width: leetcodeData ? `${leetcodeStats.mediumPercent}%` : 0 }}
+                                                        transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            {/* Hard */}
+                                            <div className="flex flex-col gap-1 w-full">
+                                                <div className="flex justify-between items-end text-xs font-bold">
+                                                    <span className="text-red-600 dark:text-red-400 uppercase tracking-wider">Hard</span>
+                                                    <span className="text-gray-500 dark:text-gray-400 tabular-nums">
+                                                        {leetcodeData ? leetcodeStats.hardSolved : "--"} <span className="text-[10px] opacity-60">/ {leetcodeStats.totalHard}</span>
+                                                    </span>
+                                                </div>
+                                                <div className="w-full h-2.5 bg-gray-100 dark:bg-white/5 rounded-full overflow-hidden">
+                                                    <motion.div
+                                                        className="h-full bg-red-500 dark:bg-red-400 rounded-full"
+                                                        initial={{ width: 0 }}
+                                                        animate={{ width: leetcodeData ? `${leetcodeStats.hardPercent}%` : 0 }}
+                                                        transition={{ duration: 0.6, ease: "easeOut", delay: 0.3 }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </LiquidContainer>
                             </motion.div>
                         )}
 

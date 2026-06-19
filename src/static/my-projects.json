@@ -110,7 +110,7 @@
         },
         {
             "id": 9,
-            "name": "Leet Code Solutions",
+            "name": "LeetCode Solutions",
             "description": "A structured collection of algorithm and data structure problem solutions for interview preparation.",
             "html_url": "https://github.com/Bhavin-Pathak/Leet-Code.git",
             "homepage": "",

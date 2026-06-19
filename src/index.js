@@ -48,5 +48,13 @@ root.render(
     </HelmetProvider>
   </React.StrictMode>
 );
+// Register Service Worker for PWA
+if ("serviceWorker" in navigator && process.env.NODE_ENV === "production") {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/service-worker.js")
+      .then((reg) => console.log("[PWA] Service Worker registered:", reg.scope))
+      .catch((err) => console.error("[PWA] Service Worker registration failed:", err));
+  });
+}
 // If you want to start measuring performance in your app, pass a function
 reportWebVitals();
